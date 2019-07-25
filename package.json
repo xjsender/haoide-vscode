@@ -1,0 +1,57 @@
+{
+	"name": "haoide",
+	"displayName": "haoide",
+	"description": "haoide",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.35.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:extension.login"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.login",
+				"title": "Hello World"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "haoide",
+			"properties": {
+				"haoide.projects": {
+					"type": "boolean",
+					"default": true,
+					"description": "Projects"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"@types/jsforce": "^1.9.7",
+		"@types/mocha": "^2.2.42",
+		"@types/node": "^10.12.21",
+		"@types/request-promise": "^4.1.44",
+		"request": "*",
+		"request-promise": "^4.2.4",
+		"tslint": "^5.12.1",
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28"
+	},
+	"dependencies": {
+		"inherits": "^2.0.4",
+		"npm-update": "^2.1.0"
+	}
+}
