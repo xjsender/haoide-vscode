@@ -1,8 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import * as jsforce from 'jsforce';
 import Login from './salesforce/login/login';
+import LightningCompletionItemProvider from "./salesforce/completions/lightningCompletionProvider";
 import { settings } from './settings';
 
 // this method is called when your extension is activated
@@ -19,11 +19,11 @@ export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand('extension.login', () => {
 		// var conn = new jsforce.Connection({});
 		// conn.login('hao.liu@trailhead.com', 'hw555555', (err, userInfo) => {
-		// 	if (err) {
-		// 		console.error(err);
-		// 	}
+		//  if (err) {
+		//      console.error(err);
+		//  }
 		// }).then((userInfo) => {
-		// 	console.log(userInfo);
+		//  console.log(userInfo);
 		// });
 
 		let login = new Login();
@@ -33,8 +33,14 @@ export function activate(context: vscode.ExtensionContext) {
 		console.log(JSON.stringify(projects));
 	});
 
-	context.subscriptions.push(disposable);
+	let lightningProvider = vscode.languages.registerCompletionItemProvider(
+        'plaintext', 
+        new LightningCompletionItemProvider(), 
+        "<"
+    );
+
+	context.subscriptions.push(lightningProvider);
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }

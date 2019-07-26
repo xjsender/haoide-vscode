@@ -2264,7 +2264,7 @@ let timezones = [
     "Pacific/Pago_Pago"
 ];
 
-let html_global_methods = [
+export let html_global_methods = [
     "onabort", "onautocomplete", "onautocompleteerror", "onauxclick", "onblur",
     "oncancel", "oncanplay", "oncanplaythrough", "onchange", "onclick",
     "onclose", "oncontextmenu", "oncuechange", "ondblclick", "ondrag",
@@ -2281,7 +2281,7 @@ let html_global_methods = [
 ];
 
 // ["analytics", "aura", "force", "forceChatter", "forceCommunity", "lightning", "ltng", "ui", "wave"]
-let tag_defs = {
+export let tag_defs: { [key: string]: any } = {
     "sfdc:sobjects": {
         "attribs": {},
         "simple": false,
@@ -10776,6 +10776,7 @@ let tag_defs = {
     "lightning-accordion": {
         "simple": false,
         "type": "lwc",
+        "description": "LWC Compoent",
         "attribs": {
             "title": {
                 "type": "String",
