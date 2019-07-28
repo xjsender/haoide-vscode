@@ -1,45 +1,44 @@
-import * as vscode from 'vscode';
 import * as request from 'request-promise';
+import { settings } from "../../settings";
 
-export default class Login {
-    constructor(session_expired=false, ...params: any) {
 
-    }
+export function loginByREST() {
 
-    public loginBySOAP() {
-        return new Promise(function(resolve, reject) {
-            let soapBody = `
-                <?xml version="1.0" encoding="utf-8" ?>
-                <env:Envelope
-                    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
-                    <env:Body>
-                        <n1:login xmlns:n1="urn:partner.soap.sforce.com">
-                            <n1:username>{this.username}</n1:username>
-                            <n1:password>{this.password}</n1:password>
-                        </n1:login>
-                    </env:Body>
-                </env:Envelope>
-            `;
-            let options = {
-                method: 'GET',
-                headers: {
-                    "Accept": "application/json", 
-                    "Authorization": "OAuth 00D7F000001waFi!AQYAQK.R3zCYOtnMqawNlbupL4B0edgKvDeKi3tJMSabz7AfXrX0n5X7kj8vR5dyzIpXGpESBxgNpplM455.QH0tlQ0P1WXP", 
-                    "Content-Type": "application/json; charset=UTF-8"
-                },
-                uri: 'https://resourceful-moose-68775-dev-ed.my.salesforce.com/services/data/v45.0',
-                body: null
-            };
+}
 
-            request(options)
-                .then(res => {
-                    console.log(JSON.stringify(res));
-                })
-                .catch(err => {
-                    console.log(JSON.stringify(err));
-                });
-        });
-    }
+export function loginBySOAP(params: { [key: string]: any }) {
+    return new Promise(function(resolve, reject) {
+        let soapBody = `<?xml version="1.0" encoding="utf-8" ?>
+            <env:Envelope
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+                <env:Body>
+                    <n1:login xmlns:n1="urn:partner.soap.sforce.com">
+                        <n1:username>hao.liu@trailhead.com</n1:username>
+                        <n1:password>xxxx</n1:password>
+                    </n1:login>
+                </env:Body>
+            </env:Envelope>
+        `;
+
+        let options = {
+            method: 'POST',
+            headers: {
+                "Content-type": "text/xml",
+                "Charset": "UTF-8",
+                "SOAPAction": "login"
+            },
+            body: soapBody,
+            uri: `https://login.salesforce.com/services/Soap/u/v${params["apiVersion"] || 39}.0`
+        };
+        console.log(JSON.stringify(options));
+
+        return request(options).
+            then(res => {
+                resolve(res);
+            }).catch(err => {
+                reject(err);
+            });
+    });
 }

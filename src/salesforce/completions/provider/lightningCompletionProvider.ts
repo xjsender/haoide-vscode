@@ -217,16 +217,4 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
 
         return completionItems;
     }
-
-    /**
-     * Get last character in the cursor position
-     * @param document Current TextDocument
-     * @param postition current cursor postion
-     */
-    private getLastCharOfPosition(document: TextDocument, postition: Position) {
-        let startPos = postition.translate(0, -1);
-        let charRange = new Range(startPos, postition);
-
-        return document.getText(charRange);
-    }
 }
