@@ -28,6 +28,14 @@
 			{
 				"language": "java",
 				"path": "./snippets/Trigger.code-snippets"
+			},
+			{
+				"language": "apex",
+				"path": "./snippets/Class.code-snippets"
+			},
+			{
+				"language": "java",
+				"path": "./snippets/Class.code-snippets"
 			}
 		],
 		"configuration": {

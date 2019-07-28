@@ -12,17 +12,25 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
         let wholeText = document.getText();
         let lineText = document.lineAt(position.line).text;
         let char = getLastCharOfPosition(document, position);
+
+        // We can't get correct word if remove -1
         let wordRange = document.getWordRangeAtPosition(
-            new Position(position.line, position.character - 1)
-        );
+            new Position(position.line, position.character - 1),
+            /\w+[-:]*\w+/g
+        ) || new Range(position, position);
+        console.log("Word: " + document.getText(wordRange));
         let word = document.getText(wordRange);
+
+        // let word = document.getText(new Range(
+        //     wordRange.start, wordRange.end.translate(0, 1)
+        // ));
 
         console.log({
             'position': JSON.stringify(position),
             "positionOffset": positionOffset,
             "lineText": lineText,
             "lastChar": char,
-            "word": word
+            "word": word.trim()
         });
 
         // Initiate completion list
@@ -36,7 +44,8 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                     completionItems.push(createCompletionItem(
                         tag, CompletionItemKind.Keyword,
                         `${tag}(${attr["type"]})`,
-                        attr["description"] || ""
+                        attr["description"] || "",
+                        `${tag}$1>$0</${tag}>`
                     ));
                 }
             }
@@ -45,10 +54,17 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
         else if (char === '-') {
             for (const tag in tagDefs) {
                 if (tagDefs.hasOwnProperty(tag)) {
+                    // If position char is :, remove the < in the word
+                    if (word.startsWith('-')) {
+                        word = word.substr(1, word.length);
+                    }
+
                     if (tag.startsWith(word)) {
+                        let tag_suffix = tag.split('-')[1];
+
                         let attr = tagDefs[tag];
                         completionItems.push(createCompletionItem(
-                            tag, CompletionItemKind.Keyword,
+                            tag_suffix, CompletionItemKind.Keyword,
                             `${tag}(${attr["type"]})`,
                             attr["description"] || ""
                         ));
@@ -80,11 +96,12 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
         }
         // completion for tag attribute
         else if (char === ' ') {
-            let pattern = /<\w+[:-\s]+\w+[\w\W]*?/g;
+            let pattern = /<\w+[:-\s]*\w+[\w\W]*?>/g;
             let match, matchedText;
             
             // Get matched string which contains cursor
             while (match = pattern.exec(wholeText)) {
+                console.log(match.index, positionOffset);
                 if (match.index > positionOffset) {
                     break;
                 }
@@ -92,13 +109,18 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
             }
 
             if (matchedText) {
-                let matchedTag = matchedText.split('.')[0];
+                let matchedTag = matchedText.trim().split(' ')[0];
 
                 // Remove the < from the matched tag, i.e., <lightning-input
                 matchedTag = matchedTag.substr(1, matchedTag.length);
 
-                let tagAttrib = tagDefs[matchedTag];
-                let attribs: Object = tagAttrib["attribs"];
+                console.log({
+                    "matchedText": matchedText,
+                    "tagName": matchedTag
+                });
+
+                let tagAttrib = tagDefs[matchedTag] || {};
+                let attribs: Object = tagAttrib["attribs"] || {};
                 for (const attrName in attribs) {
                     if (attribs.hasOwnProperty(attrName)) {
                         let attr = (<any>attribs)[attrName];
@@ -140,7 +162,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
 
                 let tagAttrib = tagDefs[matchedTag];
                 let attribs: Object = tagAttrib["attribs"];
-                let attrName = word.substr(0, word.trim().length - 1);
+                let attrName = word;
                 let attr = (<any>attribs)[attrName];
 
                 console.log({
@@ -150,11 +172,43 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                 });
 
                 if (attr && attr["type"] === "Picklist") {
-                    for (const _value in attr["values"]) {
+                    for (const _value of (attr["values"] || [])) {
                         completionItems.push(createCompletionItem(
                             _value, CompletionItemKind.Keyword,
                             `${attrName}(${attr["type"]})`,
-                            attr["description"] || ""
+                            attr["description"] || "",
+                            `"${_value}"$0`
+                        ));
+                    }
+                }
+                else if (attr && attr["type"] === "Boolean") {
+                    completionItems.push(createCompletionItem(
+                        "true", CompletionItemKind.Keyword,
+                        `${attrName}(${attr["type"]})`,
+                        attr["description"] || "",
+                        `"true"$0`
+                    ));
+                    completionItems.push(createCompletionItem(
+                        "false", CompletionItemKind.Keyword,
+                        `${attrName}(${attr["type"]})`,
+                        attr["description"] || "",
+                        `"false"$0`
+                    ));
+
+                    if (tagAttrib["type"] === "aura") {
+                        completionItems.push(createCompletionItem(
+                            "{!}", CompletionItemKind.Keyword,
+                            `${attrName}(${attr["type"]})`,
+                            attr["description"] || "",
+                            `"{$1}"$0`
+                        ));
+                    }
+                    else if (tagAttrib["type"] === "lwc") {
+                        completionItems.push(createCompletionItem(
+                            "{}", CompletionItemKind.Keyword,
+                            `${attrName}(${attr["type"]})`,
+                            attr["description"] || "",
+                            `{$1}$0`
                         ));
                     }
                 }

@@ -13027,6 +13027,7 @@ export let tag_defs: { [key: string]: any } = {
             },
             "variant": {
                 "type": "Picklist",
+                "values": ["standard", "label-inline", "label-hidden", "label-stacked"],
                 "access": "global",
                 "required": false,
                 "default": "",
