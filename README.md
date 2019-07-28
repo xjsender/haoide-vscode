@@ -1,6 +1,10 @@
-# haoide README
+# haoide-vscode README
 
-This is the README for your extension "haoide". After writing up a brief description, we recommend including the following sections.
+haoide-vscode is migrated from haoide, so far, it just supports lightning component completion and not released to vscode marketplace, more and more feat
+ures will be delivered in the next months
+- [x] Completions
+- [x] LWC Development
+- [x] ...
 
 ## Features
 
