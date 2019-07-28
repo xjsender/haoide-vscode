@@ -20,6 +20,16 @@
 				"title": "Hello World"
 			}
 		],
+		"snippets": [
+			{
+				"language": "apex",
+				"path": "./snippets/Trigger.code-snippets"
+			},
+			{
+				"language": "java",
+				"path": "./snippets/Trigger.code-snippets"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "haoide",
