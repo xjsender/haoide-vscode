@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
-import { htmlMethods, tagDefs } from "../lib";
+import { tagDefs } from "../lib";
 import { getLastCharOfPosition, createCompletionItem } from "../utils";
 
 export class LightningCompletionItemProvider implements vscode.CompletionItemProvider {
@@ -15,22 +15,16 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
 
         // We can't get correct word if remove -1
         let wordRange = document.getWordRangeAtPosition(
-            new Position(position.line, position.character - 1),
-            /\w+[-:]*\w+/g
+            new Position(position.line, position.character - 1), /[\w]+[\w-:]*/g
         ) || new Range(position, position);
-        console.log("Word: " + document.getText(wordRange));
-        let word = document.getText(wordRange);
-
-        // let word = document.getText(new Range(
-        //     wordRange.start, wordRange.end.translate(0, 1)
-        // ));
+        let word = document.getText(wordRange).trim();
 
         console.log({
             'position': JSON.stringify(position),
             "positionOffset": positionOffset,
             "lineText": lineText,
             "lastChar": char,
-            "word": word.trim()
+            "word": word
         });
 
         // Initiate completion list
@@ -45,7 +39,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                         tag, CompletionItemKind.Keyword,
                         `${tag}(${attr["type"]})`,
                         attr["description"] || "",
-                        `${tag}$1>$0</${tag}>`
+                        `${tag}$1>\n\t$0\n</${tag}>`
                     ));
                 }
             }
@@ -64,9 +58,10 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
 
                         let attr = tagDefs[tag];
                         completionItems.push(createCompletionItem(
-                            tag_suffix, CompletionItemKind.Keyword,
+                            tag, CompletionItemKind.Keyword,
                             `${tag}(${attr["type"]})`,
-                            attr["description"] || ""
+                            attr["description"] || "",
+                            tag_suffix
                         ));
                     }
                 }
