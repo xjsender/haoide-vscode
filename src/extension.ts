@@ -1,9 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { loginBySOAP } from "./salesforce/login/login";
 import { lightningCompletionProvider, apexCompletionProvider } from "./salesforce/completions/provider";
 import { settings } from './settings';
+import { startLogin, startServer } from "./salesforce/lib/auth/server";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -13,14 +13,10 @@ export function activate(context: vscode.ExtensionContext) {
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
 	let disposable = vscode.commands.registerCommand('extension.login', () => {
-		loginBySOAP({}).then((res: any) => {
-			console.log(JSON.stringify(res));
-		}).catch(err => {
-			console.log(err);
+		startServer().then(function(message: any) {
+			console.log(message);
+			startLogin();
 		});
-
-		let projects = settings.getConfigValue('projects', {});
-		console.log(JSON.stringify(projects));
 	});
 
 	let lightningProvider = vscode.languages.registerCompletionItemProvider(
