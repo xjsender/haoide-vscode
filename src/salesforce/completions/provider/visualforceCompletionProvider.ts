@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
-import { ltnTagDefs } from "../lib";
+import { vfTagDefs } from "../lib";
 import { getLastCharOfPosition, createCompletionItem } from "../utils";
 
-export class LightningCompletionItemProvider implements vscode.CompletionItemProvider {
+export class VisualforceompletionItemProvider implements vscode.CompletionItemProvider {
     public constructor() { }
 
     public provideCompletionItems(document: TextDocument, position: Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
@@ -32,9 +32,9 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
 
         // Completion for tag
         if (char === "<") {
-            for (const tag in ltnTagDefs) {
-                if (ltnTagDefs.hasOwnProperty(tag)) {
-                    let attr = ltnTagDefs[tag];
+            for (const tag in vfTagDefs) {
+                if (vfTagDefs.hasOwnProperty(tag)) {
+                    let attr = vfTagDefs[tag];
                     completionItems.push(createCompletionItem(
                         tag, CompletionItemKind.Keyword,
                         `${tag}(${attr["type"]})`,
@@ -46,8 +46,8 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
         }
         // completion for tag, such lighting-input
         else if (char === '-') {
-            for (const tag in ltnTagDefs) {
-                if (ltnTagDefs.hasOwnProperty(tag)) {
+            for (const tag in vfTagDefs) {
+                if (vfTagDefs.hasOwnProperty(tag)) {
                     // If position char is :, remove the < in the word
                     if (word.startsWith('-')) {
                         word = word.substr(1, word.length);
@@ -56,7 +56,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                     if (tag.startsWith(word)) {
                         let tag_suffix = tag.split('-')[1];
 
-                        let attr = ltnTagDefs[tag];
+                        let attr = vfTagDefs[tag];
                         completionItems.push(createCompletionItem(
                             tag, CompletionItemKind.Keyword,
                             `${tag}(${attr["type"]})`,
@@ -69,8 +69,8 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
         }
         // completion for tag, such lighting:input
         else if (char === ':') {
-            for (const tag in ltnTagDefs) {
-                if (ltnTagDefs.hasOwnProperty(tag)) {
+            for (const tag in vfTagDefs) {
+                if (vfTagDefs.hasOwnProperty(tag)) {
                     // If position char is :, remove the < in the word
                     if (word.startsWith('<')) {
                         word = word.substr(1, word.length);
@@ -79,7 +79,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                     if (tag.startsWith(word)) {
                         let tag_suffix = tag.split(':')[1];
 
-                        let attr = ltnTagDefs[tag];
+                        let attr = vfTagDefs[tag];
                         completionItems.push(createCompletionItem(
                             tag_suffix, CompletionItemKind.Keyword,
                             `${tag}(${attr["type"]})`,
@@ -114,7 +114,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                     "tagName": matchedTag
                 });
 
-                let tagAttrib = ltnTagDefs[matchedTag] || {};
+                let tagAttrib = vfTagDefs[matchedTag] || {};
                 let attribs: Object = tagAttrib["attribs"] || {};
                 for (const attrName in attribs) {
                     if (attribs.hasOwnProperty(attrName)) {
@@ -122,7 +122,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
 
                         // If attr type boolean, add { !} or { } to it according to type
                         let insertText;
-                        if (attr["type"] === "String") {
+                        if (attr["type"] === "String" && !attr.hasOwnProperty("values")) {
                             insertText = `${attrName}="$1"$0`;
                         }
 
@@ -155,7 +155,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                 // Remove the < from the matched tag, i.e., <lightning-input
                 matchedTag = matchedTag.substr(1, matchedTag.length);
 
-                let tagAttrib = ltnTagDefs[matchedTag];
+                let tagAttrib = vfTagDefs[matchedTag];
                 let attribs: Object = tagAttrib["attribs"];
                 let attrName = word;
                 let attr = (<any>attribs)[attrName];
@@ -166,7 +166,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                     "attr": attr
                 });
 
-                if (attr && attr["type"] === "Picklist") {
+                if (attr && attr["values"]) {
                     for (const _value of (attr["values"] || [])) {
                         completionItems.push(createCompletionItem(
                             _value, CompletionItemKind.Keyword,
@@ -189,23 +189,6 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                         attr["description"] || "",
                         `"false"$0`
                     ));
-
-                    if (tagAttrib["type"] === "aura") {
-                        completionItems.push(createCompletionItem(
-                            "{!}", CompletionItemKind.Keyword,
-                            `${attrName}(${attr["type"]})`,
-                            attr["description"] || "",
-                            `"{$1}"$0`
-                        ));
-                    }
-                    else if (tagAttrib["type"] === "lwc") {
-                        completionItems.push(createCompletionItem(
-                            "{}", CompletionItemKind.Keyword,
-                            `${attrName}(${attr["type"]})`,
-                            attr["description"] || "",
-                            `{$1}$0`
-                        ));
-                    }
                 }
             }
         }
