@@ -2,7 +2,9 @@ import * as jsforce from "jsforce";
 import * as express from "express";
 import * as opn from "open";
 import * as vscode from "vscode";
+import * as moment from "moment";
 import { port, entryPoint, appConfig } from "./config";
+import { projectSettings } from "../../../settings";
 
 let loginUrl = "/oauth/login";
 let callbackUrl = "/oauth/callback";
@@ -32,7 +34,7 @@ export function startServer() {
                 oauth2: oauth2
             });
 
-            conn.authorize(code, function(err: any, userInfo: Object) {
+            conn.authorize(code, function(err: any, userInfo: any) {
                 if (err) {
                     return console.error(`There has problem with login: ${err}`);
                 }
@@ -40,17 +42,28 @@ export function startServer() {
                 // Write sessionId and refreshToken to local cache
                 console.log(conn);
                 console.log(JSON.stringify(userInfo));
+                projectSettings.setSessionInfo({
+                    "orgnizationId": userInfo["orgnizationId"],
+                    "userId": userInfo["id"],
+                    "accessToken": conn.accessToken,
+                    "refreshToken": conn.refreshToken,
+                    "instanceUrl": conn.instanceUrl,
+                    "loginUrl": oauth2.loginUrl,
+                    "lastUpdatedTime": moment().format()
+                });
 
                 // Login successful message
                 vscode.window.showInformationMessage("You have been successfully login.");
 
-                // Redirect to home page
+                // Redirect to salesforce home page
                 res.redirect(`${conn.instanceUrl}/home/home.jsp`);
             });
         });
 
         app.listen(port, () => {
             resolve(`Server started at ${entryPoint}`);
+        }).on('error', function(err) {
+            resolve(`Server is already started at ${entryPoint}`);
         });
     });
 }

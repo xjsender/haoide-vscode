@@ -1,3 +1,4 @@
-import { CoreSettings } from './context';
+import { ExtensionSettings, ProjectSettings } from './context';
 
-export const settings = CoreSettings.getInstance();
+export const extensionSettings = ExtensionSettings.getInstance();
+export const projectSettings = ProjectSettings.getInstance();
