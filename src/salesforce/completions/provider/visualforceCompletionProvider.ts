@@ -35,11 +35,18 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
             for (const tag in vfTagDefs) {
                 if (vfTagDefs.hasOwnProperty(tag)) {
                     let attr = vfTagDefs[tag];
+
+                    // If simple attr is true, no child component
+                    let insertText = `${tag}$1>\n\t$0\n</${tag}>`;
+                    if (attr["simple"]) {
+                        insertText = `${tag}$1></${tag}>$0`;
+                    }
+
                     completionItems.push(createCompletionItem(
                         tag, CompletionItemKind.Keyword,
                         `${tag}(${attr["type"]})`,
                         attr["description"] || "",
-                        `${tag}$1>\n\t$0\n</${tag}>`
+                        insertText
                     ));
                 }
             }
@@ -155,8 +162,8 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
                 // Remove the < from the matched tag, i.e., <lightning-input
                 matchedTag = matchedTag.substr(1, matchedTag.length);
 
-                let tagAttrib = vfTagDefs[matchedTag];
-                let attribs: Object = tagAttrib["attribs"];
+                let tagAttrib = vfTagDefs[matchedTag] || {};
+                let attribs: Object = tagAttrib["attribs"] || {};
                 let attrName = word;
                 let attr = (<any>attribs)[attrName];
 

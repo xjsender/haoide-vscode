@@ -24,7 +24,7 @@ export function convertJson2Xml(jsonStr: string): string {
  * Just wokrk when editor has selection
  * @param jsonStr JSON String
  */
-export function formatJson(jsonStr?: string): Object {
+export function formatJson(jsonStr?: string) {
     // Get selection in the active editor if no jsonStr param
     let editor = vscode.window.activeTextEditor;
     if (!jsonStr) {
