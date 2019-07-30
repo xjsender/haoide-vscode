@@ -1,5 +1,4 @@
 import * as request from 'request-promise';
-import { loginBySOAP, loginByREST } from "../login/login";
 
 export class Rest {
     private headers: Object;

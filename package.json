@@ -1,7 +1,7 @@
 {
-	"name": "haoide",
-	"displayName": "haoide",
-	"description": "haoide",
+	"name": "haoide-vscode",
+	"displayName": "haoide-vscode",
+	"description": "haoide-vscode is a vscode extension for force.com development",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.35.0"
@@ -10,14 +10,22 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.login"
+		"onCommand:extension.haoide.login"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.login",
-				"title": "Haoide Login"
+				"command": "extension.haoide.login",
+				"title": "Haoide Authorize new Project"
+			},
+			{
+				"command": "extension.haoide.loginToSFDC",
+				"title": "Haoide Login to SFDC"
+			},
+			{
+				"command": "extension.haoide.formatJson",
+				"title": "Haoide Format JSON"
 			}
 		],
 		"snippets": [
@@ -68,6 +76,7 @@
 		"@types/request-promise": "^4.1.44",
 		"@types/jsforce": "^1.9.2",
 		"request": "*",
+		"moment": "^2.24.0",
 		"request-promise": "^4.2.4",
 		"jsforce": "^1.9.2",
 		"tslint": "^5.12.1",
