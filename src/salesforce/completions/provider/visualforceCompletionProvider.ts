@@ -207,6 +207,14 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
                         attr["description"] || "",
                         `"false"$0`
                     ));
+                    
+                    // Add {!} for boolean attr
+                    completionItems.push(createCompletionItem(
+                        "{!}", CompletionItemKind.Keyword,
+                        `${attrName}(${attr["type"]})`,
+                        attr["description"] || "",
+                        `"{!$1}"$0`
+                    ));
                 }
             }
         }
