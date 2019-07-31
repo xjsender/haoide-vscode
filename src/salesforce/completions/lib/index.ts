@@ -1,5 +1,5 @@
-import { html_global_methods, tag_defs } from "./lightning";
-import { vf_tag_defs } from "./vf";
+import { html_global_methods, tag_defs } from "./front/lightning";
+import { vf_tag_defs } from "./front/vf";
 
 export const htmlMethods = html_global_methods;
 export const ltnTagDefs = tag_defs;

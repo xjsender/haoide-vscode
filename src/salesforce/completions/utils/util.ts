@@ -12,13 +12,19 @@ export function getLastCharOfPosition(document: TextDocument, postition: Positio
     return document.getText(charRange);
 }
 
-export function createCompletionItem(label: string, kind?: CompletionItemKind.Keyword, 
+export function createCompletionItem(label: string, kind?: any, 
     detail?: string, doc?: string, insertText?: string) {
 
     let completionItem = new CompletionItem(label);
     completionItem.kind = kind;
-    completionItem.detail = detail;
-    completionItem.documentation = doc;
+
+    if (detail) {
+        completionItem.detail = detail;
+    }
+
+    if (doc) {
+        completionItem.documentation = doc;
+    }
 
     // If insertText is not null, just set it as snippet string
     if (insertText) {

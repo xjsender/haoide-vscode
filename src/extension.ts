@@ -1,7 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { ltnCompletionProvider, vfCompletionProvider } from "./salesforce/completions/provider";
+import { 
+	ltnCompletionProvider, 
+	vfCompletionProvider, 
+	apexCompletionProvider 
+} 
+from "./salesforce/completions/provider";
 import { auth, utility } from "./commands";
 
 // this method is called when your extension is activated
@@ -31,6 +36,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let vfProvider = vscode.languages.registerCompletionItemProvider(
 		'html', vfCompletionProvider, "<", ":", "-", " ", "="
+	);
+
+	let apexProvider = vscode.languages.registerCompletionItemProvider(
+		'apex', apexCompletionProvider, "."
 	);
 
 	context.subscriptions.push(ltnProvider);
