@@ -155,8 +155,8 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                 // Remove the < from the matched tag, i.e., <lightning-input
                 matchedTag = matchedTag.substr(1, matchedTag.length);
 
-                let tagAttrib = ltnTagDefs[matchedTag];
-                let attribs: Object = tagAttrib["attribs"];
+                let tagAttrib = ltnTagDefs[matchedTag] || {};
+                let attribs: Object = tagAttrib["attribs"] || {};
                 let attrName = word;
                 let attr = (<any>attribs)[attrName];
 
