@@ -5,6 +5,7 @@ import * as vscode from "vscode";
 import * as moment from "moment";
 import { port, entryPoint, appConfig } from "./config";
 import { projectSettings } from "../../../settings";
+import * as util from "../../../utils/util";
 
 let loginUrl = "/oauth/login";
 let callbackUrl = "/oauth/callback";
@@ -17,7 +18,7 @@ export function startLogin(url?: string) {
     });
 }
 
-export function startServer() {
+export function startServer(projectName: any) {
     return new Promise(function(resolve, reject) {
         let oauth2 = new jsforce.OAuth2(appConfig);
 
@@ -39,9 +40,13 @@ export function startServer() {
                     return console.error(`There has problem with login: ${err}`);
                 }
 
+                // Set the new authorized project as default
+                util.setDefaultProject(projectName);
+
+                // Add project to workspace
+                util.addProjectToWorkspace(projectName);
+
                 // Write sessionId and refreshToken to local cache
-                console.log(conn);
-                console.log(JSON.stringify(userInfo));
                 projectSettings.setSessionInfo({
                     "orgnizationId": userInfo["orgnizationId"],
                     "userId": userInfo["id"],

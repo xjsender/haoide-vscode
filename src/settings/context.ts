@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from "path";
 import * as fs from "fs";
 import * as os from "os";
-import { hasRootWorkspace, getRootWorkspacePath } from "./util";
+import * as util from "../utils/util";
 
 export class ExtensionSettings {
     private static instance: ExtensionSettings;
@@ -22,7 +22,6 @@ export class ExtensionSettings {
     }
 
     public getConfigValue<T>(key: string, defaultValue: T): T {
-        console.log(key);
         return this.getConfiguration().get<T>(key, defaultValue);
     }
 
@@ -32,6 +31,7 @@ export class ExtensionSettings {
 }
 
 export class ProjectSettings {
+    private extInstance = ExtensionSettings.getInstance();
     private static instance: ProjectSettings;
 
     public static getInstance() {
@@ -46,7 +46,7 @@ export class ProjectSettings {
     }
 
     public setSessionInfo(options: { [key: string]: any }) {
-        return this.setConfigValue("session.json", options);
+        this.setConfigValue("session.json", options);
     }
 
     public getConfigValue(fileName: string, key?: string) {
@@ -62,11 +62,11 @@ export class ProjectSettings {
         return config;
     }
 
-    public setConfigValue(fileName: string, options: {[key: string]: any}): any | Object {
+    public setConfigValue(fileName: string, options: any): any | Object {
         let filePath = this.getFilePath(fileName);
 
         // Get config info if config is already exists
-        let config: {[key: string]: any} = {};
+        let config: any = {};
         if (fs.existsSync(filePath)) {
             let data = fs.readFileSync(filePath, "utf-8");
             config = JSON.parse(data.toString());
@@ -78,6 +78,8 @@ export class ProjectSettings {
                 config[k] = options[k];
             }
         }
+
+        fs.writeFileSync(filePath, JSON.stringify(config, null, 4));
     }
 
     /**
@@ -85,9 +87,8 @@ export class ProjectSettings {
      * @param fileName file Name which contains extension
      */
     private getFilePath(fileName: string): string {
-        let fileFolder = hasRootWorkspace()
-            ? path.join(getRootWorkspacePath(), ".haoide")
-            : path.join(os.homedir(), ".haoide");
+        let projectFolder = util.getProjectFolder(); // Get default project
+        let fileFolder = path.join(projectFolder, ".haoide");
 
         if (!fs.existsSync(fileFolder)) {
             fs.mkdirSync(fileFolder);

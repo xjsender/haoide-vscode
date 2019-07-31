@@ -2,11 +2,16 @@ import * as vscode from "vscode";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
 import { ltnTagDefs } from "../lib";
 import { getLastCharOfPosition, createCompletionItem } from "../utils";
+import { extensionSettings } from "../../../settings";
 
 export class LightningCompletionItemProvider implements vscode.CompletionItemProvider {
     public constructor() { }
 
     public provideCompletionItems(document: TextDocument, position: Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
+
+        let enableDebugMode = extensionSettings.getConfigValue(
+            "enable-debug-mode", false
+        );
 
         let positionOffset = document.offsetAt(position);
         let wholeText = document.getText();
@@ -19,13 +24,15 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
         ) || new Range(position, position);
         let word = document.getText(wordRange).trim();
 
-        console.log({
-            'position': JSON.stringify(position),
-            "positionOffset": positionOffset,
-            "lineText": lineText,
-            "lastChar": char,
-            "word": word
-        });
+        if (enableDebugMode) {
+            console.log({
+                'position': JSON.stringify(position),
+                "positionOffset": positionOffset,
+                "lineText": lineText,
+                "lastChar": char,
+                "word": word
+            });
+        }
 
         // Initiate completion list
         let completionItems: CompletionItem[] = [];
@@ -96,7 +103,6 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
             
             // Get matched string which contains cursor
             while (match = pattern.exec(wholeText)) {
-                console.log(match.index, positionOffset);
                 if (match.index > positionOffset) {
                     break;
                 }
@@ -109,10 +115,12 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                 // Remove the < from the matched tag, i.e., <lightning-input
                 matchedTag = matchedTag.substr(1, matchedTag.length);
 
-                console.log({
-                    "matchedText": matchedText,
-                    "tagName": matchedTag
-                });
+                if (enableDebugMode) {
+                    console.log({
+                        "matchedText": matchedText,
+                        "tagName": matchedTag
+                    });
+                }
 
                 let tagAttrib = ltnTagDefs[matchedTag] || {};
                 let attribs: Object = tagAttrib["attribs"] || {};
@@ -160,11 +168,13 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                 let attrName = word;
                 let attr = (<any>attribs)[attrName];
 
-                console.log({
-                    "tagName": matchedTag,
-                    "attrName": attrName,
-                    "attr": attr
-                });
+                if (enableDebugMode) {
+                    console.log({
+                        "tagName": matchedTag,
+                        "attrName": attrName,
+                        "attr": attr
+                    });
+                }
 
                 if (attr && attr["type"] === "Picklist") {
                     for (const _value of (attr["values"] || [])) {

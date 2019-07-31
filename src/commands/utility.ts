@@ -29,7 +29,7 @@ export function formatJson(jsonStr?: string) {
     let editor = vscode.window.activeTextEditor;
     if (!jsonStr) {
         if (editor && editor.selection) {
-            jsonStr = editor.document.getText(editor.selection);
+            jsonStr = editor.document.getText(editor.selection) || "{}";
         }
         else {
             jsonStr = "{}";

@@ -17,15 +17,15 @@
 		"commands": [
 			{
 				"command": "extension.haoide.login",
-				"title": "Haoide Authorize new Project"
+				"title": "Haoide: Authorize New Org"
 			},
 			{
 				"command": "extension.haoide.loginToSFDC",
-				"title": "Haoide Login to SFDC"
+				"title": "Haoide: Open Default Org"
 			},
 			{
 				"command": "extension.haoide.formatJson",
-				"title": "Haoide Format JSON"
+				"title": "Haoide: Format JSON"
 			}
 		],
 		"languages": [
@@ -113,10 +113,20 @@
 			"type": "object",
 			"title": "haoide",
 			"properties": {
-				"haoide.projects": {
+				"haoide.enable-debug-log": {
 					"type": "boolean",
 					"default": true,
-					"description": "Projects"
+					"description": "Indicate whether print debug log"
+				},
+				"haoide.workspace": {
+					"type": "string",
+					"default": "",
+					"description": "Your project location"
+				},
+				"haoide.default-project": {
+					"type": "string",
+					"default": "",
+					"description": "Your default authorized project"
 				}
 			}
 		}

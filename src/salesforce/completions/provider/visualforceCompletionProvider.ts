@@ -2,12 +2,17 @@ import * as vscode from "vscode";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
 import { vfTagDefs } from "../lib";
 import { getLastCharOfPosition, createCompletionItem } from "../utils";
+import { extensionSettings } from "../../../settings";
 
 export class VisualforceompletionItemProvider implements vscode.CompletionItemProvider {
     public constructor() { }
 
     public provideCompletionItems(document: TextDocument, position: Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 
+        let enableDebugMode = extensionSettings.getConfigValue(
+            "enable-debug-mode", false
+        );
+        
         let positionOffset = document.offsetAt(position);
         let wholeText = document.getText();
         let lineText = document.lineAt(position.line).text;
@@ -19,13 +24,15 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
         ) || new Range(position, position);
         let word = document.getText(wordRange).trim();
 
-        console.log({
-            'position': JSON.stringify(position),
-            "positionOffset": positionOffset,
-            "lineText": lineText,
-            "lastChar": char,
-            "word": word
-        });
+        if (enableDebugMode) {
+            console.log({
+                'position': JSON.stringify(position),
+                "positionOffset": positionOffset,
+                "lineText": lineText,
+                "lastChar": char,
+                "word": word
+            });
+        }
 
         // Initiate completion list
         let completionItems: CompletionItem[] = [];
@@ -116,10 +123,12 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
                 // Remove the < from the matched tag, i.e., <lightning-input
                 matchedTag = matchedTag.substr(1, matchedTag.length);
 
-                console.log({
-                    "matchedText": matchedText,
-                    "tagName": matchedTag
-                });
+                if (enableDebugMode) {
+                    console.log({
+                        "matchedText": matchedText,
+                        "tagName": matchedTag
+                    });
+                }
 
                 let tagAttrib = vfTagDefs[matchedTag] || {};
                 let attribs: Object = tagAttrib["attribs"] || {};
@@ -167,11 +176,13 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
                 let attrName = word;
                 let attr = (<any>attribs)[attrName];
 
-                console.log({
-                    "tagName": matchedTag,
-                    "attrName": attrName,
-                    "attr": attr
-                });
+                if (enableDebugMode) {
+                    console.log({
+                        "tagName": matchedTag,
+                        "attrName": attrName,
+                        "attr": attr
+                    });
+                }
 
                 if (attr && attr["values"]) {
                     for (const _value of (attr["values"] || [])) {
