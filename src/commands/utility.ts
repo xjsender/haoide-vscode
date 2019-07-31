@@ -46,6 +46,7 @@ export function formatJson(jsonStr?: string): Object {
             });
         }
     });
+    return true;
 }
 
 export function formatXml(xmlStr: string): Object {

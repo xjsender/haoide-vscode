@@ -28,6 +28,65 @@
 				"title": "Haoide Format JSON"
 			}
 		],
+		"languages": [
+			{
+				"id": "apex",
+				"extensions": [
+					".cls",
+					".trigger"
+				],
+				"aliases": [
+					"Apex",
+					"apex"
+				],
+				"configuration": "./syntaxes/apex-configuration.json"
+			},
+			{
+				"id": "visualforce",
+				"aliases": [
+					"Visualforce",
+					"visualforce"
+				],
+				"extensions": [
+					".page",
+					".component"
+				],
+				"configuration": "./syntaxes/visualforce-configuration.json"
+			},
+			{
+				"id": "html",
+				"extensions": [
+					".app",
+					".cmp",
+					".design",
+					".evt",
+					".intf",
+					".auradoc",
+					".tokens"
+				]
+			}
+		],
+		"grammars": [
+			{
+				"language": "apex",
+				"scopeName": "source.apex",
+				"path": "./syntaxes/apex.tmLanguage"
+			},
+			{
+				"language": "visualforce",
+				"scopeName": "text.visualforce.markup",
+				"path": "./syntaxes/visualforce.json",
+				"embeddedLanguages": {
+					"source.css": "css",
+					"source.js": "javascript"
+				}
+			},
+			{
+				"language": "html",
+				"scopeName": "text.html.basic",
+				"path": "./syntaxes/html-tmLanguage.json"
+			}
+		],
 		"snippets": [
 			{
 				"language": "apex",
@@ -70,6 +129,7 @@
 		"test": "npm run compile && node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
+		"@salesforce/apex-tmlanguage": "^1.1.0",
 		"@types/mocha": "^2.2.42",
 		"@types/node": "^10.12.21",
 		"@types/express": "^4.16.3",
