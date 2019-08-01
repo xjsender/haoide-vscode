@@ -58,7 +58,6 @@ export class ApexCompletionItemProvider implements vscode.CompletionItemProvider
 
                 // Add static method completion
                 let methodCompletionItems = util.getMethodCompletionItem(_class);
-                console.log(methodCompletionItems);
                 completionItems.push(...methodCompletionItems);
 
                 // Add property completion

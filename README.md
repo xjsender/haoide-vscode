@@ -7,7 +7,7 @@ ures will be delivered in the next months.
 
 As today, haoide-vscode supports many features, such as below,
 + [Completions](https://github.com/xjsender/haoide-vscode/blob/master/docs/haoide-vscode.gif)
-    - Apex Completion
+    - [Apex Completion](https://github.com/xjsender/haoide-vscode/blob/master/docs/haoide-vscode-apex.gif)
     - Visualforce Completion
     - Aura Completion
     - LWC Completion
