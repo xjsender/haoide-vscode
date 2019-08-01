@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	let apexProvider = vscode.languages.registerCompletionItemProvider(
-		'apex', apexCompletionProvider, "."
+		'apex', apexCompletionProvider, ".", "="
 	);
 
 	context.subscriptions.push(ltnProvider);
