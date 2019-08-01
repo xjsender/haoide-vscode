@@ -187,7 +187,7 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
                 if (attr && attr["values"]) {
                     for (const _value of (attr["values"] || [])) {
                         completionItems.push(createCompletionItem(
-                            _value, CompletionItemKind.Keyword,
+                            _value, CompletionItemKind.Value,
                             `${attrName}(${attr["type"]})`,
                             attr["description"] || "",
                             `"${_value}"$0`
@@ -196,13 +196,13 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
                 }
                 else if (attr && attr["type"] === "Boolean") {
                     completionItems.push(createCompletionItem(
-                        "true", CompletionItemKind.Keyword,
+                        "true", CompletionItemKind.Value,
                         `${attrName}(${attr["type"]})`,
                         attr["description"] || "",
                         `"true"$0`
                     ));
                     completionItems.push(createCompletionItem(
-                        "false", CompletionItemKind.Keyword,
+                        "false", CompletionItemKind.Value,
                         `${attrName}(${attr["type"]})`,
                         attr["description"] || "",
                         `"false"$0`
@@ -210,7 +210,7 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
                     
                     // Add {!} for boolean attr
                     completionItems.push(createCompletionItem(
-                        "{!}", CompletionItemKind.Keyword,
+                        "{!}", CompletionItemKind.Value,
                         `${attrName}(${attr["type"]})`,
                         attr["description"] || "",
                         `"{!$1}"$0`

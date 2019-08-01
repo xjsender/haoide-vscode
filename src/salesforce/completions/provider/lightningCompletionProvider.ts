@@ -179,7 +179,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                 if (attr && attr["type"] === "Picklist") {
                     for (const _value of (attr["values"] || [])) {
                         completionItems.push(createCompletionItem(
-                            _value, CompletionItemKind.Keyword,
+                            _value, CompletionItemKind.Value,
                             `${attrName}(${attr["type"]})`,
                             attr["description"] || "",
                             `"${_value}"$0`
@@ -188,13 +188,13 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                 }
                 else if (attr && attr["type"] === "Boolean") {
                     completionItems.push(createCompletionItem(
-                        "true", CompletionItemKind.Keyword,
+                        "true", CompletionItemKind.Value,
                         `${attrName}(${attr["type"]})`,
                         attr["description"] || "",
                         `"true"$0`
                     ));
                     completionItems.push(createCompletionItem(
-                        "false", CompletionItemKind.Keyword,
+                        "false", CompletionItemKind.Value,
                         `${attrName}(${attr["type"]})`,
                         attr["description"] || "",
                         `"false"$0`
@@ -202,7 +202,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
 
                     if (tagAttrib["type"] === "aura") {
                         completionItems.push(createCompletionItem(
-                            "{!}", CompletionItemKind.Keyword,
+                            "{!}", CompletionItemKind.Value,
                             `${attrName}(${attr["type"]})`,
                             attr["description"] || "",
                             `"{$1}"$0`
@@ -210,7 +210,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                     }
                     else if (tagAttrib["type"] === "lwc") {
                         completionItems.push(createCompletionItem(
-                            "{}", CompletionItemKind.Keyword,
+                            "{}", CompletionItemKind.Value,
                             `${attrName}(${attr["type"]})`,
                             attr["description"] || "",
                             `{$1}$0`
