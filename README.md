@@ -1,20 +1,21 @@
 # haoide-vscode README
 
 haoide-vscode is migrated from haoide, so far, it just supports lightning component completion and not released to vscode marketplace, more and more feat
-ures will be delivered in the next months
-- [x] Completions
-- [x] LWC Development
-- [x] ...
+ures will be delivered in the next months.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+As today, haoide-vscode supports many features, such as below,
++ [Completions](https://github.com/xjsender/haoide-vscode/blob/master/docs/haoide-vscode.gif)
+    - Apex Completion
+    - Visualforce Completion
+    - Aura Completion
+    - LWC Completion
++ OAuth2 Login
++ Utilities
+    - Open Default Org
+    - Format JSON
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
 
 ## Requirements
 
