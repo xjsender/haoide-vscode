@@ -30,12 +30,17 @@ export function activate(context: vscode.ExtensionContext) {
 		"extension.haoide.formatJson", utility.formatJson
 	);
 
+	// Register loginToSFDC command
+	vscode.commands.registerCommand(
+		"extension.haoide.switchProject", utility.switchProject
+	);
+
 	let ltnProvider = vscode.languages.registerCompletionItemProvider(
 		'html', ltnCompletionProvider, "<", ":", "-", " ", "="
 	);
 
 	let vfProvider = vscode.languages.registerCompletionItemProvider(
-		'html', vfCompletionProvider, "<", ":", "-", " ", "="
+		'visualforce', vfCompletionProvider, "<", ":", "-", " ", "="
 	);
 
 	let apexProvider = vscode.languages.registerCompletionItemProvider(

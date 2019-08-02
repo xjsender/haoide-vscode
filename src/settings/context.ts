@@ -87,7 +87,7 @@ export class ProjectSettings {
      * @param fileName file Name which contains extension
      */
     private getFilePath(fileName: string): string {
-        let projectFolder = util.getProjectFolder(); // Get default project
+        let projectFolder = util.getProjectPath(); // Get default project
         let fileFolder = path.join(projectFolder, ".haoide");
 
         if (!fs.existsSync(fileFolder)) {

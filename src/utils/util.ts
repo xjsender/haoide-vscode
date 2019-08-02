@@ -27,6 +27,17 @@ export function getExtensionWorkspace() {
     return _workspace;
 }
 
+export function getProjects() {
+    try {
+        let configFile = path.join(os.homedir(), ".haoide", "config.json");
+        let data = fs.readFileSync(configFile, "utf-8");
+        return JSON.parse(data);
+    }
+    catch (err) {
+        throw new Error(`Not found config.json file due to ${err}`);
+    }
+}
+
 /**
  * Set project as default one in the same workspace
  * @param projectName project name to be set as default
@@ -85,24 +96,25 @@ export function getDefaultProject(): string {
     }
 }
 
-export function getProjectFolder(projectName?: string) {
+// Get default project path
+export function getProjectPath(projectName?: string) {
     // If projectName is null, just fetch the default project
     if (!projectName) {
         projectName = getDefaultProject();
     }
 
     let _workspace = getExtensionWorkspace();
-    let projectFolder = path.join(_workspace, projectName);
+    let projectPath = path.join(_workspace, projectName);
 
-    if (!fs.existsSync(projectFolder)) {
-        fs.mkdirSync(projectFolder);
+    if (!fs.existsSync(projectPath)) {
+        fs.mkdirSync(projectPath);
     }
 
-    return projectFolder;
+    return projectPath;
 }
 
 export function addProjectToWorkspace(projectName: string) {
-    let projectFolder = getProjectFolder(projectName);
+    let projectFolder = getProjectPath(projectName);
     let folders = vscode.workspace.workspaceFolders || [];
     vscode.workspace.updateWorkspaceFolders(
         folders.length, null, {

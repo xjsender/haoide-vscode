@@ -10,7 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.haoide.login"
+		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -26,6 +26,10 @@
 			{
 				"command": "extension.haoide.formatJson",
 				"title": "Haoide: Format JSON"
+			},
+			{
+				"command": "extension.haoide.switchProject",
+				"title": "Haoide: Switch Project"
 			}
 		],
 		"languages": [
@@ -145,6 +149,7 @@
 		"@types/express": "^4.16.3",
 		"@types/request-promise": "^4.1.44",
 		"@types/jsforce": "^1.9.2",
+		"@types/xml2js": "^0.4.4",
 		"request": "*",
 		"moment": "^2.24.0",
 		"request-promise": "^4.2.4",
@@ -153,7 +158,8 @@
 		"typescript": "^3.3.1",
 		"vscode": "^1.1.28",
 		"express": "^4.16.4",
-		"open": "^6.4.0"
+		"open": "^6.4.0",
+		"xml2js": "^0.4.4"
 	},
 	"dependencies": {
 		"inherits": "^2.0.4",

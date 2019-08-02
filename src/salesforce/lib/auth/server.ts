@@ -6,6 +6,7 @@ import * as moment from "moment";
 import { port, entryPoint, appConfig } from "./config";
 import { projectSettings } from "../../../settings";
 import * as util from "../../../utils/util";
+import { MetadataApi } from "../../api/metadata";
 
 let loginUrl = "/oauth/login";
 let callbackUrl = "/oauth/callback";
@@ -47,7 +48,7 @@ export function startServer(projectName: any) {
                 util.addProjectToWorkspace(projectName);
 
                 // Write sessionId and refreshToken to local cache
-                projectSettings.setSessionInfo({
+                let sesssionInfo = {
                     "orgnizationId": userInfo["orgnizationId"],
                     "userId": userInfo["id"],
                     "accessToken": conn.accessToken,
@@ -55,7 +56,20 @@ export function startServer(projectName: any) {
                     "instanceUrl": conn.instanceUrl,
                     "loginUrl": oauth2.loginUrl,
                     "lastUpdatedTime": moment().format()
+                };
+                projectSettings.setSessionInfo(sesssionInfo);
+
+                // Describe metadata
+                let metadataApi = new MetadataApi({
+                    session: sesssionInfo
                 });
+                metadataApi._invoke_method("DescribeMetadata")
+                    .then(function(response) {
+                        console.log(response);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
 
                 // Login successful message
                 vscode.window.showInformationMessage("You have been successfully login.");
