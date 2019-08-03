@@ -150,6 +150,7 @@
 		"@types/request-promise": "^4.1.44",
 		"@types/jsforce": "^1.9.2",
 		"@types/xml2js": "^0.4.4",
+		"@types/lodash": "^4.14.136",
 		"request": "*",
 		"moment": "^2.24.0",
 		"request-promise": "^4.2.4",
@@ -159,7 +160,9 @@
 		"vscode": "^1.1.28",
 		"express": "^4.16.4",
 		"open": "^6.4.0",
-		"xml2js": "^0.4.4"
+		"xml2js": "^0.4.4",
+		"querystring": "v0.2.0",
+		"lodash": "^4.17.15"
 	},
 	"dependencies": {
 		"inherits": "^2.0.4",

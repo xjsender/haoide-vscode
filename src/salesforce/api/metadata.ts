@@ -14,7 +14,7 @@ export class MetadataApi {
 
     public constructor(options: any={}) {
         this.session = options["session"] || projectSettings.getSessionInfo();
-        this.sessionId = this.session["sessionId"];
+        this.sessionId = this.session["accessToken"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;
         this.metadataUrl = `${this.instanceUrl}/services/Soap/m/${this.apiVersion}.0`;
@@ -25,17 +25,18 @@ export class MetadataApi {
         };
 
         this.soap = new SOAP({
-            "sessionId":this.sessionId
+            "sessionId":this.sessionId,
+            "apiVersion": 46
         });
     }
 
-    public _invoke_method(_method:string, options={}) {
+    public _invoke_method(_method:string, options: any={}) {
         let self = this;
         return new Promise(function(resolve, reject) {
             let soapBody = self.soap.getRequestBody(_method, options);
 
             let requestOptions = {
-                method: "POST",
+                method: options["method"] || "POST",
                 headers: self.headers,
                 uri: self.metadataUrl,
                 resolveWithFullResponse: true,
@@ -48,6 +49,25 @@ export class MetadataApi {
             .catch (err => {
                 reject(err);
             });
+        });
+    }
+
+    /**
+     * Describe Metadata
+     * @returns {Promise.<Response>}
+     */
+    public describeMetadata() {
+        return this._invoke_method("DescribeMetadata");
+    }
+
+    /**
+     * Check Status
+     * @param asyncProcessId async process Id
+     * @returns {Promise.<Response>}
+     */
+    public checkStatus(asyncProcessId: string) {
+        return this._invoke_method("CheckStatus", {
+            "asyncProcessId": asyncProcessId
         });
     }
 }

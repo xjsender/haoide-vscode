@@ -7,6 +7,17 @@ export default class SOAP {
         this.apiVerson = options["apiVersion"] || 46;
     }
 
+    /**
+     *  
+     * @param requestType request type, available values should be, [
+     *                          "DescribeMetadata", 
+     *                          "CheckStatus",
+     *                          "CheckRetrieveStatus",
+     *                          "CancelDeployment", 
+     *                          "CheckDeployStatus"
+     *                     ]
+     * @param options options, for example, {"types": {"CustomObject": ["Account"]}, "asyncProcessId": ""}
+     */
     public getRequestBody(requestType: string, options = {}) {
         let methodName = `create${requestType}Request`;
         return (this as any)[methodName](options);
@@ -17,7 +28,7 @@ export default class SOAP {
      */
     private createMetadataEnvelope(soapBody: string) {
         let requestEnvelope = `<?xml version="1.0" encoding="UTF-8"?>
-            <soapenv:Envelope 
+            <soapenv:Envelope
                 xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
                 xmlns:met="http://soap.sforce.com/2006/04/metadata">
             <soapenv:Header>
@@ -43,40 +54,61 @@ export default class SOAP {
         return this.createMetadataEnvelope(soapBody);
     }
 
-    private createCheckStatusRequest(asyncProcessId: string) {
+    /**
+     * Before v31.0, we need to invoke check_status before check_retrieve_status
+     * @param options {"asyncProcessId": string}
+     * @returns Soap body for ``Check Status`` request
+     */
+    private createCheckStatusRequest(options: any={}) {
         let soapBody = `
             <met:checkStatus>
-                <met:asyncProcessId>${asyncProcessId}</met:asyncProcessId>
+                <met:asyncProcessId>${options["asyncProcessId"]}</met:asyncProcessId>
             </met:checkStatus>
         `;
 
         return this.createMetadataEnvelope(soapBody);
     }
 
-    private createCheckRetrieveStatusRequest(asyncProcessId: string) {
+    /**
+     * Build soap body for retrieve status check operation
+     * @param options {"asyncProcessId": string}
+     * @returns Soap body for ``Check Retrieve Status`` request
+     */
+    private createCheckRetrieveStatusRequest(options: any={}) {
         let soapBody = `
             <met:checkRetrieveStatus>
-                <met:asyncProcessId>${asyncProcessId}</met:asyncProcessId>
+                <met:asyncProcessId>${options["asyncProcessId"]}</met:asyncProcessId>
             </met:checkRetrieveStatus>
         `;
 
         return this.createMetadataEnvelope(soapBody);
     }
     
-    private createCancelDeployRequest(asyncProcessId: string) {
+    /**
+     * Build soap body for deployment cancel operation
+     * @param options {"asyncProcessId": string}
+     * @returns Soap body for ``Check Retrieve Status`` request
+     */
+    private createCancelDeployRequest(options: any={}) {
         let soapBody = `
             <met:cancelDeploy>
-                <met:asyncProcessId>${asyncProcessId}</met:asyncProcessId>
+                <met:asyncProcessId>${options["asyncProcessId"]}</met:asyncProcessId>
             </met:cancelDeploy>
         `;
 
         return this.createMetadataEnvelope(soapBody);
     }
 
-    private createCheckDeployStatusRequest(asyncProcessId: string, includeDetails=true) {
+    /**
+     * Build soap body for deployment check operation
+     * @param options {"asyncProcessId": string}
+     * @param includeDetails true means including deploy details in the deployment result
+     * @returns Soap body for ``Check Retrieve Status`` request
+     */
+    private createCheckDeployStatusRequest(options: any={}, includeDetails=true) {
         let soapBody = `
             <met:checkDeployStatus>
-                <met:asyncProcessId>${asyncProcessId}</met:asyncProcessId>
+                <met:asyncProcessId>${options["asyncProcessId"]}</met:asyncProcessId>
                 <met:includeDetails>${includeDetails}</met:includeDetails>
             </met:checkDeployStatus>
         `;
@@ -84,6 +116,12 @@ export default class SOAP {
         return this.createMetadataEnvelope(soapBody);
     }
 
+    /**
+     * 
+     * @param options {"asyncProcessId": string}
+     * @param includeDetails true means including deploy details in the deployment result
+     * @returns Soap body for ``Check Retrieve Status`` request
+     */
     private createListPackageRequest(options: any) {
         let queries = [];
         let types = options["types"];
@@ -123,7 +161,8 @@ export default class SOAP {
 
     /**
      * Build soap body for retrieve request
-     * @param options for example, {"CustomObject": ["Account"]}
+     * @param options for example, {"types": {"CustomObject": ["Account"]}}
+     * @returns soap body for ``retrieve request``
      */
     private checkRetrieveRequest(options: any) {
         let packages = "";
@@ -168,6 +207,7 @@ export default class SOAP {
      * Build soap body for deploy request
      * @param zipFile base64 encoded package to be deployed
      * @param options deploy options, for example, {"checkOnly", true, ...}
+     * @returns soap body for ``deploy request``
      */
     private createDeployRequest(zipFile: string, options:any) {
         let soapBody = `

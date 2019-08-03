@@ -3,12 +3,32 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import * as vscode from "vscode";
+import * as xml2js from "xml2js";
 import { extensionSettings } from "../settings";
 
 export function openWithBrowser(url: string) {
     opn(url).catch(_ => {
         console.log(`Has error when open ${url}`);
     });
+}
+
+export function getXmlParse(): xml2js.Parser {
+    let parser: xml2js.Parser = new xml2js.Parser({
+        explicitArray : false, 
+        ignoreAttrs : true
+    });
+
+    return parser;
+}
+
+export function parseIdUrl(idUrl: string) {
+    var idUrls = idUrl.split("/");
+    var userId = idUrls.pop(), orgId = idUrls.pop();
+
+    return {
+        "userId": userId,
+        "organizationId": orgId
+    };
 }
 
 export function getExtensionWorkspace() {
