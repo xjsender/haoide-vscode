@@ -84,6 +84,91 @@ export default class SOAP {
         return this.createMetadataEnvelope(soapBody);
     }
 
+    private createListPackageRequest(options: any) {
+        let queries = [];
+        let types = options["types"];
+
+        for (const _type in types) {
+            if (types.hasOwnProperty(_type)) {
+                const folders = types[_type];
+                for (const folder of folders) {
+                    if (!folder) {
+                        queries.push(`
+                            <met:queries>
+                                <met:type>${_type}</met:type>
+                            </met:queries>
+                        `);
+                    }
+                    else {
+                        queries.push(`
+                            <met:queries>
+                                <met:type>${_type}</met:type>
+                                <met:folder>${folder}</met:folder>
+                            </met:queries>
+                        `);
+                    }
+                }
+            }
+        }
+
+        let soapBody =  `
+            <met:listMetadata>
+                ${queries.join("")}
+                <met:asOfVersion>${this.apiVerson}.0</met:asOfVersion>
+            </met:listMetadata>
+        `;
+
+        return this.createMetadataEnvelope(soapBody);
+    }
+
+    /**
+     * Build soap body for retrieve request
+     * @param options for example, {"CustomObject": ["Account"]}
+     */
+    private checkRetrieveRequest(options: any) {
+        let packages = "";
+        if (options["packageNames"]) {
+            packages = options["packageNames"].map( (pn: string) => {
+                return `<met:packageNames>${pn}</met:packageNames>`;
+            }).join("");
+        }
+
+        let metadataObjects = [];
+        let types = options["types"];
+        for (const metaName in types) {
+            if (types.hasOwnProperty(metaName)) {
+                const members: any = types[metaName];
+                let membersStr = members.map( (m: string) => {
+                    return `<met:members>${m}</met:members>`;
+                }).join("");
+
+                metadataObjects.push(
+                    `<met:types>
+                        ${membersStr}
+                        <name>${metaName}</name>
+                    </met:types>`
+                );
+            }
+        }
+
+        let soapBody = `
+            <met:retrieve>
+                <met:retrieveRequest>
+                    <met:apiVersion>${this.apiVerson}.0</met:apiVersion>
+                    ${packages}
+                    <met:unpackaged>${metadataObjects}</met:unpackaged>
+                </met:retrieveRequest>
+            </met:retrieve>
+        `;
+
+        return this.createMetadataEnvelope(soapBody);
+    }
+
+    /**
+     * Build soap body for deploy request
+     * @param zipFile base64 encoded package to be deployed
+     * @param options deploy options, for example, {"checkOnly", true, ...}
+     */
     private createDeployRequest(zipFile: string, options:any) {
         let soapBody = `
             <met:deploy>
@@ -104,5 +189,108 @@ export default class SOAP {
         `;
 
         return this.createMetadataEnvelope(soapBody);
+    }
+
+    /**
+     * Build apex soap request envelope
+     * @param soapBody soap body string
+     * @param options for example, {"logLevels": []}
+     */
+    private createApexEnvelope(soapBody: string, options?: any) {
+        let logLevelSettings = options["logLevels"];
+        let logLevels = "";
+        for (const logLevel of logLevelSettings) {
+            logLevels += `
+                <apex:categories>
+                    <apex:category>${logLevel["log_category"]}</apex:category>
+                    <apex:level>${logLevel["log_level"]}</apex:level>
+                </apex:categories>
+            `;
+        }
+
+        let envelopedBody = `
+            <soapenv:Envelope 
+                xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+                xmlns:apex="http://soap.sforce.com/2006/08/apex">
+                <soapenv:Header>
+                    <apex:DebuggingHeader>
+                        ${logLevels}
+                    </apex:DebuggingHeader>
+                    <apex:SessionHeader>
+                        <apex:sessionId>${this.sessionId}</apex:sessionId>
+                    </apex:SessionHeader>
+                </soapenv:Header>
+                <soapenv:Body>
+                    ${soapBody}
+                </soapenv:Body>
+            </soapenv:Envelope>
+        `;
+
+        return envelopedBody;
+    }
+    
+    /**
+     * Build soap body for anonymous code execution request
+     * @param options Used to pass apex string
+     */
+    private createExecuteAnonymousRequest(options: any) {
+        let soapBody = `
+            <apex:executeAnonymous>
+                <apex:String>${options["apexCode"]}</apex:String>
+            </apex:executeAnonymous>
+        `;
+
+        return this.createApexEnvelope(soapBody, options);
+    }
+
+    /**
+     * Build soap body for run all test request
+     * @param options reserved params
+     */
+    private createRunAllTestRequest(options: any) {
+        let soapBody = `
+            <apex:runTests>
+                <apex:RunTestsRequest>
+                    <apex:allTests>true</apex:allTests>
+                </apex:RunTestsRequest>
+            </apex:runTests>
+        `;
+
+        return this.createApexEnvelope(soapBody, options);
+    }
+
+    /**
+     * Partner API Request Envelope
+     */
+    private createPartnerEnvelope(soapBody:string) {
+        let partnerRequestEnvelope = `<soapenv:Envelope 
+            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+            xmlns:urn="urn:partner.soap.sforce.com">
+            <soapenv:Header>
+                <urn:SessionHeader>
+                    <urn:sessionId>${this.sessionId}</urn:sessionId>
+                </urn:SessionHeader>
+            </soapenv:Header>
+            <soapenv:Body>
+                {body}
+            </soapenv:Body>
+        </soapenv:Envelope>`;
+
+        return partnerRequestEnvelope;
+    }
+
+    /**
+     * Build soap body for layout describe reqeust
+     * @param options sobject & RecordTypeId pairs
+     */
+    private createDescribeLayoutRequest(options: any) {
+        let soapBody = `
+            <urn:describeLayout>
+                <urn:sObjectType>${options["sobject"]}</urn:sObjectType>
+                <urn:recordTypeIds>${options["recordTypeId"]}</urn:recordTypeIds>
+            </urn:describeLayout>
+        `;
+
+        return this.createPartnerEnvelope(soapBody);
     }
 }
