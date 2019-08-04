@@ -7,7 +7,7 @@ import {
 	apexCompletionProvider 
 } 
 from "./salesforce/completions/provider";
-import { auth, utility } from "./commands";
+import { auth, utility, main } from "./commands";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -24,6 +24,16 @@ export function activate(context: vscode.ExtensionContext) {
 		"extension.haoide.authorize.default", auth.authorizeDefaultProject
 	);
 
+	// Create new project command
+	vscode.commands.registerCommand(
+		"extension.haoide.createProject", main.createProject
+	);	
+	
+	// Register switchProject command
+	vscode.commands.registerCommand(
+		"extension.haoide.switchProject", utility.switchProject
+	);
+
 	// Register loginToSFDC command
 	vscode.commands.registerCommand(
 		"extension.haoide.loginToSFDC", utility.loginToSFDC
@@ -37,12 +47,6 @@ export function activate(context: vscode.ExtensionContext) {
 	// Register loginToSFDC command
 	vscode.commands.registerCommand(
 		"extension.haoide.convertXml2Json", utility.convertXml2Json
-	);
-
-
-	// Register loginToSFDC command
-	vscode.commands.registerCommand(
-		"extension.haoide.switchProject", utility.switchProject
 	);
 
 	let ltnProvider = vscode.languages.registerCompletionItemProvider(

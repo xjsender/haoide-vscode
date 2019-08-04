@@ -12,9 +12,9 @@ export class MetadataApi {
     private headers: any;
     private metadataUrl: string;
 
-    public constructor(options: any={}) {
-        this.session = options["session"] || projectSettings.getSessionInfo();
-        this.sessionId = this.session["accessToken"];
+    public constructor(sessionInfo?:any) {
+        this.session = sessionInfo || projectSettings.getSessionInfo();
+        this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;
         this.metadataUrl = `${this.instanceUrl}/services/Soap/m/${this.apiVersion}.0`;
@@ -24,24 +24,22 @@ export class MetadataApi {
             "SOAPAction": '""'
         };
 
-        this.soap = new SOAP({
-            "sessionId":this.sessionId,
-            "apiVersion": 46
-        });
+        this.soap = new SOAP(this.session);
     }
 
     public _invoke_method(_method:string, options: any={}) {
         let self = this;
-        return new Promise(function(resolve, reject) {
+        return new Promise<any>(function(resolve, reject) {
             let soapBody = self.soap.getRequestBody(_method, options);
 
             let requestOptions = {
                 method: options["method"] || "POST",
                 headers: self.headers,
                 uri: self.metadataUrl,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: options["resolveWithFullResponse"] || true,
                 body: soapBody
             };
+            console.log(requestOptions);
 
             request(requestOptions).then(response => {
                 resolve(response);
@@ -68,6 +66,33 @@ export class MetadataApi {
     public checkStatus(asyncProcessId: string) {
         return this._invoke_method("CheckStatus", {
             "asyncProcessId": asyncProcessId
+        });
+    }
+
+    /**
+     * Check Status
+     * @param asyncProcessId async process Id
+     * @returns {Promise.<Response>}
+     */
+    public checkRetriveStatus(asyncProcessId: string) {
+        return this._invoke_method("CheckRetrieveStatus", {
+            "asyncProcessId": asyncProcessId
+        });
+    }
+
+    /**
+     *  1. Issue a retrieve request to start the asynchronous retrieval and asyncProcessId is returned
+        2. Issue a checkRetrieveStatus request to check whether the async process job is completed.
+        3. After the job is completed, you will get the zipFile(base64) 
+        4. Use Python Lib base64 to convert the base64 string to zip file.
+        5. Use Python Lib zipFile to unzip the zip file to path
+     * @param options {"types" : types, "package_names": package_names}
+     */
+    public retrieve(options: any) {
+        let retrieveAll = options["retrieveAll"] || false;
+
+        this._invoke_method("Retrieve", options).then( res => {
+            console.log(res["body"]);
         });
     }
 }

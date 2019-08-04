@@ -28,16 +28,20 @@
 				"title": "Haoide: Open Default Org"
 			},
 			{
+				"command": "extension.haoide.switchProject",
+				"title": "Haoide: Switch Project"
+			},
+			{
+				"command": "extension.haoide.createProject",
+				"title": "Haoide: Create New Project"
+			},
+			{
 				"command": "extension.haoide.formatJson",
 				"title": "Haoide: Format JSON"
 			},
 			{
 				"command": "extension.haoide.convertXml2Json",
 				"title": "Haoide: Convert XML to JSON"
-			},
-			{
-				"command": "extension.haoide.switchProject",
-				"title": "Haoide: Switch Project"
 			}
 		],
 		"keybindings":[
