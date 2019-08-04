@@ -20,6 +20,10 @@ export default class SOAP {
      */
     public getRequestBody(requestType: string, options = {}) {
         let methodName = `create${requestType}Request`;
+        if (typeof (this as any)[methodName] !== "function") {
+            throw new Error(`${methodName} is not function`);
+        }
+
         return (this as any)[methodName](options);
     }
 
@@ -164,7 +168,7 @@ export default class SOAP {
      * @param options for example, {"types": {"CustomObject": ["Account"]}}
      * @returns soap body for ``retrieve request``
      */
-    private checkRetrieveRequest(options: any) {
+    private createRetrieveRequest(options: any) {
         let packages = "";
         if (options["packageNames"]) {
             packages = options["packageNames"].map( (pn: string) => {

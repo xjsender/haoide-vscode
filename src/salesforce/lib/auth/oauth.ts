@@ -26,7 +26,7 @@ export class OAuth {
     private _invokeTokenRequest(params: any) {
         let self = this;
 
-        return new Promise(function(resolve, reject) {
+        return new Promise<any>(function(resolve, reject) {
             let requestOptions = {
                 method: "POST",
                 headers : {

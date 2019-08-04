@@ -46,8 +46,8 @@ export function authorizeDefaultProject() {
     let oauth = new OAuth(sessionInfo["loginUrl"]);
 
     oauth.refreshToken(sessionInfo["refreshToken"]).then(function(response) {
-        let body = JSON.parse((response as any)["body"]);
-        sessionInfo["accessToken"] = body["accessToken"];
+        let body = JSON.parse(response["body"]);
+        sessionInfo["sessionId"] = body["access_token"];
         sessionInfo["lastUpdatedTime"] = moment().format();
 
         projectSettings.setSessionInfo(sessionInfo);

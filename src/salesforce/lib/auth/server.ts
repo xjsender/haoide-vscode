@@ -33,7 +33,7 @@ export function startServer(projectName: any, loginUrl: string) {
             const code = req.query.code;
 
             oauth.requestToken(code).then(function(response) {
-                let body = JSON.parse((response as any)["body"]);
+                let body = JSON.parse(response["body"]);
                 let {userId, organizationId} = util.parseIdUrl(body["id"]);
 
                 // Set the new authorized project as default
@@ -46,7 +46,7 @@ export function startServer(projectName: any, loginUrl: string) {
                 let sessionInfo = {
                     "orgnizationId": organizationId,
                     "userId": userId,
-                    "accessToken": body["access_token"],
+                    "sessionId": body["access_token"],
                     "refreshToken": body["refresh_token"],
                     "instanceUrl": body["instance_url"],
                     "loginUrl": loginUrl,
@@ -61,7 +61,7 @@ export function startServer(projectName: any, loginUrl: string) {
                 metadataApi._invoke_method("DescribeMetadata")
                     .then(function(response) {
                         util.getXmlParse().parseString(
-                            (response as any)["body"], 
+                            response["body"], 
                             function(err: any, result: any) {
                                 if (err) {
                                     return console.error(err);

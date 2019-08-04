@@ -39,7 +39,7 @@ export function loginToSFDC(startUrl?: string) {
     let session = projectSettings.getSessionInfo();
 
     let open_url = `${session["instanceUrl"]}/secur/frontdoor.jsp` + 
-        `?sid=${session["accessToken"]}&retURL=${startUrl} || ""`;
+        `?sid=${session["sessionId"]}&retURL=${startUrl} || ""`;
 
     util.openWithBrowser(open_url);
 }
