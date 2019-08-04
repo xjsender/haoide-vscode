@@ -1,6 +1,12 @@
 import { html_global_methods, tag_defs } from "./front/lightning";
 import { vf_tag_defs } from "./front/vf";
+import { classes } from "./server/classes";
+import { namespaces } from "./server/namespaces";
 
-export const htmlMethods = html_global_methods;
-export const ltnTagDefs = tag_defs;
-export const vfTagDefs = vf_tag_defs;
+export {
+    html_global_methods as htmlMethods,
+    tag_defs as ltnTagDefs,
+    vf_tag_defs as vfTagDefs,
+    classes,
+    namespaces
+}
