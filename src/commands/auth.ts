@@ -41,7 +41,7 @@ export async function authorizeNewProject() {
     quickPick.show();
 }
 
-export async function authorizeDefaultProject() {
+export function authorizeDefaultProject() {
     let sessionInfo = projectSettings.getSessionInfo();
     let oauth = new OAuth(sessionInfo["loginUrl"]);
 

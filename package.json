@@ -32,6 +32,10 @@
 				"title": "Haoide: Format JSON"
 			},
 			{
+				"command": "extension.haoide.convertXml2Json",
+				"title": "Haoide: Convert XML to JSON"
+			},
+			{
 				"command": "extension.haoide.switchProject",
 				"title": "Haoide: Switch Project"
 			}

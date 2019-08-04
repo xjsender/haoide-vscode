@@ -36,6 +36,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Register loginToSFDC command
 	vscode.commands.registerCommand(
+		"extension.haoide.convertXml2Json", utility.convertXml2Json
+	);
+
+
+	// Register loginToSFDC command
+	vscode.commands.registerCommand(
 		"extension.haoide.switchProject", utility.switchProject
 	);
 

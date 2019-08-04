@@ -44,8 +44,31 @@ export function loginToSFDC(startUrl?: string) {
     util.openWithBrowser(open_url);
 }
 
-export function convertXml2Json(jsonStr: string): Object {
-    return {};
+export function convertXml2Json(xmlStr="") {
+    // Get selection in the active editor if no jsonStr param
+    let editor = vscode.window.activeTextEditor;
+    if (!xmlStr && editor && editor.selection) {
+        xmlStr = editor.document.getText(editor.selection) || "{}";
+    }
+
+    util.getXmlParse().parseString(xmlStr, function(err: any, result: any) {
+        if (err) {
+            console.error(err);
+            return vscode.window.showErrorMessage(err);
+        }
+        
+        vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
+            editor = vscode.window.activeTextEditor;
+            if (editor) {
+                editor.edit(editBuilder => {
+                    editBuilder.insert(
+                        new vscode.Position(0, 0), 
+                        JSON.stringify(result, null, 4)
+                    );
+                });
+            }
+        });
+    });
 }
 
 export function convertJson2Xml(jsonStr: string): string {
@@ -60,7 +83,7 @@ export function convertJson2Xml(jsonStr: string): string {
 export function formatJson(jsonStr="{}") {
     // Get selection in the active editor if no jsonStr param
     let editor = vscode.window.activeTextEditor;
-    if (editor && editor.selection) {
+    if (jsonStr !== "{}" && editor && editor.selection) {
         jsonStr = editor.document.getText(editor.selection) || "{}";
     }
 
@@ -74,7 +97,6 @@ export function formatJson(jsonStr="{}") {
             });
         }
     });
-    return true;
 }
 
 export function formatXml(xmlStr: string): Object {
