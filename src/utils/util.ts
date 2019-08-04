@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import * as vscode from "vscode";
-import * as xml2js from "xml2js";
+import * as fastXmlParse from "fast-xml-parser";
 import { extensionSettings } from "../settings";
 
 export function openWithBrowser(url: string) {
@@ -12,11 +12,8 @@ export function openWithBrowser(url: string) {
     });
 }
 
-export function getXmlParse(): xml2js.Parser {
-    let parser: xml2js.Parser = new xml2js.Parser({
-        explicitArray : false, 
-        ignoreAttrs : true
-    });
+export function getXmlParse() {
+    let parser = fastXmlParse;
 
     return parser;
 }

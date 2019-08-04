@@ -55,23 +55,13 @@ export function startServer(projectName: any, loginUrl: string) {
                 projectSettings.setSessionInfo(sessionInfo);
 
                 // Describe metadata
-                let metadataApi = new MetadataApi({
-                    session: sessionInfo
-                });
+                let metadataApi = new MetadataApi(sessionInfo);
                 metadataApi._invoke_method("DescribeMetadata")
                     .then(function(response) {
-                        util.getXmlParse().parseString(
-                            response["body"], 
-                            function(err: any, result: any) {
-                                if (err) {
-                                    return console.error(err);
-                                }
-
-                                projectSettings.setConfigValue(
-                                    "metadata.json", 
-                                    result["soapenv:Envelope"]["soapenv:Body"]["describeMetadataResponse"]["result"]
-                                );
-                            }
+                        let result = util.getXmlParse().parse(response["body"]);
+                        projectSettings.setConfigValue(
+                            "metadata.json", 
+                            result["soapenv:Envelope"]["soapenv:Body"]["describeMetadataResponse"]["result"]
                         );
                     })
                     .catch(err => {

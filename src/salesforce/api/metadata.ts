@@ -1,4 +1,3 @@
-import * as xml2js from "xml2js";
 import * as request from "request-promise";
 import SOAP from "../lib/soap";
 import { projectSettings } from "../../settings";

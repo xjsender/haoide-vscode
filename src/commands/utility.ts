@@ -51,28 +51,20 @@ export function convertXml2Json(xmlStr="") {
         xmlStr = editor.document.getText(editor.selection) || "{}";
     }
 
-    util.getXmlParse().parseString(xmlStr, function(err: any, result: any) {
-        if (err) {
-            console.error(err);
-            return vscode.window.showErrorMessage(err);
-        }
+    // Parse xml to json
+    let result = util.getXmlParse().parse(xmlStr);
         
-        vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
-            editor = vscode.window.activeTextEditor;
-            if (editor) {
-                editor.edit(editBuilder => {
-                    editBuilder.insert(
-                        new vscode.Position(0, 0), 
-                        JSON.stringify(result, null, 4)
-                    );
-                });
-            }
-        });
+    vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
+        editor = vscode.window.activeTextEditor;
+        if (editor) {
+            editor.edit(editBuilder => {
+                editBuilder.insert(
+                    new vscode.Position(0, 0), 
+                    JSON.stringify(result, null, 4)
+                );
+            });
+        }
     });
-}
-
-export function convertJson2Xml(jsonStr: string): string {
-    return "";
 }
 
 /**
@@ -97,8 +89,4 @@ export function formatJson(jsonStr="{}") {
             });
         }
     });
-}
-
-export function formatXml(xmlStr: string): Object {
-    return "";
 }
