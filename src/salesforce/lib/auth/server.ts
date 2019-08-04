@@ -2,6 +2,7 @@ import * as express from "express";
 import * as opn from "open";
 import * as vscode from "vscode";
 import * as moment from "moment";
+import * as xmlParser from "fast-xml-parser";
 import { port, entryPoint, appConfig } from "./config";
 import { projectSettings } from "../../../settings";
 import * as util from "../../../utils/util";
@@ -58,7 +59,7 @@ export function startServer(projectName: any, loginUrl: string) {
                 let metadataApi = new MetadataApi(sessionInfo);
                 metadataApi._invoke_method("DescribeMetadata")
                     .then(function(response) {
-                        let result = util.getXmlParse().parse(response["body"]);
+                        let result = xmlParser.parse(response["body"]);
                         projectSettings.setConfigValue(
                             "metadata.json", 
                             result["soapenv:Envelope"]["soapenv:Body"]["describeMetadataResponse"]["result"]

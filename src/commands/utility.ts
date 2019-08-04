@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as xmlParser from "fast-xml-parser";
 import * as util from "../utils/util";
 import { projectSettings } from "../settings";
 
@@ -52,7 +53,7 @@ export function convertXml2Json(xmlStr="") {
     }
 
     // Parse xml to json
-    let result = util.getXmlParse().parse(xmlStr);
+    let result = xmlParser.parse(xmlStr);
         
     vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
         editor = vscode.window.activeTextEditor;

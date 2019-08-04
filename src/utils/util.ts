@@ -12,12 +12,6 @@ export function openWithBrowser(url: string) {
     });
 }
 
-export function getXmlParse() {
-    let parser = fastXmlParse;
-
-    return parser;
-}
-
 export function parseIdUrl(idUrl: string) {
     var idUrls = idUrl.split("/");
     var userId = idUrls.pop(), orgId = idUrls.pop();

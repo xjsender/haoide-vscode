@@ -1,4 +1,5 @@
 import * as request from "request-promise";
+import * as xmlParser from "fast-xml-parser";
 import SOAP from "../lib/soap";
 import { projectSettings } from "../../settings";
 
@@ -88,10 +89,22 @@ export class MetadataApi {
      * @param options {"types" : types, "package_names": package_names}
      */
     public retrieve(options: any) {
-        let retrieveAll = options["retrieveAll"] || false;
+        let self = this;
 
+        let retrieveAll = options["retrieveAll"] || false;
+        
         this._invoke_method("Retrieve", options).then( res => {
-            console.log(res["body"]);
+            let parseResult = xmlParser.parse(res["body"]);
+            let result = parseResult["soapenv:Envelope"]["soapenv:Body"]["retrieveResponse"]["result"];
+            console.log(result, result["done"] === false);
+            while (!result["done"]) {
+                console.log(result);
+                self.checkRetriveStatus(result["id"]).then( res => {
+                    parseResult = xmlParser.parse(res["body"]);
+                    console.log(parseResult);
+                    result = parseResult["soapenv:Envelope"]["soapenv:Body"]["checkRetrieveStatusResponse"]["result"];
+                });
+            }
         });
     }
 }
