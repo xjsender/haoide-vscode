@@ -2,7 +2,6 @@ import * as express from "express";
 import * as opn from "open";
 import * as vscode from "vscode";
 import * as moment from "moment";
-import * as xml2js from "xml2js";
 import { port, entryPoint, appConfig } from "./config";
 import { projectSettings } from "../../../settings";
 import * as util from "../../../utils/util";
@@ -22,7 +21,7 @@ export function startLogin(url?: string) {
 
 export function startServer(projectName: any, loginUrl: string) {
     return new Promise(function(resolve, reject) {
-        let oauth = new OAuth({"loginUrl": loginUrl});
+        let oauth = new OAuth(loginUrl);
 
         let app = express();
         app.get(oauthLoginUrl, function(req: any, res: any) {
@@ -68,7 +67,6 @@ export function startServer(projectName: any, loginUrl: string) {
                                     return console.error(err);
                                 }
 
-                                console.log(JSON.stringify(result));
                                 projectSettings.setConfigValue(
                                     "metadata.json", 
                                     result["soapenv:Envelope"]["soapenv:Body"]["describeMetadataResponse"]["result"]

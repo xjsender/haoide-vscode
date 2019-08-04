@@ -16,8 +16,12 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.haoide.login",
-				"title": "Haoide: Authorize New Org"
+				"command": "extension.haoide.authorize.new",
+				"title": "Haoide: Authorize New Project"
+			},
+			{
+				"command": "extension.haoide.authorize.default",
+				"title": "Haoide: Authorize Default Project"
 			},
 			{
 				"command": "extension.haoide.loginToSFDC",
@@ -30,6 +34,15 @@
 			{
 				"command": "extension.haoide.switchProject",
 				"title": "Haoide: Switch Project"
+			}
+		],
+		"keybindings":[
+			{
+				"command": "extension.haoide.switchProject",
+				"key": "alt+s",
+				"mac": "alt+s",
+				"win": "alt+s",
+				"linux": "alt+s"
 			}
 		],
 		"languages": [
@@ -148,13 +161,11 @@
 		"@types/node": "^10.12.21",
 		"@types/express": "^4.16.3",
 		"@types/request-promise": "^4.1.44",
-		"@types/jsforce": "^1.9.2",
 		"@types/xml2js": "^0.4.4",
 		"@types/lodash": "^4.14.136",
 		"request": "*",
 		"moment": "^2.24.0",
 		"request-promise": "^4.2.4",
-		"jsforce": "^1.9.2",
 		"tslint": "^5.12.1",
 		"typescript": "^3.3.1",
 		"vscode": "^1.1.28",

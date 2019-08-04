@@ -8,9 +8,7 @@ export class OAuth {
     private tokenUrl: string;
     private revokeUrl: string;
 
-    public constructor(options: any={}) {
-        let loginUrl = options["loginUrl"];
-
+    public constructor(loginUrl: string) {
         this.tokenUrl = `${loginUrl}/services/oauth2/token`;
         this.revokeUrl = `${loginUrl}//services/oauth2/revoke`;
         this.authorizeUrl = `${loginUrl}/services/oauth2/authorize`;
@@ -62,7 +60,7 @@ export class OAuth {
 
     public refreshToken(refreshToken: string) {
         let params = {
-            response_type: "refresh_token",
+            grant_type: "refresh_token",
             refresh_token : refreshToken ,
             client_id: appConfig["clientId"]
         };

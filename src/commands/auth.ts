@@ -1,8 +1,11 @@
 import * as vscode from "vscode";
+import * as moment from "moment";
 import { startLogin, startServer } from "../salesforce/lib/auth/server";
-import * as util from "../salesforce/completions/lib/util";
+import { projectSettings } from "../settings";
+import { OAuth } from "../salesforce/lib/auth/oauth";
+import * as util from "../utils/util";
 
-export async function login() {
+export async function authorizeNewProject() {
     // Get projectName from user input
     let projectName = await vscode.window.showInputBox({
         placeHolder: "Please input your project name..."
@@ -36,4 +39,25 @@ export async function login() {
     });
 
     quickPick.show();
+}
+
+export async function authorizeDefaultProject() {
+    let sessionInfo = projectSettings.getSessionInfo();
+    let oauth = new OAuth(sessionInfo["loginUrl"]);
+
+    oauth.refreshToken(sessionInfo["refreshToken"]).then(function(response) {
+        let body = JSON.parse((response as any)["body"]);
+        sessionInfo["accessToken"] = body["accessToken"];
+        sessionInfo["lastUpdatedTime"] = moment().format();
+
+        projectSettings.setSessionInfo(sessionInfo);
+
+        // Add project to workspace
+        let projectName = util.getDefaultProject();
+        util.addProjectToWorkspace(projectName);
+    })
+    .catch(err => {
+        console.error(err);
+        vscode.window.showErrorMessage(err);
+    });
 }

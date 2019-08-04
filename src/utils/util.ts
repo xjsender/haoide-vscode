@@ -116,7 +116,11 @@ export function getDefaultProject(): string {
     }
 }
 
-// Get default project path
+/**
+ * Get path of project
+ * @param projectName If null, means default project
+ * @returns project path
+ */
 export function getProjectPath(projectName?: string) {
     // If projectName is null, just fetch the default project
     if (!projectName) {
