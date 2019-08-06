@@ -76,8 +76,8 @@ export function startServer(projectName: any, loginUrl: string) {
                 res.redirect(`${sessionInfo["instanceUrl"]}/home/home.jsp`);
             })
             .catch(err => {
+                console.error(err);
                 let errorMsg = `There has problem with login: ${err}`;
-                console.error(errorMsg);
                 vscode.window.showErrorMessage(errorMsg);
             });
         });

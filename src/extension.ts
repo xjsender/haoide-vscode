@@ -36,7 +36,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Add default project to workspace
 	vscode.commands.registerCommand(
-		"extension.haoide.addDefaultProjectToWorkspace", utility.addDefaultProjectToWorkspace
+		"extension.haoide.addDefaultProjectToWorkspace", 
+		utility.addDefaultProjectToWorkspace
 	);
 
 	// Register loginToSFDC command

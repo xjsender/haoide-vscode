@@ -1,18 +1,24 @@
+import * as vscode from "vscode";
 import * as request from "request-promise";
 import * as xmlParser from "fast-xml-parser";
 import SOAP from "../lib/soap";
 import { projectSettings } from "../../settings";
+import * as auth from "../../commands/auth";
 
 export class MetadataApi {
-    private soap: SOAP;
+    private soap!: SOAP;
     private session: any;
-    private sessionId: string;
-    private instanceUrl: string;
-    private apiVersion: number;
+    private sessionId!: string;
+    private instanceUrl!: string;
+    private apiVersion!: number;
     private headers: any;
-    private metadataUrl: string;
+    private metadataUrl!: string;
 
     public constructor(sessionInfo?:any) {
+        this.initiate(sessionInfo);
+    }
+
+    public initiate(sessionInfo?: any) {
         this.session = sessionInfo || projectSettings.getSessionInfo();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
@@ -25,6 +31,8 @@ export class MetadataApi {
         };
 
         this.soap = new SOAP(this.session);
+
+        return this;
     }
 
     public _invoke_method(_method:string, options: any={}) {
@@ -74,9 +82,48 @@ export class MetadataApi {
      * @param asyncProcessId async process Id
      * @returns {Promise.<Response>}
      */
-    public checkRetriveStatus(asyncProcessId: string) {
-        return this._invoke_method("CheckRetrieveStatus", {
+    public checkRetriveStatus(asyncProcessId: string, progress?: any) {
+        let self = this;
+        let soapBody = self.soap.getRequestBody("CheckRetrieveStatus", {
             "asyncProcessId": asyncProcessId
+        });
+
+        let requestOptions = {
+            method: "POST",
+            headers: self.headers,
+            uri: self.metadataUrl,
+            resolveWithFullResponse: true,
+            body: soapBody
+        };
+
+        return new Promise<any>(function (resolve, reject) {
+            recursiveCheck();
+
+            function recursiveCheck() {
+                request(requestOptions).then(response => {
+                    let parseResult = xmlParser.parse(response["body"]);
+                    let result = parseResult["soapenv:Envelope"]["soapenv:Body"]["checkRetrieveStatusResponse"]["result"];
+                    let done: boolean = result["done"];
+
+                    // Show progress status
+                    if (progress && !done) {
+                        progress.report({message: result["status"]});
+                    }
+                    else if (progress && done) {
+                        progress.report({
+                            increment: 100,
+                            message: result["status"]
+                        });
+                    }
+
+                    if (!done) {
+                        return setTimeout(recursiveCheck, 2000);
+                    }
+                    else {
+                        resolve(response);
+                    }
+                });
+            }
         });
     }
 
@@ -91,20 +138,40 @@ export class MetadataApi {
     public retrieve(options: any) {
         let self = this;
 
-        let retrieveAll = options["retrieveAll"] || false;
+        // let retrieveAll = options["retrieveAll"] || false;
         
-        this._invoke_method("Retrieve", options).then( res => {
-            let parseResult = xmlParser.parse(res["body"]);
-            let result = parseResult["soapenv:Envelope"]["soapenv:Body"]["retrieveResponse"]["result"];
-            console.log(result, result["done"] === false);
-            while (!result["done"]) {
-                console.log(result);
-                self.checkRetriveStatus(result["id"]).then( res => {
+        return new Promise<any>( (resolve, reject) => {
+            this._invoke_method("Retrieve", options).then( response => {
+                let parseResult = xmlParser.parse(response["body"]);
+                let result = parseResult["soapenv:Envelope"]["soapenv:Body"]["retrieveResponse"]["result"];
+                
+                vscode.window.withProgress({
+                    location: vscode.ProgressLocation.Notification,
+                    title: `[sf:retrieve] Request Status: `,
+                    cancellable: true
+                }, (progress, token) => {
+                    token.onCancellationRequested(() => {
+                        console.log("You canceled the long polling operation");
+                    });
+                    progress.report({message: result["state"]});
+
+                    return self.checkRetriveStatus(result["id"], progress);
+                })
+                .then( res => {
                     parseResult = xmlParser.parse(res["body"]);
-                    console.log(parseResult);
                     result = parseResult["soapenv:Envelope"]["soapenv:Body"]["checkRetrieveStatusResponse"]["result"];
+
+                    resolve(result);
                 });
-            }
+            })
+            .catch( err => {
+                // If session is expired, just login again
+                if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
+                    auth.authorizeDefaultProject().then(() => {
+                        self.initiate().retrieve(options);
+                    });
+                }
+            });
         });
     }
 }

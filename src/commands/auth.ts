@@ -45,19 +45,24 @@ export function authorizeDefaultProject() {
     let sessionInfo = projectSettings.getSessionInfo();
     let oauth = new OAuth(sessionInfo["loginUrl"]);
 
-    oauth.refreshToken(sessionInfo["refreshToken"]).then(function(response) {
-        let body = JSON.parse(response["body"]);
-        sessionInfo["sessionId"] = body["access_token"];
-        sessionInfo["lastUpdatedTime"] = moment().format();
+    return new Promise( (resolve, reject) => {
+        oauth.refreshToken(sessionInfo["refreshToken"]).then(function(response) {
+            let body = JSON.parse(response["body"]);
+            sessionInfo["sessionId"] = body["access_token"];
+            sessionInfo["lastUpdatedTime"] = moment().format();
 
-        projectSettings.setSessionInfo(sessionInfo);
+            projectSettings.setSessionInfo(sessionInfo);
 
-        // Add project to workspace
-        let projectName = util.getDefaultProject();
-        util.addProjectToWorkspace(projectName);
-    })
-    .catch(err => {
-        console.error(err);
-        vscode.window.showErrorMessage(err);
+            // Add project to workspace
+            let projectName = util.getDefaultProject();
+            util.addProjectToWorkspace(projectName);
+
+            resolve();
+        })
+        .catch(err => {
+            console.error(err);
+            vscode.window.showErrorMessage(err);
+            reject(err);
+        });
     });
 }
