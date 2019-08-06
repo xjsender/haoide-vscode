@@ -24,6 +24,10 @@
 				"title": "Haoide: Authorize Default Project"
 			},
 			{
+				"command": "extension.haoide.addDefaultProjectToWorkspace",
+				"title": "Haoide: Add Default Project to Workspace"
+			},
+			{
 				"command": "extension.haoide.loginToSFDC",
 				"title": "Haoide: Open Default Org"
 			},
@@ -44,7 +48,7 @@
 				"title": "Haoide: Convert XML to JSON"
 			}
 		],
-		"keybindings":[
+		"keybindings": [
 			{
 				"command": "extension.haoide.switchProject",
 				"key": "alt+s",

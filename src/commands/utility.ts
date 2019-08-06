@@ -4,6 +4,12 @@ import * as util from "../utils/util";
 import { projectSettings } from "../settings";
 
 
+export function addDefaultProjectToWorkspace() {
+    // Add project to workspace
+    let projectName = util.getDefaultProject();
+    util.addProjectToWorkspace(projectName);
+}
+
 export function switchProject(projectName?: string) {
     let projects = util.getProjects();
     let pickItems: any = [];

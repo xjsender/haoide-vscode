@@ -34,6 +34,11 @@ export function activate(context: vscode.ExtensionContext) {
 		"extension.haoide.switchProject", utility.switchProject
 	);
 
+	// Add default project to workspace
+	vscode.commands.registerCommand(
+		"extension.haoide.addDefaultProjectToWorkspace", utility.addDefaultProjectToWorkspace
+	);
+
 	// Register loginToSFDC command
 	vscode.commands.registerCommand(
 		"extension.haoide.loginToSFDC", utility.loginToSFDC
