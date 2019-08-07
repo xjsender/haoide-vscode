@@ -3,17 +3,17 @@ import * as opn from "open";
 import * as vscode from "vscode";
 import * as moment from "moment";
 import * as xmlParser from "fast-xml-parser";
-import { port, entryPoint, appConfig } from "./config";
+import * as config from "./config";
 import { projectSettings } from "../../../settings";
 import * as util from "../../../utils/util";
-import { MetadataApi } from "../../api/metadata";
+import MetadataApi from "../../api/metadata";
 import { OAuth } from "./oauth";
 
 let oauthLoginUrl = "/oauth/login";
 let oauthCallbackUrl = "/oauth/callback";
 
 export function startLogin(url?: string) {
-    url = url || entryPoint + oauthLoginUrl;
+    url = url || config.entryPoint + oauthLoginUrl;
 
     opn(url).catch(_ => {
         console.log(`Has error when open ${url}`);
@@ -57,7 +57,7 @@ export function startServer(projectName: any, loginUrl: string) {
 
                 // Describe metadata
                 let metadataApi = new MetadataApi(sessionInfo);
-                metadataApi._invoke_method("DescribeMetadata")
+                metadataApi.describeMetadata()
                     .then(function(response) {
                         let result = xmlParser.parse(response["body"]);
                         projectSettings.setConfigValue(
@@ -82,10 +82,10 @@ export function startServer(projectName: any, loginUrl: string) {
             });
         });
 
-        app.listen(port, () => {
-            resolve(`Server started at ${entryPoint}`);
+        app.listen(config.port, () => {
+            resolve(`Server started at ${config.entryPoint}`);
         }).on('error', function(err) {
-            resolve(`Server is already started at ${entryPoint}`);
+            resolve(`Server is already started at ${config.entryPoint}`);
         });
     });
 }

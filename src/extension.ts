@@ -40,6 +40,12 @@ export function activate(context: vscode.ExtensionContext) {
 		utility.addDefaultProjectToWorkspace
 	);
 
+	// Add default project to workspace
+	vscode.commands.registerCommand(
+		"extension.haoide.executeAnonymous",
+		main.executeAnonymous
+	);
+
 	// Register loginToSFDC command
 	vscode.commands.registerCommand(
 		"extension.haoide.loginToSFDC", utility.loginToSFDC
@@ -66,9 +72,6 @@ export function activate(context: vscode.ExtensionContext) {
 	let apexProvider = vscode.languages.registerCompletionItemProvider(
 		'apex', apexCompletionProvider, ".", "="
 	);
-
-	context.subscriptions.push(ltnProvider);
-	context.subscriptions.push(vfProvider);
 }
 
 // this method is called when your extension is deactivated

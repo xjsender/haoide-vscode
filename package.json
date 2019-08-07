@@ -55,6 +55,13 @@
 				"mac": "alt+s",
 				"win": "alt+s",
 				"linux": "alt+s"
+			},
+			{
+				"command": "extension.haoide.executeAnonymous",
+				"key": "ctrl+alt+e",
+				"mac": "cmd+shift+e",
+				"win": "ctrl+alt+e",
+				"linux": "ctrl+alt+e"
 			}
 		],
 		"languages": [

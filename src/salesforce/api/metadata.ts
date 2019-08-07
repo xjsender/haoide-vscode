@@ -5,7 +5,7 @@ import SOAP from "../lib/soap";
 import { projectSettings } from "../../settings";
 import * as auth from "../../commands/auth";
 
-export class MetadataApi {
+export default class MetadataApi {
     private soap!: SOAP;
     private session: any;
     private sessionId!: string;
@@ -18,7 +18,7 @@ export class MetadataApi {
         this.initiate(sessionInfo);
     }
 
-    public initiate(sessionInfo?: any) {
+    private initiate(sessionInfo?: any) {
         this.session = sessionInfo || projectSettings.getSessionInfo();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
@@ -35,7 +35,7 @@ export class MetadataApi {
         return this;
     }
 
-    public _invoke_method(_method:string, options: any={}) {
+    private _invoke_method(_method:string, options: any={}) {
         let self = this;
         return new Promise<any>(function(resolve, reject) {
             let soapBody = self.soap.getRequestBody(_method, options);

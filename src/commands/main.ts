@@ -6,38 +6,60 @@ import * as AdmZip from "adm-zip";
 import * as shelljs from "shelljs";
 import * as util from "../utils/util";
 import { projectSettings } from "../settings";
-import { MetadataApi } from "../salesforce/api/metadata";
+import MetadataApi from "../salesforce/api/metadata";
+import ApexApi from "../salesforce/api/apex";
+
+export function executeAnonymous(apexCode?: string) {
+    // Get selection in the active editor
+    let editor = vscode.window.activeTextEditor;
+    if (editor && editor.selection) {
+        apexCode = editor.document.getText(editor.selection) || "{}";
+    }
+
+    if (!apexCode) {
+        return vscode.window.showErrorMessage(
+            'There is no code to execute'
+        );
+    }
+
+    let apexApi = new ApexApi();
+    apexApi.executeAnonymous(apexCode).then( response => {
+        vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
+            editor = vscode.window.activeTextEditor;
+            if (editor) {
+                editor.edit(editBuilder => {
+                    editBuilder.insert(new vscode.Position(0, 0), response.body);
+                });
+            }
+        });
+    });
+}
 
 export function createProject() {
     let sessionInfo = projectSettings.getSessionInfo();
     
     let _types = {
-        // "ApexClass": ["*"],
+        "ApexClass": ["*"],
         "ApexTrigger": ["*"]
     };
 
     let metadataApi = new MetadataApi(sessionInfo);
     metadataApi.retrieve({"types": _types}).then( result => {
-        let projectPath = util.getProjectPath();
         let zipFilePath = path.join(os.homedir(), "haoide.zip");
-        let writeResult = fs.writeFileSync(
+        fs.writeFileSync(
             zipFilePath, result["zipFile"], "base64"
         );
         
         let zip = new AdmZip(zipFilePath);
-        var zipEntries = zip.getEntries();
-        console.log(zipEntries);
-
-        for (const zipEntry of zipEntries) {
+        for (const zipEntry of zip.getEntries()) {
             let entryName = zipEntry.entryName.replace("unpackaged", "src");
             let fileName = zipEntry.name;
 
             // Get file path for every file
             let filePath = path.join(
-                projectPath, 
+                util.getProjectPath(), 
                 entryName.substr(0, entryName.lastIndexOf(fileName) - 1)
             );
-            console.log(filePath);
             
             // If folder is not exist, just make it
             // https://stackoverflow.com/questions/31645738/how-to-create-full-path-with-nodes-fs-mkdirsync
