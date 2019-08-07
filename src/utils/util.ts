@@ -22,6 +22,22 @@ export function parseIdUrl(idUrl: string) {
     };
 }
 
+/**
+ * Open a new untitled file and display specified content
+ * @param content Content to display in the newUntitile file
+ */
+export function openNewUntitledFile(content: string) {
+    let editor = vscode.window.activeTextEditor;
+    vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
+        editor = vscode.window.activeTextEditor;
+        if (editor) {
+            editor.edit(editBuilder => {
+                editBuilder.insert(new vscode.Position(0, 0), content);
+            });
+        }
+    });
+}
+
 export function getExtensionWorkspace() {
     let _workspace = extensionSettings.getConfigValue(
         "workspace", ""

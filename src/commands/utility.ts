@@ -69,17 +69,7 @@ export function convertXml2Json(xmlStr="") {
     }
     
     // Open a new file to display the json
-    vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
-        editor = vscode.window.activeTextEditor;
-        if (editor) {
-            editor.edit(editBuilder => {
-                editBuilder.insert(
-                    new vscode.Position(0, 0), 
-                    JSON.stringify(result, null, 4)
-                );
-            });
-        }
-    });
+    util.openNewUntitledFile(JSON.stringify(result, null, 4));
 }
 
 /**

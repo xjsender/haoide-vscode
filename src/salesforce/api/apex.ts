@@ -1,4 +1,5 @@
 import * as request from "request-promise";
+import * as _ from "lodash";
 import SOAP from "../lib/soap";
 import { projectSettings } from "../../settings";
 import * as auth from "../../commands/auth";
@@ -35,6 +36,7 @@ export default class ApexApi {
 
     private _invoke_method(_method: string, options: any = {}) {
         let self = this;
+
         return new Promise<any>(function (resolve, reject) {
             let soapBody = self.soap.getRequestBody(_method, options);
 
@@ -45,19 +47,21 @@ export default class ApexApi {
                 resolveWithFullResponse: options["resolveWithFullResponse"] || true,
                 body: soapBody
             };
-            console.log(requestOptions);
 
             request(requestOptions).then(response => {
                 resolve(response);
             })
-                .catch(err => {
-                    reject(err);
-                });
+            .catch( err => {
+                reject(err);
+            });
         });
     }
 
     public executeAnonymous(apexCode: string) {
         let self = this;
+
+        // Escape apex code
+        apexCode = _.escape(apexCode);
 
         return this._invoke_method("ExecuteAnonymous", {
             apexCode: apexCode,
@@ -89,6 +93,8 @@ export default class ApexApi {
                     self.initiate().executeAnonymous(apexCode);
                 });
             }
+
+            throw new Error(err.message);
         });
     }
 }

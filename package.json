@@ -32,6 +32,10 @@
 				"title": "Haoide: Open Default Org"
 			},
 			{
+				"command": "extension.haoide.executeAnonymous",
+				"title": "Haoide: Execute Anonymous Code"
+			},
+			{
 				"command": "extension.haoide.switchProject",
 				"title": "Haoide: Switch Project"
 			},

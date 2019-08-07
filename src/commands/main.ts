@@ -13,7 +13,7 @@ export function executeAnonymous(apexCode?: string) {
     // Get selection in the active editor
     let editor = vscode.window.activeTextEditor;
     if (editor && editor.selection) {
-        apexCode = editor.document.getText(editor.selection) || "{}";
+        apexCode = editor.document.getText(editor.selection) || "";
     }
 
     if (!apexCode) {
@@ -24,14 +24,11 @@ export function executeAnonymous(apexCode?: string) {
 
     let apexApi = new ApexApi();
     apexApi.executeAnonymous(apexCode).then( response => {
-        vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
-            editor = vscode.window.activeTextEditor;
-            if (editor) {
-                editor.edit(editBuilder => {
-                    editBuilder.insert(new vscode.Position(0, 0), response.body);
-                });
-            }
-        });
+        util.openNewUntitledFile(response.body);
+    })
+    .catch( err => {
+        console.log(err);
+        vscode.window.showErrorMessage(err.message);
     });
 }
 
