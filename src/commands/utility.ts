@@ -57,10 +57,18 @@ export function convertXml2Json(xmlStr="") {
     if (!xmlStr && editor && editor.selection) {
         xmlStr = editor.document.getText(editor.selection) || "{}";
     }
+    
+    // Validate xml
+    let validResult = xmlParser.validate(xmlStr);
+    if (validResult !== true) {
+        console.log(validResult.err);
+        vscode.window.showErrorMessage(validResult.err);
+    }
 
     // Parse xml to json
     let result = xmlParser.parse(xmlStr);
-        
+    
+    // Open a new file to display the json
     vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
         editor = vscode.window.activeTextEditor;
         if (editor) {
