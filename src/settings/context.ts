@@ -48,6 +48,12 @@ export class ProjectSettings {
         this.setConfigValue("session.json", options);
     }
 
+    /**
+     * Get all configs or get value of spcified key
+     * @param fileName file name, for example, settings
+     * @param key if no specified, means get all key-values
+     * @returns value of specified key or all key-values
+     */
     public getConfigValue(fileName: string, key?: string) {
         let filePath = this.getFilePath(fileName);
         let data = fs.readFileSync(filePath, "utf-8");

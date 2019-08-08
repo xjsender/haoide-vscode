@@ -40,6 +40,10 @@
 				"title": "Haoide: Switch Project"
 			},
 			{
+				"command": "extension.haoide.toggleMetadataObjects",
+				"title": "Haoide: Toggle Metadata Objects"
+			},
+			{
 				"command": "extension.haoide.createProject",
 				"title": "Haoide: Create New Project"
 			},

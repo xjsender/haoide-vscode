@@ -5,6 +5,7 @@ import * as os from "os";
 import * as AdmZip from "adm-zip";
 import * as shelljs from "shelljs";
 import * as util from "../utils/util";
+import * as utility from "./utility";
 import { projectSettings } from "../settings";
 import MetadataApi from "../salesforce/api/metadata";
 import ApexApi from "../salesforce/api/apex";
@@ -33,14 +34,12 @@ export function executeAnonymous(apexCode?: string) {
 }
 
 export function createProject() {
-    let sessionInfo = projectSettings.getSessionInfo();
-    
     let _types = {
         "ApexClass": ["*"],
         "ApexTrigger": ["*"]
     };
 
-    let metadataApi = new MetadataApi(sessionInfo);
+    let metadataApi = new MetadataApi();
     metadataApi.retrieve({"types": _types}).then( result => {
         let zipFilePath = path.join(os.homedir(), "haoide.zip");
         fs.writeFileSync(
@@ -69,6 +68,9 @@ export function createProject() {
                 path.join(filePath, fileName),
                 zipEntry.getData()
             );
+
+            // Add project to workspace
+            utility.addDefaultProjectToWorkspace();
         }
     });
 }

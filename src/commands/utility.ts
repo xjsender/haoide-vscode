@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as xmlParser from "fast-xml-parser";
+import * as _ from "lodash";
 import * as util from "../utils/util";
 import { projectSettings } from "../settings";
 
@@ -8,6 +9,68 @@ export function addDefaultProjectToWorkspace() {
     // Add project to workspace
     let projectName = util.getDefaultProject();
     util.addProjectToWorkspace(projectName);
+}
+
+export async function toggleMetadataObjects() {
+    let settings = projectSettings.getConfigValue("settings.json");
+    let subscribed_metadata_objects = settings["subscribed_metadata_objects"] || [];
+    let metadataObjects = projectSettings.getConfigValue("metadata.json");
+    let metaObjects = _.sortBy(metadataObjects["metadataObjects"], mo => mo.xmlName);
+    
+    const selecteItems = await vscode.window.showQuickPick(
+        _.map(metaObjects, mo => {
+            let isPicked = _.indexOf(subscribed_metadata_objects, mo.xmlName) !== -1;
+
+            return {
+                label: mo.xmlName,
+                description: mo.directoryName,
+                picked: isPicked,
+                alwaysShow: isPicked
+            };
+        }), {
+            placeHolder: "Choose the metadata objects to be subscribed",
+            canPickMany: true,
+            ignoreFocusOut: true
+        }
+    );
+
+    // Keep subscribed_metadata_objects to project settings
+    projectSettings.setConfigValue("settings.json", {
+        "subscribed_metadata_objects": _.map(selecteItems, si => si.label)
+    });
+
+    // quickPick.placeholder = "Please choose the metadata objects";
+    // quickPick.canSelectMany = true;
+    // quickPick.items = _.map(
+    //     metadataObjects["metadataObjects"], mo => {
+            // return {
+            //     label: mo.xmlName,
+            //     description: mo.directoryName,
+            //     picked: _.indexOf(
+            //         subscribed_metadata_objects, mo.xmlName
+            //     ) !== -1
+            // };
+    //     }
+    // );
+
+    // // Add event listener
+    // quickPick.onDidAccept(() => {
+    //     // Get selected items
+    //     subscribed_metadata_objects = _.map(
+    //         quickPick.selectedItems, selectedItem => {
+    //             return selectedItem.label;
+    //         }
+    //     );
+
+    //     // Keep subscribed_metadata_objects to project settings
+    //     projectSettings.setConfigValue("settings.json", {
+    //         "subscribed_metadata_objects": subscribed_metadata_objects
+    //     });
+
+    //     quickPick.dispose();
+    // });
+
+    // quickPick.show();
 }
 
 export function switchProject(projectName?: string) {
