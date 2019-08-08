@@ -1,37 +1,13 @@
-import * as vscode from 'vscode';
 import * as path from "path";
 import * as fs from "fs";
+import * as moment from "moment";
 import * as util from "../utils/util";
 
-export class ExtensionSettings {
-    private static instance: ExtensionSettings;
 
-    public static getInstance() {
-        if (!ExtensionSettings.instance) {
-            ExtensionSettings.instance = new ExtensionSettings();
-        }
-        return ExtensionSettings.instance;
-    }
-
-    /**
-     * Get the configuration for a sfdx-core
-     */
-    public getConfiguration(): vscode.WorkspaceConfiguration {
-        return vscode.workspace.getConfiguration('haoide');
-    }
-
-    public getConfigValue<T>(key: string, defaultValue: T): T {
-        return this.getConfiguration().get<T>(key, defaultValue);
-    }
-
-    public async setConfigValue(key: string, value: any) {
-        await this.getConfiguration().update(key, value);
-    }
-}
-
-export class ProjectSettings {
-    private extInstance = ExtensionSettings.getInstance();
+export default class ProjectSettings {
     private static instance: ProjectSettings;
+    private sessionFileName = "session.json";
+    private settingsFileName = "settings.json";
 
     public static getInstance() {
         if (!ProjectSettings.instance) {
@@ -40,12 +16,61 @@ export class ProjectSettings {
         return ProjectSettings.instance;
     }
 
-    public getSessionInfo() {
-        return this.getConfigValue("session.json");
+    public getSession(): any {
+        return this.getConfigValue(this.sessionFileName);
     }
 
-    public setSessionInfo(options: { [key: string]: any }) {
-        this.setConfigValue("session.json", options);
+    public setSession(options: {}) {
+        return this.setConfigValue(
+            this.sessionFileName, options
+        );
+    }
+
+    /**
+     * Update session id when refresh token
+     * @param sessionId sessionId to update
+     */
+    public setSessionId(sessionId: string): void {
+        this.setConfigValue(this.sessionFileName, {
+            "sessionId": sessionId,
+            "lastUpdatedTime": moment().format()
+        });
+    }
+
+    public getSessionId(): string {
+        return this.getConfigValue(
+            this.sessionFileName, 
+            "sessionId"
+        );
+    }
+
+    /**
+     * Get settings of default project
+     * @returns settings of project
+     */
+    public getSettings(): {} {
+        return this.getConfigValue(this.settingsFileName);
+    }
+
+    /**
+     * Get subscribed metadataObjects
+     * @returns subscribed metadataObjects array
+     */
+    public getSubscribedMetadataObjects(): [] {
+        return this.getConfigValue(
+            this.settingsFileName,
+            "subscribed_metadata_objects"
+        );
+    }
+
+    /**
+     * Set subscribed metadataObjects settings by spcified values
+     * @param subscribed_metadata_objects subscribed metadataObjects array
+     */
+    public setSubscribedMetadataObjects(subscribed_metadata_objects: []): void {
+        this.setConfigValue(this.settingsFileName, {
+            "subscribed_metadata_objects": subscribed_metadata_objects
+        });
     }
 
     /**

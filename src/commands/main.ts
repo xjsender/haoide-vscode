@@ -34,13 +34,10 @@ export function executeAnonymous(apexCode?: string) {
 }
 
 export function createProject() {
-    let _types = {
-        "ApexClass": ["*"],
-        "ApexTrigger": ["*"]
-    };
+    // let subscribed_metadata_objects = projectSettings.getSubscribedMetadataObjects();
 
     let metadataApi = new MetadataApi();
-    metadataApi.retrieve({"types": _types}).then( result => {
+    metadataApi.retrieve({"types": {"ApexClass": ["*"]}}).then( result => {
         let zipFilePath = path.join(os.homedir(), "haoide.zip");
         fs.writeFileSync(
             zipFilePath, result["zipFile"], "base64"

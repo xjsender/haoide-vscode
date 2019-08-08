@@ -44,7 +44,7 @@ export function startServer(projectName: any, loginUrl: string) {
                 util.addProjectToWorkspace(projectName);
 
                 // Write sessionId and refreshToken to local cache
-                let sessionInfo = {
+                let session = {
                     "orgnizationId": organizationId,
                     "userId": userId,
                     "sessionId": body["access_token"],
@@ -53,10 +53,10 @@ export function startServer(projectName: any, loginUrl: string) {
                     "loginUrl": loginUrl,
                     "lastUpdatedTime": moment().format()
                 };
-                projectSettings.setSessionInfo(sessionInfo);
+                projectSettings.setSession(session);
 
                 // Describe metadata
-                let metadataApi = new MetadataApi(sessionInfo);
+                let metadataApi = new MetadataApi(session);
                 metadataApi.describeMetadata()
                     .then(function(response) {
                         let result = xmlParser.parse(response["body"]);
@@ -73,7 +73,7 @@ export function startServer(projectName: any, loginUrl: string) {
                 vscode.window.showInformationMessage("You have been successfully login.");
 
                 // Redirect to salesforce home page
-                res.redirect(`${sessionInfo["instanceUrl"]}/home/home.jsp`);
+                res.redirect(`${session["instanceUrl"]}/home/home.jsp`);
             })
             .catch(err => {
                 console.error(err);

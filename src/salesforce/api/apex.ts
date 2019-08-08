@@ -18,7 +18,7 @@ export default class ApexApi {
     }
 
     private initiate(sessionInfo?: any) {
-        this.session = sessionInfo || projectSettings.getSessionInfo();
+        this.session = sessionInfo || projectSettings.getSession();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;

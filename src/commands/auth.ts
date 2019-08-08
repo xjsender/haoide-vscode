@@ -42,16 +42,13 @@ export async function authorizeNewProject() {
 }
 
 export function authorizeDefaultProject() {
-    let sessionInfo = projectSettings.getSessionInfo();
-    let oauth = new OAuth(sessionInfo["loginUrl"]);
+    let session = projectSettings.getSession();
+    let oauth = new OAuth(session["loginUrl"]);
 
     return new Promise( (resolve, reject) => {
-        oauth.refreshToken(sessionInfo["refreshToken"]).then(function(response) {
+        oauth.refreshToken(session["refreshToken"]).then(function(response) {
             let body = JSON.parse(response["body"]);
-            sessionInfo["sessionId"] = body["access_token"];
-            sessionInfo["lastUpdatedTime"] = moment().format();
-
-            projectSettings.setSessionInfo(sessionInfo);
+            projectSettings.setSessionId(body["access_token"]);
 
             // Add project to workspace
             let projectName = util.getDefaultProject();

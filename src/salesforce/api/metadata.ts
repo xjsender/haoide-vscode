@@ -14,12 +14,12 @@ export default class MetadataApi {
     private headers: any;
     private metadataUrl!: string;
 
-    public constructor(sessionInfo?:any) {
-        this.initiate(sessionInfo);
+    public constructor(session?: any) {
+        this.initiate(session);
     }
 
-    private initiate(sessionInfo?: any) {
-        this.session = sessionInfo || projectSettings.getSessionInfo();
+    private initiate(session?: any) {
+        this.session = session || projectSettings.getSession();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;

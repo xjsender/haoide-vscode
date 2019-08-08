@@ -41,7 +41,7 @@ export class OAuth {
                 resolve(response);
             })
             .catch (err => {
-                reject(err);    
+                reject(err);
             });
         });
     }

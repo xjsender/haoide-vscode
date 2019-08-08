@@ -39,6 +39,8 @@ export async function toggleMetadataObjects() {
     projectSettings.setConfigValue("settings.json", {
         "subscribed_metadata_objects": _.map(selecteItems, si => si.label)
     });
+
+    vscode.window.showInformationMessage("You subscribed metadata objects are updated");
 }
 
 export function switchProject(projectName?: string) {
@@ -74,7 +76,7 @@ export function switchProject(projectName?: string) {
 }
 
 export function loginToSFDC(startUrl?: string) {
-    let session = projectSettings.getSessionInfo();
+    let session = projectSettings.getSession();
 
     let open_url = `${session["instanceUrl"]}/secur/frontdoor.jsp` + 
         `?sid=${session["sessionId"]}&retURL=${startUrl}`;
@@ -86,7 +88,7 @@ export function loginToSFDC(startUrl?: string) {
  * Command for copying loginUrl to clipboard
  */
 export function copyLoginUrl() {
-    let session = projectSettings.getSessionInfo();
+    let session = projectSettings.getSession();
 
     let loginUrl = `${session["instanceUrl"]}/secur/frontdoor.jsp` +
         `?sid=${session["sessionId"]}`;
