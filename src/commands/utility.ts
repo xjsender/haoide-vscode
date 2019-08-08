@@ -30,7 +30,8 @@ export async function toggleMetadataObjects() {
         }), {
             placeHolder: "Choose the metadata objects to be subscribed",
             canPickMany: true,
-            ignoreFocusOut: true
+            ignoreFocusOut: true,
+            matchOnDescription: true
         }
     );
 
@@ -38,39 +39,6 @@ export async function toggleMetadataObjects() {
     projectSettings.setConfigValue("settings.json", {
         "subscribed_metadata_objects": _.map(selecteItems, si => si.label)
     });
-
-    // quickPick.placeholder = "Please choose the metadata objects";
-    // quickPick.canSelectMany = true;
-    // quickPick.items = _.map(
-    //     metadataObjects["metadataObjects"], mo => {
-            // return {
-            //     label: mo.xmlName,
-            //     description: mo.directoryName,
-            //     picked: _.indexOf(
-            //         subscribed_metadata_objects, mo.xmlName
-            //     ) !== -1
-            // };
-    //     }
-    // );
-
-    // // Add event listener
-    // quickPick.onDidAccept(() => {
-    //     // Get selected items
-    //     subscribed_metadata_objects = _.map(
-    //         quickPick.selectedItems, selectedItem => {
-    //             return selectedItem.label;
-    //         }
-    //     );
-
-    //     // Keep subscribed_metadata_objects to project settings
-    //     projectSettings.setConfigValue("settings.json", {
-    //         "subscribed_metadata_objects": subscribed_metadata_objects
-    //     });
-
-    //     quickPick.dispose();
-    // });
-
-    // quickPick.show();
 }
 
 export function switchProject(projectName?: string) {
@@ -109,9 +77,25 @@ export function loginToSFDC(startUrl?: string) {
     let session = projectSettings.getSessionInfo();
 
     let open_url = `${session["instanceUrl"]}/secur/frontdoor.jsp` + 
-        `?sid=${session["sessionId"]}&retURL=${startUrl} || ""`;
+        `?sid=${session["sessionId"]}&retURL=${startUrl}`;
 
     util.openWithBrowser(open_url);
+}
+
+/**
+ * Command for copying loginUrl to clipboard
+ */
+export function copyLoginUrl() {
+    let session = projectSettings.getSessionInfo();
+
+    let loginUrl = `${session["instanceUrl"]}/secur/frontdoor.jsp` +
+        `?sid=${session["sessionId"]}`;
+
+    // Write loginUrl to clipboard
+    vscode.env.clipboard.writeText(loginUrl);
+
+    // Show information
+    vscode.window.showInformationMessage("Login url has been copied to clipboard");
 }
 
 export function convertXml2Json(xmlStr="") {

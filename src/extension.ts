@@ -56,6 +56,11 @@ export function activate(context: vscode.ExtensionContext) {
 		"extension.haoide.loginToSFDC", utility.loginToSFDC
 	));
 
+	// Register copyLoginUrl command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.copyLoginUrl", utility.copyLoginUrl
+	));
+
 	// Register loginToSFDC command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.formatJson", utility.formatJson
