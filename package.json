@@ -1,6 +1,8 @@
 {
 	"name": "haoide-vscode",
 	"displayName": "haoide-vscode",
+	"publisher": "mouseliu",
+	"repository": "https://github.com/xjsender/haoide-vscode",
 	"description": "haoide-vscode is a vscode extension for force.com development",
 	"version": "0.0.1",
 	"engines": {
@@ -17,47 +19,58 @@
 		"commands": [
 			{
 				"command": "extension.haoide.authorize.new",
-				"title": "Haoide: Authorize New Project"
+				"title": "Authorize New Project",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.authorize.default",
-				"title": "Haoide: Authorize Default Project"
+				"title": "Authorize Default Project",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.addDefaultProjectToWorkspace",
-				"title": "Haoide: Add Default Project to Workspace"
+				"title": "Add Default Project to Workspace",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.loginToSFDC",
-				"title": "Haoide: Open Default Org"
+				"title": "Open Default Org",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.copyLoginUrl",
-				"title": "Haoide: Copy Login Url"
+				"title": "Copy Login Url",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.executeAnonymous",
-				"title": "Haoide: Execute Anonymous Code"
+				"title": "Execute Anonymous Code",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.switchProject",
-				"title": "Haoide: Switch Project"
+				"title": "Switch Project",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.toggleMetadataObjects",
-				"title": "Haoide: Toggle Metadata Objects"
+				"title": "Toggle Metadata Objects",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.createProject",
-				"title": "Haoide: Create New Project"
+				"title": "Create New Project",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.formatJson",
-				"title": "Haoide: Format JSON"
+				"title": "Format JSON",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.convertXml2Json",
-				"title": "Haoide: Convert XML to JSON"
+				"title": "Convert XML to JSON",
+				"category": "Haoide"
 			}
 		],
 		"keybindings": [
@@ -169,12 +182,7 @@
 				"haoide.workspace": {
 					"type": "string",
 					"default": "",
-					"description": "Your project location"
-				},
-				"haoide.default-project": {
-					"type": "string",
-					"default": "",
-					"description": "Your default authorized project"
+					"description": "Indicate where to put projects"
 				}
 			}
 		}
@@ -210,6 +218,25 @@
 		"shelljs": "^0.8.1"
 	},
 	"dependencies": {
+		"@salesforce/apex-tmlanguage": "^1.1.0",
+		"@types/mocha": "^2.2.42",
+		"@types/node": "^10.12.21",
+		"@types/express": "^4.16.3",
+		"@types/request-promise": "^4.1.44",
+		"@types/lodash": "^4.14.136",
+		"@types/adm-zip": "^0.4.32",
+		"@types/shelljs": "^0.8.5",
+		"moment": "^2.24.0",
+		"request": "*",
+		"request-promise": "^4.2.4",
+		"typescript": "^3.3.1",
+		"express": "^4.16.4",
+		"open": "^6.4.0",
+		"querystring": "v0.2.0",
+		"lodash": "^4.17.15",
+		"fast-xml-parser": "^3.12.19",
+		"adm-zip": "^0.4.13",
+		"shelljs": "^0.8.1",
 		"inherits": "^2.0.4",
 		"npm-update": "^2.1.0"
 	}

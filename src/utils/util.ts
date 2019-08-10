@@ -12,6 +12,22 @@ export function openWithBrowser(url: string) {
     });
 }
 
+/**
+ * Create status bar item
+ * @param text text to show in the status bar
+ * @param tooltip text to display when hove on it
+ */
+let haoideStatusBarItem;
+export function setStatusBarItem(text: string, tooltip?: string) {
+    haoideStatusBarItem = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Left, 9999
+    );
+
+    haoideStatusBarItem.text = text;
+    haoideStatusBarItem.tooltip = tooltip || "";
+    haoideStatusBarItem.show();
+}
+
 export function parseIdUrl(idUrl: string) {
     var idUrls = idUrl.split("/");
     var userId = idUrls.pop(), orgId = idUrls.pop();
@@ -28,19 +44,22 @@ export function parseIdUrl(idUrl: string) {
  */
 export function openNewUntitledFile(content: string, languageId?: string) {
     let editor = vscode.window.activeTextEditor;
-    vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
-        editor = vscode.window.activeTextEditor;
-        if (editor) {
-            languageId = languageId || "json";
-            vscode.languages.setTextDocumentLanguage(
-                editor.document, languageId
-            );
-
-            editor.edit(editBuilder => {
-                editBuilder.insert(new vscode.Position(0, 0), content);
-            });
-        }
-    });
+    vscode.commands.executeCommand("workbench.action.files.newUntitledFile")
+        .then(() => {
+            editor = vscode.window.activeTextEditor;
+            if (editor) {
+                // Set language of the untitled file
+                languageId = languageId || "json";
+                vscode.languages.setTextDocumentLanguage(
+                    editor.document, languageId
+                );
+                
+                // Insert content to new open file from start
+                editor.edit(editBuilder => {
+                    editBuilder.insert(new vscode.Position(0, 0), content);
+                });
+            }
+        });
 }
 
 export function getExtensionWorkspace() {

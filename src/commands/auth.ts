@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import * as moment from "moment";
 import { startLogin, startServer } from "../salesforce/lib/auth/server";
 import { projectSettings } from "../settings";
 import { OAuth } from "../salesforce/lib/auth/oauth";
@@ -53,6 +52,11 @@ export function authorizeDefaultProject() {
             // Add project to workspace
             let projectName = util.getDefaultProject();
             util.addProjectToWorkspace(projectName);
+
+            // Show success information
+            vscode.window.showInformationMessage(
+                "Session information is refreshed"
+            );
 
             resolve();
         })

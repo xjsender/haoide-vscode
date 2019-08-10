@@ -9,6 +9,23 @@ import * as utility from "./utility";
 import { projectSettings } from "../settings";
 import MetadataApi from "../salesforce/api/metadata";
 import ApexApi from "../salesforce/api/apex";
+import RestApi from "../salesforce/api/rest";
+
+export function executeRestTest() {
+    // Get selection in the active editor
+    let editor = vscode.window.activeTextEditor;
+    let serverUrl = "";
+    if (editor && editor.selection) {
+        serverUrl = editor.document.getText(editor.selection);
+    }
+
+    let restApi = new RestApi();
+    restApi.get(serverUrl).then( body => {
+        util.openNewUntitledFile(
+            JSON.stringify(JSON.parse(body), null, 4)
+        );
+    });
+}
 
 export function executeAnonymous(apexCode?: string) {
     // Get selection in the active editor
@@ -34,10 +51,14 @@ export function executeAnonymous(apexCode?: string) {
 }
 
 export function createProject() {
-    // let subscribed_metadata_objects = projectSettings.getSubscribedMetadataObjects();
+    let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
+    let types: any = {};
+    for (const mo of subscribedMetaObjects) {
+        types[mo] = ["*"];
+    }
 
     let metadataApi = new MetadataApi();
-    metadataApi.retrieve({"types": {"ApexClass": ["*"]}}).then( result => {
+    metadataApi.retrieve({ "types": types}).then( result => {
         let zipFilePath = path.join(os.homedir(), "haoide.zip");
         fs.writeFileSync(
             zipFilePath, result["zipFile"], "base64"
@@ -65,9 +86,9 @@ export function createProject() {
                 path.join(filePath, fileName),
                 zipEntry.getData()
             );
-
-            // Add project to workspace
-            utility.addDefaultProjectToWorkspace();
         }
+
+        // Add project to workspace
+        utility.addDefaultProjectToWorkspace();
     });
 }

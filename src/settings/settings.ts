@@ -37,13 +37,6 @@ export default class ProjectSettings {
         });
     }
 
-    public getSessionId(): string {
-        return this.getConfigValue(
-            this.sessionFileName, 
-            "sessionId"
-        );
-    }
-
     /**
      * Get settings of default project
      * @returns settings of project
@@ -53,24 +46,53 @@ export default class ProjectSettings {
     }
 
     /**
-     * Get subscribed metadataObjects
-     * @returns subscribed metadataObjects array
+     * Get subscribed metaObjects
+     * @returns subscribed metaObjects array
      */
-    public getSubscribedMetadataObjects(): [] {
+    public getSubscribedMetaObjects(): Array<string> {
         return this.getConfigValue(
             this.settingsFileName,
-            "subscribed_metadata_objects"
+            "subscribedMetaObjects"
         );
     }
 
     /**
-     * Set subscribed metadataObjects settings by spcified values
-     * @param subscribed_metadata_objects subscribed metadataObjects array
+     * Set subscribed metaObjects settings by spcified values
+     * @param subscribedMetaObjects subscribed metaObjects array
      */
-    public setSubscribedMetadataObjects(subscribed_metadata_objects: []): void {
+    public setSubscribedMetaObjects(subscribedMetaObjects: []): void {
         this.setConfigValue(this.settingsFileName, {
-            "subscribed_metadata_objects": subscribed_metadata_objects
+            "subscribedMetaObjects": subscribedMetaObjects
         });
+    }
+
+    /**
+     * Get deployOptions of this project if have,
+     * otherwise, set it as default one
+     * @returns Metadata Deployment options
+     */
+    public getDeployOptions() {
+        let deployOptions = this.getConfigValue(
+            this.settingsFileName,
+            "deployOptions"
+        );
+
+        if (!deployOptions) {
+            deployOptions = {
+                "allowMissingFiles": false,
+                "autoUpdatePackage": false,
+                "checkOnly": false,
+                "ignoreWarnings": true,
+                "performRetrieve": false,
+                "purgeOnDelete": false,
+                "rollbackOnError": true,
+                "runTests": "true",
+                "singlePackage": true,
+                "testLevel": "NoTestRun"
+            };
+        }
+
+        return deployOptions;
     }
 
     /**
@@ -81,12 +103,18 @@ export default class ProjectSettings {
      */
     public getConfigValue(fileName: string, key?: string) {
         let filePath = this.getFilePath(fileName);
+
+        // If config file is not exist, return {}
+        if (!fs.existsSync(filePath)) {
+            return {};
+        }
+
         let data = fs.readFileSync(filePath, "utf-8");
         let config: {[key: string]: any} = JSON.parse(data.toString());
 
         // If key parameter is null, return all
         if (key) {
-            return config.get(key);
+            return config[key];
         }
 
         return config;

@@ -33,23 +33,30 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.switchProject", utility.switchProject
 	));
-
+	
+	// Register toggleMetaObjects command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.toggleMetadataObjects", 
 		utility.toggleMetadataObjects
 	));
 
-	// Add default project to workspace
+	// Register default project to workspace
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.addDefaultProjectToWorkspace", 
 		utility.addDefaultProjectToWorkspace
 	));
 
-	// Add default project to workspace
+	// Register executeAnonymous command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.executeAnonymous",
 		main.executeAnonymous
 	));
+
+	// Register executeRestTest command
+	// context.subscriptions.push(vscode.commands.registerCommand(
+	// 	"extension.haoide.executeRestTest",
+	// 	utility.executeRestTest
+	// ));
 
 	// Register loginToSFDC command
 	context.subscriptions.push(vscode.commands.registerCommand(
@@ -60,12 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.copyLoginUrl", utility.copyLoginUrl
 	));
-
-	// Register loginToSFDC command
-	context.subscriptions.push(vscode.commands.registerCommand(
-		"extension.haoide.formatJson", utility.formatJson
-	));
-
+	
 	// Register loginToSFDC command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.convertXml2Json", utility.convertXml2Json

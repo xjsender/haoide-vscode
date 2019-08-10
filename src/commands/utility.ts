@@ -12,14 +12,16 @@ export function addDefaultProjectToWorkspace() {
 }
 
 export async function toggleMetadataObjects() {
-    let settings = projectSettings.getConfigValue("settings.json");
-    let subscribed_metadata_objects = settings["subscribed_metadata_objects"] || [];
+    // Get all meta objects
     let metadataObjects = projectSettings.getConfigValue("metadata.json");
     let metaObjects = _.sortBy(metadataObjects["metadataObjects"], mo => mo.xmlName);
+
+    // Get already subscribed meta objects
+    let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
     
     const selecteItems = await vscode.window.showQuickPick(
         _.map(metaObjects, mo => {
-            let isPicked = _.indexOf(subscribed_metadata_objects, mo.xmlName) !== -1;
+            let isPicked = _.indexOf(subscribedMetaObjects, mo.xmlName) !== -1;
 
             return {
                 label: mo.xmlName,
@@ -35,9 +37,9 @@ export async function toggleMetadataObjects() {
         }
     );
 
-    // Keep subscribed_metadata_objects to project settings
+    // Keep subscribedMetaObjects to project settings
     projectSettings.setConfigValue("settings.json", {
-        "subscribed_metadata_objects": _.map(selecteItems, si => si.label)
+        "subscribedMetaObjects": _.map(selecteItems, si => si.label)
     });
 
     vscode.window.showInformationMessage("You subscribed metadata objects are updated");
@@ -63,10 +65,18 @@ export function switchProject(projectName?: string) {
 
     // Add event listener
     quickPick.onDidChangeSelection(chosenItems => {
+        // Add chosen project
         const chosenItem = chosenItems[0];
         util.setDefaultProject(chosenItem.label);
         quickPick.hide();
 
+        // Show default project at the status bar
+        util.setStatusBarItem(
+            `Haoide: ${chosenItem.label}`,
+            `This is haoide default project`
+        );
+        
+        // Show success message
         vscode.window.showInformationMessage(
             `Your current default project is changed to ${chosenItem.label}`
         );
@@ -119,28 +129,4 @@ export function convertXml2Json(xmlStr="") {
     
     // Open a new file to display the json
     util.openNewUntitledFile(JSON.stringify(result, null, 4));
-}
-
-/**
- * Format json string and display it in the new view
- * Just wokrk when editor has selection
- * @param jsonStr JSON String
- */
-export function formatJson(jsonStr="{}") {
-    // Get selection in the active editor if no jsonStr param
-    let editor = vscode.window.activeTextEditor;
-    if (jsonStr !== "{}" && editor && editor.selection) {
-        jsonStr = editor.document.getText(editor.selection) || "{}";
-    }
-
-    let formattedJson = JSON.stringify(JSON.parse(jsonStr), null, 4);
-
-    vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
-        editor = vscode.window.activeTextEditor;
-        if (editor) {
-            editor.edit(editBuilder => {
-                editBuilder.insert(new vscode.Position(0, 0), formattedJson);
-            });
-        }
-    });
 }

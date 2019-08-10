@@ -129,11 +129,12 @@ export default class MetadataApi {
 
     /**
      *  1. Issue a retrieve request to start the asynchronous retrieval and asyncProcessId is returned
-        2. Issue a checkRetrieveStatus request to check whether the async process job is completed.
-        3. After the job is completed, you will get the zipFile(base64) 
-        4. Use Python Lib base64 to convert the base64 string to zip file.
-        5. Use Python Lib zipFile to unzip the zip file to path
+     *  2. Issue a checkRetrieveStatus request to check whether the async process job is completed.
+     *  3. After the job is completed, you will get the zipFile(base64) 
+     *  4. Use Python Lib base64 to convert the base64 string to zip file.
+     *  5. Use Python Lib zipFile to unzip the zip file to path
      * @param options {"types" : types, "package_names": package_names}
+     * @returns new Promise<any>{Response}
      */
     public retrieve(options: any) {
         let self = this;
@@ -167,10 +168,12 @@ export default class MetadataApi {
             .catch( err => {
                 // If session is expired, just login again
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
-                    auth.authorizeDefaultProject().then(() => {
+                    return auth.authorizeDefaultProject().then(() => {
                         self.initiate().retrieve(options);
                     });
                 }
+
+                reject(err);
             });
         });
     }

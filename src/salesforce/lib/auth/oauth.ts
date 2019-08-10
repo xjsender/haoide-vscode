@@ -1,5 +1,5 @@
 
-import { port, entryPoint, appConfig } from "./config";
+import { appConfig } from "./config";
 import * as querystring from "querystring";
 import * as request from "request-promise";
 
