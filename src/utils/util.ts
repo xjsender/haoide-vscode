@@ -26,11 +26,16 @@ export function parseIdUrl(idUrl: string) {
  * Open a new untitled file and display specified content
  * @param content Content to display in the newUntitile file
  */
-export function openNewUntitledFile(content: string) {
+export function openNewUntitledFile(content: string, languageId?: string) {
     let editor = vscode.window.activeTextEditor;
     vscode.commands.executeCommand("workbench.action.files.newUntitledFile").then(() => {
         editor = vscode.window.activeTextEditor;
         if (editor) {
+            languageId = languageId || "json";
+            vscode.languages.setTextDocumentLanguage(
+                editor.document, languageId
+            );
+
             editor.edit(editBuilder => {
                 editBuilder.insert(new vscode.Position(0, 0), content);
             });
