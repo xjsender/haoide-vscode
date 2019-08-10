@@ -1,9 +1,11 @@
 import * as vscode from "vscode";
 import * as request from "request-promise";
 import * as xmlParser from "fast-xml-parser";
+import * as _ from "lodash";
 import SOAP from "../lib/soap";
 import { projectSettings } from "../../settings";
 import * as auth from "../../commands/auth";
+import ProgressNotification from "../../utils/progress";
 
 export default class MetadataApi {
     private soap!: SOAP;
@@ -35,24 +37,46 @@ export default class MetadataApi {
         return this;
     }
 
-    private _invoke_method(_method:string, options: any={}) {
+    private _invoke_method(options: any, progress?: any) {
         let self = this;
+
         return new Promise<any>(function(resolve, reject) {
-            let soapBody = self.soap.getRequestBody(_method, options);
+            let requestType = options["requestType"];
+            let soapBody = self.soap.getRequestBody(requestType, options);
 
             let requestOptions = {
                 method: options["method"] || "POST",
                 headers: self.headers,
                 uri: self.metadataUrl,
-                resolveWithFullResponse: options["resolveWithFullResponse"] || true,
+                resolveWithFullResponse: false,
                 body: soapBody
             };
-            console.log(requestOptions);
 
-            request(requestOptions).then(response => {
-                resolve(response);
+            // Send notification
+            ProgressNotification.notify(
+                progress, `Start ${requestType}...`
+            );
+
+            request(requestOptions).then(body => {
+                let parseResult = xmlParser.parse(body);
+                let soapenvBody = parseResult["soapenv:Envelope"]["soapenv:Body"];
+                let result = soapenvBody[`${_.lowerFirst(requestType)}Response`]["result"];
+
+                // If request is finished, notify user and stop future notification
+                ProgressNotification.notify(
+                    progress, `${requestType} submitted successfully`, 100
+                );
+
+                resolve(result);
             })
             .catch (err => {
+                // If session is expired, just login again
+                if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
+                    return auth.authorizeDefaultProject().then(() => {
+                        self.initiate().retrieve(options);
+                    });
+                }
+
                 reject(err);
             });
         });
@@ -71,21 +95,10 @@ export default class MetadataApi {
      * @param asyncProcessId async process Id
      * @returns {Promise.<Response>}
      */
-    public checkStatus(asyncProcessId: string) {
-        return this._invoke_method("CheckStatus", {
-            "asyncProcessId": asyncProcessId
-        });
-    }
-
-    /**
-     * Check Status
-     * @param asyncProcessId async process Id
-     * @returns {Promise.<Response>}
-     */
-    public checkRetriveStatus(asyncProcessId: string, progress?: any) {
+    public checkRetriveStatus(options: any, progress?: any) {
         let self = this;
         let soapBody = self.soap.getRequestBody("CheckRetrieveStatus", {
-            "asyncProcessId": asyncProcessId
+            "asyncProcessId": options["asyncProcessId"]
         });
 
         let requestOptions = {
@@ -106,21 +119,16 @@ export default class MetadataApi {
                     let done: boolean = result["done"];
 
                     // Show progress status
-                    if (progress && !done) {
-                        progress.report({message: result["status"]});
-                    }
-                    else if (progress && done) {
-                        progress.report({
-                            increment: 100,
-                            message: result["status"]
-                        });
-                    }
+                    ProgressNotification.notify(
+                        progress, result["status"], 
+                        done ? 100 : undefined
+                    );
 
                     if (!done) {
                         return setTimeout(recursiveCheck, 2000);
                     }
                     else {
-                        resolve(response);
+                        resolve(result);
                     }
                 });
             }
@@ -142,39 +150,15 @@ export default class MetadataApi {
         // let retrieveAll = options["retrieveAll"] || false;
         
         return new Promise<any>( (resolve, reject) => {
-            this._invoke_method("Retrieve", options).then( response => {
-                let parseResult = xmlParser.parse(response["body"]);
-                let result = parseResult["soapenv:Envelope"]["soapenv:Body"]["retrieveResponse"]["result"];
-                
-                vscode.window.withProgress({
-                    location: vscode.ProgressLocation.Notification,
-                    title: `[sf:retrieve] Request Status: `,
-                    cancellable: true
-                }, (progress, token) => {
-                    token.onCancellationRequested(() => {
-                        console.log("You canceled the long polling operation");
-                    });
-                    progress.report({message: result["state"]});
-
-                    return self.checkRetriveStatus(result["id"], progress);
-                })
-                .then( res => {
-                    parseResult = xmlParser.parse(res["body"]);
-                    result = parseResult["soapenv:Envelope"]["soapenv:Body"]["checkRetrieveStatusResponse"]["result"];
-
-                    resolve(result);
+            options["requestType"] = "Retrieve";
+            ProgressNotification.showProgress(self, "_invoke_method", options)
+                .then( result => {
+                    options["asyncProcessId"] = result["id"];
+                    ProgressNotification.showProgress(self, "checkRetriveStatus", options)
+                        .then( result => {
+                            resolve(result);
+                        });
                 });
-            })
-            .catch( err => {
-                // If session is expired, just login again
-                if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
-                    return auth.authorizeDefaultProject().then(() => {
-                        self.initiate().retrieve(options);
-                    });
-                }
-
-                reject(err);
-            });
         });
     }
 }

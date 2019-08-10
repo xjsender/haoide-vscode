@@ -46,6 +46,16 @@ export default class ProjectSettings {
     }
 
     /**
+     * Get settings of default project
+     * @returns settings of project
+     */
+    public getSettingValue(key: string): any {
+        return this.getConfigValue(
+            this.settingsFileName, key
+        );
+    }
+
+    /**
      * Get subscribed metaObjects
      * @returns subscribed metaObjects array
      */
