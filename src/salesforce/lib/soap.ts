@@ -105,15 +105,17 @@ export default class SOAP {
 
     /**
      * Build soap body for deployment check operation
-     * @param options {"asyncProcessId": string}
-     * @param includeDetails true means including deploy details in the deployment result
+     * @param options {
+     *      "asyncProcessId": string,
+     *      "includeDetails": true | false
+     * }
      * @returns Soap body for ``Check Retrieve Status`` request
      */
-    private createCheckDeployStatusRequest(options: any={}, includeDetails=true) {
+    private createCheckDeployStatusRequest(options: any={}) {
         let soapBody = `
             <met:checkDeployStatus>
                 <met:asyncProcessId>${options["asyncProcessId"]}</met:asyncProcessId>
-                <met:includeDetails>${includeDetails}</met:includeDetails>
+                <met:includeDetails>${options["includeDetails"]}</met:includeDetails>
             </met:checkDeployStatus>
         `;
 

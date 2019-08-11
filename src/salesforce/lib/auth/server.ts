@@ -4,7 +4,8 @@ import * as vscode from "vscode";
 import * as moment from "moment";
 import * as xmlParser from "fast-xml-parser";
 import * as config from "./config";
-import { projectSettings } from "../../../settings";
+import * as settingsUtil from "../../../settings/settingsUtil";
+import { projectSession } from "../../../settings";
 import * as util from "../../../utils/util";
 import MetadataApi from "../../api/metadata";
 import { OAuth } from "./oauth";
@@ -53,14 +54,14 @@ export function startServer(projectName: any, loginUrl: string) {
                     "loginUrl": loginUrl,
                     "lastUpdatedTime": moment().format()
                 };
-                projectSettings.setSession(session);
+                projectSession.setSession(session);
 
                 // Describe metadata
                 let metadataApi = new MetadataApi(session);
                 metadataApi.describeMetadata()
                     .then(function(response) {
                         let result = xmlParser.parse(response["body"]);
-                        projectSettings.setConfigValue(
+                        settingsUtil.setConfigValue(
                             "metadata.json", 
                             result["soapenv:Envelope"]["soapenv:Body"]["describeMetadataResponse"]["result"]
                         );

@@ -1,7 +1,7 @@
 import * as request from "request-promise";
 import * as _ from "lodash";
 import SOAP from "../lib/soap";
-import { projectSettings } from "../../settings";
+import { projectSession } from "../../settings";
 import * as auth from "../../commands/auth";
 
 export default class ApexApi {
@@ -18,7 +18,7 @@ export default class ApexApi {
     }
 
     private initiate(sessionInfo?: any) {
-        this.session = sessionInfo || projectSettings.getSession();
+        this.session = sessionInfo || projectSession.getSession();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;

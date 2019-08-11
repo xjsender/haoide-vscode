@@ -2,7 +2,8 @@ import * as vscode from "vscode";
 import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
 import * as util from "../utils/util";
-import { projectSettings } from "../settings";
+import { projectSettings, projectSession, metadata } from "../settings";
+import * as settingsUtil from "../settings/settingsUtil";
 
 
 export function addDefaultProjectToWorkspace() {
@@ -13,8 +14,8 @@ export function addDefaultProjectToWorkspace() {
 
 export async function toggleMetadataObjects() {
     // Get all meta objects
-    let metadataObjects = projectSettings.getConfigValue("metadata.json");
-    let metaObjects = _.sortBy(metadataObjects["metadataObjects"], mo => mo.xmlName);
+    let metadataObjects = metadata.getMetaObjects();
+    let metaObjects = _.sortBy(metadataObjects, mo => mo.xmlName);
 
     // Get already subscribed meta objects
     let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
@@ -38,7 +39,7 @@ export async function toggleMetadataObjects() {
     );
 
     // Keep subscribedMetaObjects to project settings
-    projectSettings.setConfigValue("settings.json", {
+    settingsUtil.setConfigValue("settings.json", {
         "subscribedMetaObjects": _.map(selecteItems, si => si.label)
     });
 
@@ -86,10 +87,14 @@ export function switchProject(projectName?: string) {
 }
 
 export function loginToSFDC(startUrl?: string) {
-    let session = projectSettings.getSession();
+    let session = projectSession.getSession();
 
     let open_url = `${session["instanceUrl"]}/secur/frontdoor.jsp` + 
-        `?sid=${session["sessionId"]}&retURL=${startUrl}`;
+        `?sid=${session["sessionId"]}`;
+
+    if (startUrl) {
+        open_url += "&retURL=" + startUrl;
+    }
 
     util.openWithBrowser(open_url);
 }
@@ -98,7 +103,7 @@ export function loginToSFDC(startUrl?: string) {
  * Command for copying loginUrl to clipboard
  */
 export function copyLoginUrl() {
-    let session = projectSettings.getSession();
+    let session = projectSession.getSession();
 
     let loginUrl = `${session["instanceUrl"]}/secur/frontdoor.jsp` +
         `?sid=${session["sessionId"]}`;

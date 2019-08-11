@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as request from "request-promise";
 import * as auth from "../../commands/auth";
-import { projectSettings } from "../../settings";
+import { projectSettings, projectSession } from "../../settings";
 
 export default class MetadataApi {
     private session: any;
@@ -20,7 +20,7 @@ export default class MetadataApi {
     }
 
     private initiate(session?: any) {
-        this.session = session || projectSettings.getSession();
+        this.session = session || projectSession.getSession();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { startLogin, startServer } from "../salesforce/lib/auth/server";
-import { projectSettings } from "../settings";
+import { projectSession } from "../settings";
 import { OAuth } from "../salesforce/lib/auth/oauth";
 import * as util from "../utils/util";
 
@@ -41,13 +41,13 @@ export async function authorizeNewProject() {
 }
 
 export function authorizeDefaultProject() {
-    let session = projectSettings.getSession();
+    let session = projectSession.getSession();
     let oauth = new OAuth(session["loginUrl"]);
 
     return new Promise( (resolve, reject) => {
         oauth.refreshToken(session["refreshToken"]).then(function(response) {
             let body = JSON.parse(response["body"]);
-            projectSettings.setSessionId(body["access_token"]);
+            projectSession.setSessionId(body["access_token"]);
 
             // Add project to workspace
             let projectName = util.getDefaultProject();

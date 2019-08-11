@@ -17,9 +17,8 @@ export function openWithBrowser(url: string) {
  * @param text text to show in the status bar
  * @param tooltip text to display when hove on it
  */
-let haoideStatusBarItem;
 export function setStatusBarItem(text: string, tooltip?: string) {
-    haoideStatusBarItem = vscode.window.createStatusBarItem(
+    let haoideStatusBarItem = vscode.window.createStatusBarItem(
         vscode.StatusBarAlignment.Left, 9999
     );
 

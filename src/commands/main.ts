@@ -50,6 +50,20 @@ export function executeAnonymous(apexCode?: string) {
     });
 }
 
+export function deployFilesToServer(
+        files: string[], 
+        switchProject: boolean = false, 
+        chosenTestClasses: string[]) {
+    let deployOptions = projectSettings.getDeployOptions();
+
+    // If testLevel is RunSpecifiedTests, check testClasses
+    if (deployOptions["testLevel"] === "RunSpecifiedTests") {
+        if (chosenTestClasses) {
+            
+        }
+    }
+}
+
 export function createProject() {
     let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
     let types: any = {};
