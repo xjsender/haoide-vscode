@@ -94,7 +94,9 @@ export default class MetadataApi {
      * @returns {Promise.<Response>}
      */
     public describeMetadata() {
-        return this._invoke_method("DescribeMetadata");
+        return this._invoke_method({
+            "requestType": "DescribeMetadata"
+        });
     }
 
     /**
@@ -106,8 +108,9 @@ export default class MetadataApi {
      */
     public checkRetriveStatus(options: any, progress?: any) {
         let self = this;
+        let requestType = "CheckRetrieveStatus";
         let soapBody = self.soap.getRequestBody(
-            "CheckRetrieveStatus", options
+            requestType, options
         );
 
         let requestOptions = {
@@ -122,11 +125,12 @@ export default class MetadataApi {
 
             function recursiveCheck() {
                 request(requestOptions).then(body => {
-                    let result = self.parseResult(body, "CheckRetrieveStatus");
+                    let result = self.parseResult(body, requestType);
 
                     // Show progress status
                     ProgressNotification.notify(
-                        progress, result["status"], 
+                        progress, 
+                        `[sf:retrieve] Request Status: ${result["status"]}`,
                         result["done"] ? 100 : undefined
                     );
 
@@ -159,7 +163,7 @@ export default class MetadataApi {
         
         return new Promise<any>( (resolve, reject) => {
             options["requestType"] = "Retrieve";
-            console.log(options);
+
             ProgressNotification.showProgress(self, "_invoke_method", options)
                 .then( result => {
                     options["asyncProcessId"] = result["id"];

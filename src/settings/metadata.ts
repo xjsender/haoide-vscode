@@ -5,13 +5,6 @@ import * as settingsUtil from "./settingsUtil";
 export default class Metadata {
     private static instance: Metadata;
     private metaFileName = "metadata.json";
-    private metaObjects: any;
-
-    private constructor() {
-        this.metaObjects = settingsUtil.getConfig(
-            this.metaFileName
-        )["metadataObjects"];
-    }
 
     public static getInstance() {
         if (!Metadata.instance) {
@@ -21,11 +14,19 @@ export default class Metadata {
         return Metadata.instance;
     }
 
+    public setMetaObjects(metaObject: any) {
+        settingsUtil.setConfigValue(
+            "metadata.json", metaObject
+        );
+    }
+
     /**
      * Get metaobjects array
      */
     public getMetaObjects() {
-        return this.metaObjects;
+        return settingsUtil.getConfig(
+            this.metaFileName
+        )["metadataObjects"];
     }
 
     /**
@@ -40,7 +41,8 @@ export default class Metadata {
      *  }
      */
     public getMetaObject(metaFolder: string): any {
-        for (const metaObject of this.metaObjects) {
+        let metaobjects = this.getMetaObjects();
+        for (const metaObject of metaobjects) {
             if (metaObject["directoryName"] === metaFolder) {
                 return metaObject;
             }
