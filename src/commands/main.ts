@@ -24,6 +24,10 @@ export function executeRestTest() {
         util.openNewUntitledFile(
             JSON.stringify(JSON.parse(body), null, 4)
         );
+    })
+    .catch(err => {
+        console.log(err);
+        vscode.window.showErrorMessage(err.message);
     });
 }
 

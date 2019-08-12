@@ -52,6 +52,18 @@ export default class ApexApi {
                 resolve(response);
             })
             .catch( err => {
+                // If session is expired, just login again
+                if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
+                    return auth.authorizeDefaultProject().then(() => {
+                        self.initiate().retrieve(options);
+                    });
+                }
+
+                // If network is timeout, just throw exception
+                if (err.message.indexOf("getaddrinfo ENOTFOUND")) {
+                    err.message = "Connection timeout, please check your network.";
+                }
+                
                 reject(err);
             });
         });

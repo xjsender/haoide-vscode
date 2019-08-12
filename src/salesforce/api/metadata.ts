@@ -84,6 +84,11 @@ export default class MetadataApi {
                     });
                 }
 
+                // If network is timeout, just throw exception
+                if (err.message.indexOf("getaddrinfo ENOTFOUND")) {
+                    err.message = "Connection timeout, please check your network.";
+                }
+
                 reject(err);
             });
         });
@@ -170,7 +175,13 @@ export default class MetadataApi {
                     ProgressNotification.showProgress(self, "checkRetriveStatus", options)
                         .then( result => {
                             resolve(result);
+                        })
+                        .catch(err => {
+                            reject(err);
                         });
+                })
+                .catch( err => {
+                    reject(err);
                 });
         });
     }
@@ -214,6 +225,9 @@ export default class MetadataApi {
                     else {
                         resolve(result);
                     }
+                })
+                .catch(err => {
+                    reject(err);
                 });
             }
         });
@@ -245,7 +259,13 @@ export default class MetadataApi {
                     ProgressNotification.showProgress(self, "checkRetriveStatus", options)
                         .then(result => {
                             resolve(result);
+                        })
+                        .catch(err => {
+                            reject(err);
                         });
+                })
+                .catch(err => {
+                    reject(err);
                 });
         });
     }

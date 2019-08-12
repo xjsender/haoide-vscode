@@ -72,6 +72,11 @@ export default class MetadataApi {
                     });
                 }
 
+                // If network is timeout, just throw exception
+                if (err.message.indexOf("getaddrinfo ENOTFOUND")) {
+                    err.message = "Connection timeout, please check your network.";
+                }
+
                 reject(err);
             });
         });

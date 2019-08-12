@@ -63,6 +63,7 @@ export function startServer(projectName: any, loginUrl: string) {
                     })
                     .catch(err => {
                         console.error(err);
+                        return vscode.window.showErrorMessage(err);
                     });
 
                 // Login successful message
