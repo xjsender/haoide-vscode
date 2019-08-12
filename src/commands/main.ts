@@ -66,6 +66,10 @@ export function deployFilesToServer(
 
 export function createProject() {
     let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
+    if (!subscribedMetaObjects) {
+        return utility.toggleMetadataObjects(createProject);
+    }
+
     let types: any = {};
     for (const mo of subscribedMetaObjects) {
         types[mo] = ["*"];
@@ -104,5 +108,9 @@ export function createProject() {
 
         // Add project to workspace
         utility.addDefaultProjectToWorkspace();
+    })
+    .catch ( err => {
+        console.log(err);
+        vscode.window.showErrorMessage(err.message);
     });
 }

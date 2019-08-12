@@ -12,7 +12,7 @@ export function addDefaultProjectToWorkspace() {
     util.addProjectToWorkspace(projectName);
 }
 
-export async function toggleMetadataObjects() {
+export async function toggleMetadataObjects(callback?: Function) {
     // Get all meta objects
     let metadataObjects = metadata.getMetaObjects();
     let metaObjects = _.sortBy(metadataObjects, mo => mo.xmlName);
@@ -44,6 +44,10 @@ export async function toggleMetadataObjects() {
     });
 
     vscode.window.showInformationMessage("You subscribed metadata objects are updated");
+
+    if (callback) {
+        callback();
+    }
 }
 
 export function switchProject(projectName?: string) {
