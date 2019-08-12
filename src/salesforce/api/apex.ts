@@ -1,8 +1,9 @@
 import * as request from "request-promise";
-import * as _ from "lodash";
-import SOAP from "../lib/soap";
-import { projectSession } from "../../settings";
+import * as xmlParser from "fast-xml-parser";
 import * as auth from "../../commands/auth";
+import SOAP from "../lib/soap";
+import ProgressNotification from "../../utils/progress";
+import { projectSession } from "../../settings";
 
 export default class ApexApi {
     private soap!: SOAP;
@@ -11,7 +12,7 @@ export default class ApexApi {
     private instanceUrl!: string;
     private apiVersion!: number;
     private headers: any;
-    private metadataUrl!: string;
+    private apexUrl!: string;
 
     public constructor(sessionInfo?: any) {
         this.initiate(sessionInfo);
@@ -22,7 +23,7 @@ export default class ApexApi {
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;
-        this.metadataUrl = `${this.instanceUrl}/services/Soap/s/${this.apiVersion}.0`;
+        this.apexUrl = `${this.instanceUrl}/services/Soap/s/${this.apiVersion}.0`;
         this.headers = {
             "Content-Type": "text/xml;charset=utf-8",
             "Authorization": `OAuth ${this.sessionId}`,
@@ -34,28 +35,38 @@ export default class ApexApi {
         return this;
     }
 
-    private _invoke_method(_method: string, options: any = {}) {
+    private _invoke_method(options: any, progress?: any) {
         let self = this;
 
         return new Promise<any>(function (resolve, reject) {
-            let soapBody = self.soap.getRequestBody(_method, options);
+            let requestType = options["requestType"];
+            let soapBody = self.soap.getRequestBody(requestType, options);
 
             let requestOptions = {
                 method: options["method"] || "POST",
                 headers: self.headers,
-                uri: self.metadataUrl,
-                resolveWithFullResponse: options["resolveWithFullResponse"] || true,
+                uri: self.apexUrl,
                 body: soapBody
             };
 
-            request(requestOptions).then(response => {
-                resolve(response);
+            // Send notification
+            ProgressNotification.notify(
+                progress, `Start ${requestType}...`
+            );
+
+            request(requestOptions).then( body => {
+                // If request is finished, notify user and stop future notification
+                ProgressNotification.notify(
+                    progress, `${requestType} succeed`, 100
+                );
+
+                resolve(body);
             })
             .catch( err => {
                 // If session is expired, just login again
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
                     return auth.authorizeDefaultProject().then(() => {
-                        self.initiate().retrieve(options);
+                        self.initiate()._invoke_method(options, progress);
                     });
                 }
 
@@ -69,44 +80,30 @@ export default class ApexApi {
         });
     }
 
-    public executeAnonymous(apexCode: string) {
+    public executeAnonymous(options: any) {
         let self = this;
-
-        // Escape apex code
-        apexCode = _.escape(apexCode);
-
-        return this._invoke_method("ExecuteAnonymous", {
-            apexCode: apexCode,
-            logLevels: [{
-                    "log_category": "Apex_Code",
-                    "log_level": "Debug"
-                }, {
-                    "log_category": "Apex_Profiling",
-                    "log_level": "Info"
-                }, {
-                    "log_category": "Callout",
-                    "log_level": "Info"
-                }, {
-                    "log_category": "DB",
-                    "log_level": "Info"
-                }, {
-                    "log_category": "Validation",
-                    "log_level": "Info"
-                }, {
-                    "log_category": "Workflow",
-                    "log_level": "Info"
-                }
-            ]
-        })
-        .catch( err => {
-            // If session is expired, just login again
-            if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
-                auth.authorizeDefaultProject().then(() => {
-                    self.initiate().executeAnonymous(apexCode);
-                });
+        options["requestType"] = "ExecuteAnonymous";
+        options["logLevels"] = [{
+                "log_category": "Apex_Code",
+                "log_level": "Debug"
+            }, {
+                "log_category": "Apex_Profiling",
+                "log_level": "Info"
+            }, {
+                "log_category": "Callout",
+                "log_level": "Info"
+            }, {
+                "log_category": "DB",
+                "log_level": "Info"
+            }, {
+                "log_category": "Validation",
+                "log_level": "Info"
+            }, {
+                "log_category": "Workflow",
+                "log_level": "Info"
             }
+        ];
 
-            throw new Error(err.message);
-        });
+        return this._invoke_method(options);
     }
 }

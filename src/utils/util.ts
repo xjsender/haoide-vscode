@@ -2,14 +2,43 @@ import * as opn from "open";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import * as _ from "lodash";
 import * as vscode from "vscode";
-import * as fastXmlParse from "fast-xml-parser";
+import * as xmlParser from "fast-xml-parser";
 import { extensionSettings } from "../settings";
 
 export function openWithBrowser(url: string) {
     opn(url).catch(_ => {
         console.log(`Has error when open ${url}`);
     });
+}
+
+/**
+ * Replace all matched oldText to newText in the spcified text
+ * @param text Text to be replaced
+ * @param from oldText
+ * @param to newText
+ */
+export function replaceAll(text: string, from: string, to: string) {
+    while (text.indexOf(from) !== -1) {
+        text = text.replace(from, to);
+    }
+
+    return text;
+}
+
+/**
+ * Parse Metadata api response body as JSON format
+ * @param body Metadata Api request response body
+ * @param requestType Metadata Api request type, i.e., executeAnonymous, retrieve
+ * @returns JSON formated body
+ */
+export function parseResult(body: string, requestType: string) {
+    let parseResult = xmlParser.parse(body);
+    let soapenvBody = parseResult["soapenv:Envelope"]["soapenv:Body"];
+    let result = soapenvBody[`${_.lowerFirst(requestType)}Response`]["result"];
+
+    return result;
 }
 
 /**

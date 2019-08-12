@@ -17,6 +17,9 @@ export default class ProgressNotification {
                 console.log("You canceled the long polling operation");
             });
 
+            // Notify for init action
+            progress.report({ message: methodName });
+
             return self[methodName](options, progress);
         }) as Promise<any>;
     }

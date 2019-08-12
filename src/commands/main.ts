@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import * as _ from "lodash";
 import * as AdmZip from "adm-zip";
 import * as shelljs from "shelljs";
 import * as util from "../utils/util";
@@ -10,6 +11,7 @@ import { projectSettings } from "../settings";
 import MetadataApi from "../salesforce/api/metadata";
 import ApexApi from "../salesforce/api/apex";
 import RestApi from "../salesforce/api/rest";
+import ProgressNotification from "../utils/progress";
 
 export function executeRestTest() {
     // Get selection in the active editor
@@ -39,19 +41,44 @@ export function executeAnonymous(apexCode?: string) {
     }
 
     if (!apexCode) {
-        return vscode.window.showErrorMessage(
-            'There is no code to execute'
-        );
+        let errorMsg = "There is no code to execute";
+        console.log(errorMsg);
+        return vscode.window.showErrorMessage(errorMsg);
     }
 
     let apexApi = new ApexApi();
-    apexApi.executeAnonymous(apexCode).then( response => {
-        util.openNewUntitledFile(response.body);
-    })
-    .catch( err => {
-        console.log(err);
-        vscode.window.showErrorMessage(err.message);
-    });
+    let requestType = "executeAnonymous";
+    ProgressNotification.showProgress(apexApi, requestType, { "apexCode": apexCode })
+        .then( (body: string) => {
+            // If there is compile error, parse it as human-readable
+            if (body.indexOf("<success>false</success>") !== -1) {
+                let result = util.parseResult(body, requestType);
+
+                let compileProblem = result["compileProblem"] as string;
+
+                // Replace all &apos; to '
+                compileProblem = util.replaceAll(
+                    compileProblem, "&apos;", "'"
+                );
+                
+                // Replace all &quot; to ""
+                compileProblem = util.replaceAll(
+                    compileProblem, "&quot;", '"'
+                );
+
+                let errorMsg = `${compileProblem} at line ` + 
+                    `${result["line"]} column ${result["column"]}`;
+                console.log(errorMsg);
+
+                return vscode.window.showErrorMessage(errorMsg);
+            }
+
+            util.openNewUntitledFile(body, "apex");
+        })
+        .catch( err => {
+            console.log(err);
+            vscode.window.showErrorMessage(err.message);
+        });
 }
 
 export function deployFilesToServer(

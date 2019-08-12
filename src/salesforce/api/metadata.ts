@@ -2,10 +2,11 @@ import * as vscode from "vscode";
 import * as request from "request-promise";
 import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
-import SOAP from "../lib/soap";
-import { projectSettings, projectSession } from "../../settings";
 import * as auth from "../../commands/auth";
+import * as util from "../../utils/util";
+import SOAP from "../lib/soap";
 import ProgressNotification from "../../utils/progress";
+import { projectSession } from "../../settings";
 
 export default class MetadataApi {
     private soap!: SOAP;
@@ -37,14 +38,6 @@ export default class MetadataApi {
         return this;
     }
 
-    private parseResult(body: string, requestType: string) {
-        let parseResult = xmlParser.parse(body);
-        let soapenvBody = parseResult["soapenv:Envelope"]["soapenv:Body"];
-        let result = soapenvBody[`${_.lowerFirst(requestType)}Response`]["result"];
-
-        return result;
-    }
-
     private _invoke_method(options: any, progress?: any) {
         let self = this;
 
@@ -67,7 +60,7 @@ export default class MetadataApi {
 
             request(requestOptions).then(body => {
                 // Parse request result as json format
-                let result = self.parseResult(body, requestType);
+                let result = util.parseResult(body, requestType);
 
                 // If request is finished, notify user and stop future notification
                 ProgressNotification.notify(
@@ -130,7 +123,7 @@ export default class MetadataApi {
 
             function recursiveCheck() {
                 request(requestOptions).then(body => {
-                    let result = self.parseResult(body, requestType);
+                    let result = util.parseResult(body, requestType);
 
                     // Show progress status
                     ProgressNotification.notify(
@@ -211,7 +204,7 @@ export default class MetadataApi {
 
             function recursiveCheck() {
                 request(requestOptions).then(body => {
-                    let result = self.parseResult(body, requestType);
+                    let result = util.parseResult(body, requestType);
 
                     // Show progress status
                     ProgressNotification.notify(
