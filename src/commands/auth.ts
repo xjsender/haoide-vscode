@@ -14,13 +14,14 @@ export async function authorizeNewProject() {
     }
 
     // Get login url from user selection
-    let loginUrls = [
-        "https://login.salesforce.com",
-        "https://test.salesforce.com"
+    let pickItems = [{
+            label: "https://login.salesforce.com",
+            description: "Production Enviroment"
+        }, {
+            label: "https://test.salesforce.com",
+            description: "Test Enviroment"
+        }
     ];
-    let pickItems = loginUrls.map(loginUrl => {
-        return {label: loginUrl};
-    });
 
     const quickPick = vscode.window.createQuickPick();
     quickPick.placeholder = "Please choose the login url";
