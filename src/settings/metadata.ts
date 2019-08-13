@@ -5,6 +5,7 @@ import * as settingsUtil from "./settingsUtil";
 export default class Metadata {
     private static instance: Metadata;
     private metaFileName = "metadata.json";
+    private metaObjects: any;
 
     public static getInstance() {
         if (!Metadata.instance) {
@@ -41,8 +42,11 @@ export default class Metadata {
      *  }
      */
     public getMetaObject(metaFolder: string): any {
-        let metaobjects = this.getMetaObjects();
-        for (const metaObject of metaobjects) {
+        if (this.metaObjects === undefined) {
+            this.metaObjects = this.getMetaObjects();
+        }
+
+        for (const metaObject of this.metaObjects) {
             if (metaObject["directoryName"] === metaFolder) {
                 return metaObject;
             }
