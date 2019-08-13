@@ -28,7 +28,7 @@ export async function toggleMetadataObjects(callback?: Function) {
                 label: mo.xmlName,
                 description: mo.directoryName,
                 picked: isPicked,
-                alwaysShow: isPicked,
+                alwaysShow: isPicked
             };
         }), {
             placeHolder: "Choose the metadata objects to be subscribed",

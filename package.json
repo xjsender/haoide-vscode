@@ -63,6 +63,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.deployFilesToServer",
+				"title": "Deploy Files to Server",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.formatJson",
 				"title": "Format JSON",
 				"category": "Haoide"

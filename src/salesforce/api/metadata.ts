@@ -6,7 +6,7 @@ import * as auth from "../../commands/auth";
 import * as util from "../../utils/util";
 import SOAP from "../lib/soap";
 import ProgressNotification from "../../utils/progress";
-import { projectSession } from "../../settings";
+import { projectSession, projectSettings } from "../../settings";
 
 export default class MetadataApi {
     private soap!: SOAP;
@@ -42,6 +42,7 @@ export default class MetadataApi {
         let self = this;
 
         return new Promise<any>(function(resolve, reject) {
+            console.log(options);
             let requestType = options["requestType"];
             let soapBody = self.soap.getRequestBody(requestType, options);
 
@@ -230,7 +231,7 @@ export default class MetadataApi {
     *  1. Issue a deploy request to get the asyncProcessId
     *  2. Issue a resursive checkDeployStatus util done
     *  3. After that, you will get the deployment result
-    * @param zipfile the base64 encoded zip file
+    * @param zipfile the base64 encoded string of zip file
     * @param testClasses the classes to run when runSpecifiedTest
     * @returns new Promise<any>{ body }
     */
@@ -241,7 +242,8 @@ export default class MetadataApi {
             let options: any = {
                 "requestType": "Deploy",
                 "zipfile": zipfile,
-                "testClasses": testClasses
+                "testClasses": testClasses,
+                "deployOptions": projectSettings.getDeployOptions()
             };
 
             ProgressNotification.showProgress(self, "_invoke_method", options)

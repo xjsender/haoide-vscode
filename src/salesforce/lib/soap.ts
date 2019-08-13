@@ -21,6 +21,7 @@ export default class SOAP {
      * @param options options, for example, {"types": {"CustomObject": ["Account"]}, "asyncProcessId": ""}
      */
     public getRequestBody(requestType: string, options = {}) {
+        console.log(requestType, options);
         let methodName = `create${requestType}Request`;
         if (typeof (this as any)[methodName] !== "function") {
             throw new Error(`${methodName} is not function`);
@@ -217,21 +218,23 @@ export default class SOAP {
      * @param options deploy options, for example, {"checkOnly", true, ...}
      * @returns soap body for ``deploy request``
      */
-    private createDeployRequest(zipFile: string, options:any) {
+    private createDeployRequest(options:any) {
+        console.log(options);
+        let deployOptions = options["deployOptions"];
         let soapBody = `
             <met:deploy>
-                <met:ZipFile>${zipFile}</met:ZipFile>
+                <met:ZipFile>${options["zipfile"]}</met:ZipFile>
                 <met:DeployOptions>
-                    <met:allowMissingFiles>${options["allowMissingFiles"]}</met:allowMissingFiles>
-                    <met:autoUpdatePackage>${options["autoUpdatePackage"]}</met:autoUpdatePackage>
-                    <met:checkOnly>${options["checkOnly"]}</met:checkOnly>
-                    <met:ignoreWarnings>${options["ignoreWarnings"]}</met:ignoreWarnings>
-                    <met:performRetrieve>${options["performRetrieve"]}</met:performRetrieve>
-                    <met:purgeOnDelete>${options["purgeOnDelete"]}</met:purgeOnDelete>
-                    <met:rollbackOnError>${options["rollbackOnError"]}</met:rollbackOnError>
-                    <met:testLevel>${options["testLevel"]}</met:testLevel>
+                    <met:allowMissingFiles>${deployOptions["allowMissingFiles"]}</met:allowMissingFiles>
+                    <met:autoUpdatePackage>${deployOptions["autoUpdatePackage"]}</met:autoUpdatePackage>
+                    <met:checkOnly>${deployOptions["checkOnly"]}</met:checkOnly>
+                    <met:ignoreWarnings>${deployOptions["ignoreWarnings"]}</met:ignoreWarnings>
+                    <met:performRetrieve>${deployOptions["performRetrieve"]}</met:performRetrieve>
+                    <met:purgeOnDelete>${deployOptions["purgeOnDelete"]}</met:purgeOnDelete>
+                    <met:rollbackOnError>${deployOptions["rollbackOnError"]}</met:rollbackOnError>
+                    <met:testLevel>${deployOptions["testLevel"]}</met:testLevel>
                         ${options["runTests"]}
-                    <met:singlePackage>${options["singlePackage"]}</met:singlePackage>
+                    <met:singlePackage>${deployOptions["singlePackage"]}</met:singlePackage>
                 </met:DeployOptions>
             </met:deploy>
         `;

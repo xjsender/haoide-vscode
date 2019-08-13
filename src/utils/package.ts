@@ -6,13 +6,10 @@ import * as AdmZip from "adm-zip";
 import * as _ from "lodash";
 import { metadata } from "../settings";
 import * as util from "../utils/util";
+import { Buffer } from "buffer";
 
 
 export function buildDeployPackage(files: string[]) {
-    let zipFilePath = path.join(
-        os.homedir(), moment().format("hhmmss")
-    );
-
     // Create new instance for zip writer
     let zip = new AdmZip();
 
@@ -50,10 +47,24 @@ export function buildDeployPackage(files: string[]) {
             }
         }
     }
-
-    zip.writeZip(path.join(os.homedir(), "test.zip"));
     
     // Build package.xml
+    let xmlContent = buildPackageXml(packageDict);
+    zip.addFile("src/package.xml", Buffer.alloc(
+        xmlContent.length, xmlContent, "utf-8"
+    ));
+
+    // Write zip file to local disk
+    let zipFilePath = path.join(os.homedir(), "test.zip");
+    zip.writeZip(zipFilePath);
+    
+    // Read binary data from zipfile
+    let data = fs.readFileSync(zipFilePath);
+    
+    // Convert data to base64 encode
+    let base64Str = Buffer.alloc(data.length, data, "base64");
+
+    return base64Str.toString();
 }
 
 export function buildPackageDict(files: string[], ignoreFolder=true) {

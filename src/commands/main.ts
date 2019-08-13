@@ -7,11 +7,13 @@ import * as AdmZip from "adm-zip";
 import * as shelljs from "shelljs";
 import * as util from "../utils/util";
 import * as utility from "./utility";
+import * as packages from "../utils/package";
 import { projectSettings } from "../settings";
 import MetadataApi from "../salesforce/api/metadata";
 import ApexApi from "../salesforce/api/apex";
 import RestApi from "../salesforce/api/rest";
 import ProgressNotification from "../utils/progress";
+
 
 export function executeRestTest() {
     // Get selection in the active editor
@@ -81,17 +83,27 @@ export function executeAnonymous(apexCode?: string) {
         });
 }
 
-export function deployFilesToServer(
-        files: string[], 
-        switchProject: boolean = false, 
-        chosenTestClasses: string[]) {
+// export function deployFilesToServer(
+//         files: string[], 
+//         switchProject: boolean = false, 
+//         chosenTestClasses: string[]) {
+export function deployFilesToServer() {
     let deployOptions = projectSettings.getDeployOptions();
 
-    // If testLevel is RunSpecifiedTests, check testClasses
-    if (deployOptions["testLevel"] === "RunSpecifiedTests") {
-        if (chosenTestClasses) {
+    // // If testLevel is RunSpecifiedTests, check testClasses
+    // if (deployOptions["testLevel"] === "RunSpecifiedTests") {
+    //     if (chosenTestClasses) {
             
-        }
+    //     }
+    // }
+
+    let editor = vscode.window.activeTextEditor;
+    if (editor) {
+        let fileName = editor.document.fileName;
+        let zipFile = packages.buildDeployPackage([fileName]);
+
+        let metadataApi = new MetadataApi();
+        metadataApi.deploy(zipFile);
     }
 }
 

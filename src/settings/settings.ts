@@ -77,6 +77,8 @@ export default class ProjectSettings {
             };
         }
 
+        console.log(deployOptions);
+
         return deployOptions;
     }
 }

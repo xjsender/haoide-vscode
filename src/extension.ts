@@ -28,6 +28,11 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.createProject", main.createProject
 	));	
+
+	// Register deployFilesToServer command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.deployFilesToServer", main.deployFilesToServer
+	));	
 	
 	// Register switchProject command
 	context.subscriptions.push(vscode.commands.registerCommand(
