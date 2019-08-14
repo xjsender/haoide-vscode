@@ -110,7 +110,6 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
             
             // Get matched string which contains cursor
             while (match = pattern.exec(wholeText)) {
-                console.log(match.index, positionOffset);
                 if (match.index > positionOffset) {
                     break;
                 }
@@ -138,8 +137,16 @@ export class VisualforceompletionItemProvider implements vscode.CompletionItemPr
 
                         // If attr type boolean, add { !} or { } to it according to type
                         let insertText;
-                        if (attr["type"] === "String" && !attr.hasOwnProperty("values")) {
-                            insertText = `${attrName}="$1"$0`;
+                        if (!attr.hasOwnProperty("values")) {
+                            if (attr["type"] === "String") {
+                                insertText = `${attrName}="$1"$0`;
+                            }
+                            else if (attr["type"] === "Id") {
+                                insertText = `${attrName}="$1"$0`;
+                            }
+                            else if (attr["type"] === "Integer") {
+                                insertText = `${attrName}="$1"$0`;
+                            }
                         }
 
                         completionItems.push(createCompletionItem(

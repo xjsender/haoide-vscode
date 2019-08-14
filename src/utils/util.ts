@@ -2,13 +2,92 @@ import * as opn from "open";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
+import * as _ from "lodash";
 import * as vscode from "vscode";
+import * as xmlParser from "fast-xml-parser";
 import { extensionSettings } from "../settings";
 
 export function openWithBrowser(url: string) {
     opn(url).catch(_ => {
         console.log(`Has error when open ${url}`);
     });
+}
+
+/**
+ * Replace all matched oldText to newText in the spcified text
+ * @param text Text to be replaced
+ * @param from oldText
+ * @param to newText
+ */
+export function replaceAll(text: string, from: string, to: string) {
+    while (text.indexOf(from) !== -1) {
+        text = text.replace(from, to);
+    }
+
+    return text;
+}
+
+/**
+ * Parse Metadata api response body as JSON format
+ * @param body Metadata Api request response body
+ * @param requestType Metadata Api request type, i.e., executeAnonymous, retrieve
+ * @returns JSON formated body
+ */
+export function parseResult(body: string, requestType: string) {
+    let parseResult = xmlParser.parse(body);
+    let soapenvBody = parseResult["soapenv:Envelope"]["soapenv:Body"];
+    let result = soapenvBody[`${_.lowerFirst(requestType)}Response`]["result"];
+
+    return result;
+}
+
+/**
+ * Create status bar item
+ * @param text text to show in the status bar
+ * @param tooltip text to display when hove on it
+ */
+export function setStatusBarItem(text: string, tooltip?: string) {
+    let haoideStatusBarItem = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Left, 9999
+    );
+
+    haoideStatusBarItem.text = text;
+    haoideStatusBarItem.tooltip = tooltip || "";
+    haoideStatusBarItem.show();
+}
+
+export function parseIdUrl(idUrl: string) {
+    var idUrls = idUrl.split("/");
+    var userId = idUrls.pop(), orgId = idUrls.pop();
+
+    return {
+        "userId": userId,
+        "organizationId": orgId
+    };
+}
+
+/**
+ * Open a new untitled file and display specified content
+ * @param content Content to display in the newUntitile file
+ */
+export function openNewUntitledFile(content: string, languageId?: string) {
+    let editor = vscode.window.activeTextEditor;
+    vscode.commands.executeCommand("workbench.action.files.newUntitledFile")
+        .then(() => {
+            editor = vscode.window.activeTextEditor;
+            if (editor) {
+                // Set language of the untitled file
+                languageId = languageId || "json";
+                vscode.languages.setTextDocumentLanguage(
+                    editor.document, languageId
+                );
+                
+                // Insert content to new open file from start
+                editor.edit(editBuilder => {
+                    editBuilder.insert(new vscode.Position(0, 0), content);
+                });
+            }
+        });
 }
 
 export function getExtensionWorkspace() {
@@ -25,6 +104,17 @@ export function getExtensionWorkspace() {
     }
 
     return _workspace;
+}
+
+export function getProjects() {
+    try {
+        let configFile = path.join(os.homedir(), ".haoide", "config.json");
+        let data = fs.readFileSync(configFile, "utf-8");
+        return JSON.parse(data);
+    }
+    catch (err) {
+        throw new Error(`Not found config.json file due to ${err}`);
+    }
 }
 
 /**
@@ -85,24 +175,29 @@ export function getDefaultProject(): string {
     }
 }
 
-export function getProjectFolder(projectName?: string) {
+/**
+ * Get path of project
+ * @param projectName If null, means default project
+ * @returns project path
+ */
+export function getProjectPath(projectName?: string) {
     // If projectName is null, just fetch the default project
     if (!projectName) {
         projectName = getDefaultProject();
     }
 
     let _workspace = getExtensionWorkspace();
-    let projectFolder = path.join(_workspace, projectName);
+    let projectPath = path.join(_workspace, projectName);
 
-    if (!fs.existsSync(projectFolder)) {
-        fs.mkdirSync(projectFolder);
+    if (!fs.existsSync(projectPath)) {
+        fs.mkdirSync(projectPath);
     }
 
-    return projectFolder;
+    return projectPath;
 }
 
 export function addProjectToWorkspace(projectName: string) {
-    let projectFolder = getProjectFolder(projectName);
+    let projectFolder = getProjectPath(projectName);
     let folders = vscode.workspace.workspaceFolders || [];
     vscode.workspace.updateWorkspaceFolders(
         folders.length, null, {

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
-import { namespaces, classes } from "../lib/server";
+import { namespaces, classes } from "../lib";
 import { getLastCharOfPosition, createCompletionItem } from "../utils";
 import { extensionSettings } from "../../../settings";
 import  * as util from "../utils/util";

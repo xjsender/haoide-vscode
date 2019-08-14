@@ -1,6 +1,8 @@
 {
 	"name": "haoide-vscode",
 	"displayName": "haoide-vscode",
+	"publisher": "mouseliu",
+	"repository": "https://github.com/xjsender/haoide-vscode",
 	"description": "haoide-vscode is a vscode extension for force.com development",
 	"version": "0.0.1",
 	"engines": {
@@ -10,22 +12,86 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.haoide.login"
+		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "extension.haoide.login",
-				"title": "Haoide: Authorize New Org"
+				"command": "extension.haoide.authorize.new",
+				"title": "Authorize New Project",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.authorize.default",
+				"title": "Authorize Default Project",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.addDefaultProjectToWorkspace",
+				"title": "Add Default Project to Workspace",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.loginToSFDC",
-				"title": "Haoide: Open Default Org"
+				"title": "Open Default Org",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.copyLoginUrl",
+				"title": "Copy Login Url",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.executeAnonymous",
+				"title": "Execute Anonymous Code",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.switchProject",
+				"title": "Switch Project",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.toggleMetadataObjects",
+				"title": "Toggle Metadata Objects",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.createProject",
+				"title": "Create New Project",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.deployFilesToServer",
+				"title": "Deploy Files to Server",
+				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.formatJson",
-				"title": "Haoide: Format JSON"
+				"title": "Format JSON",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.convertXml2Json",
+				"title": "Convert XML to JSON",
+				"category": "Haoide"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "extension.haoide.switchProject",
+				"key": "alt+s",
+				"mac": "alt+s",
+				"win": "alt+s",
+				"linux": "alt+s"
+			},
+			{
+				"command": "extension.haoide.executeAnonymous",
+				"key": "ctrl+alt+e",
+				"mac": "cmd+shift+e",
+				"win": "ctrl+alt+e",
+				"linux": "ctrl+alt+e"
 			}
 		],
 		"languages": [
@@ -121,12 +187,7 @@
 				"haoide.workspace": {
 					"type": "string",
 					"default": "",
-					"description": "Your project location"
-				},
-				"haoide.default-project": {
-					"type": "string",
-					"default": "",
-					"description": "Your default authorized project"
+					"description": "Indicate where to put projects"
 				}
 			}
 		}
@@ -136,7 +197,7 @@
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+		"test": "node .src/test/runTest.ts"
 	},
 	"devDependencies": {
 		"@salesforce/apex-tmlanguage": "^1.1.0",
@@ -144,18 +205,43 @@
 		"@types/node": "^10.12.21",
 		"@types/express": "^4.16.3",
 		"@types/request-promise": "^4.1.44",
-		"@types/jsforce": "^1.9.2",
+		"@types/lodash": "^4.14.136",
+		"@types/adm-zip": "^0.4.32",
+		"@types/shelljs": "^0.8.5",
+		"mocha": "^6.2.0",
 		"request": "*",
 		"moment": "^2.24.0",
 		"request-promise": "^4.2.4",
-		"jsforce": "^1.9.2",
 		"tslint": "^5.12.1",
 		"typescript": "^3.3.1",
 		"vscode": "^1.1.28",
 		"express": "^4.16.4",
-		"open": "^6.4.0"
+		"open": "^6.4.0",
+		"querystring": "v0.2.0",
+		"lodash": "^4.17.15",
+		"fast-xml-parser": "^3.12.19",
+		"adm-zip": "^0.4.13",
+		"shelljs": "^0.8.1"
 	},
 	"dependencies": {
+		"@salesforce/apex-tmlanguage": "^1.1.0",
+		"@types/node": "^10.12.21",
+		"@types/express": "^4.16.3",
+		"@types/request-promise": "^4.1.44",
+		"@types/lodash": "^4.14.136",
+		"@types/adm-zip": "^0.4.32",
+		"@types/shelljs": "^0.8.5",
+		"moment": "^2.24.0",
+		"request": "*",
+		"request-promise": "^4.2.4",
+		"typescript": "^3.3.1",
+		"express": "^4.16.4",
+		"open": "^6.4.0",
+		"querystring": "v0.2.0",
+		"lodash": "^4.17.15",
+		"fast-xml-parser": "^3.12.19",
+		"adm-zip": "^0.4.13",
+		"shelljs": "^0.8.1",
 		"inherits": "^2.0.4",
 		"npm-update": "^2.1.0"
 	}
