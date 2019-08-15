@@ -21,6 +21,79 @@ As today, haoide-vscode supports many features, such as below,
 
 If you have any requirements or dependencies, add a section describing those and how to install and configure them.
 
+## What's included
+
+Within the download you'll find the following directories and files, you can find differnet modules which is focused on spcified purpose, like this, 
+
+```text
+HAOIDE-VSCODE
+└── snippets/
+│   ├── aura.code-snippets    -- aura related snippets
+│   ├── class.code-snippets    -- apex class related snippets
+│   ├── lwc.code-snippets    -- lwc related snippets
+│   ├── trigger.code-snippets    -- trigger related snippets
+│   └── visualforce.code-snippets    -- visualforce related snippets
+└── src
+    ├──commands/    -- all commands are put here
+    │   ├── aura.ts    -- all aura related commands
+    │   ├── auth.ts    -- all login related commands
+    │   ├── lwc.ts    -- all lwc related commands
+    │   ├── main.ts    -- commands involving to request to server
+    │   ├── package.ts    -- all deployment related commands
+    │   ├── utility.ts    -- all utilities command, for example, xml and json convert, json to apex
+    │   └── index.ts
+    │── salesforce/
+    │   ├── api/
+    │   |    ├── apex.ts
+    │   |    ├── metadata.ts
+    │   |    ├── rest.ts
+    │   |    └── tooling.ts
+    │   ├── completions/
+    │   |    ├── lib/
+    │   |    |    ├── front/
+    │   |    |    |    ├── lightning.ts    -- lightning lib which is manually collected from guide
+    │   |    |    |    └── vf.ts    -- vf lib which is fetched from /tooling/completions?type=visualforce
+    │   |    |    ├── server/
+    │   |    |    |    ├── apex.ts    -- from /tooling/completions?type=apex and is parsed by ./util.ts
+    │   |    |    |    ├── classes.ts    -- which is parsed by util.parseClasses
+    │   |    |    |    └── namespaces.ts    -- which is parsed by util.parseNamespace
+    │   |    |    ├── index.ts
+    │   |    |    └── util.ts    -- which is used to parsing apex lib by tooling api to classes and namespaces
+    │   |    ├── provider/
+    │   |    |    ├── index.ts
+    │   |    |    ├── apexCompletionProvider.ts    -- completion provider for apex language
+    │   |    |    ├── lightningCompletionProvider.ts    -- completion provider for lightning language
+    │   |    |    └── visualforceCompletionProvider.ts    -- completion provider for visualforce language
+    │   |    └── utils/
+    │   |        ├── index.ts
+    │   |        └── util.ts    -- which is used in completion provider
+    │   └── lib/
+    │       ├── auth/
+    │       |   ├── config.ts    -- haoide-vscode oauth2 client credentials
+    │       |   ├── oauth.ts    -- oauth lib, i.e., request token, refresh token and revoke token
+    │       |   └── server.ts    -- start oauth2 login flow to get token by express lib
+    │       └── soap.ts    -- build all metadata request body, including, apex, metadata, bulk
+    │── settings/
+    │    ├── index.ts
+    │    ├── extension.ts    -- used to mgt. simple extension settings
+    │    ├── metadata.ts    -- used to mgt. metadata from DescribeMetadata request
+    │    ├── session.ts    -- used to mgt. session information
+    │    ├── settings.ts    -- used to mgt. complicate extension settings
+    │    └── settingsUtil.ts    -- util for other settings
+    │── test/
+    │    ├── suite/    -- test suite based on the structure of function class
+    │    │   ├── utils    -- test suite for utils
+    │    │   ├── settings    -- test suite for settings
+    │    │   ├── salesforce    -- test suite for salesforce
+    │    │   └── ...
+    │    └── runTests.ts    -- Mocha start point
+    └── utils/
+    |    ├── package.ts    -- util for package related
+    |    ├── progress.ts    -- vscode progress wrapper
+    |    └── util.ts    -- genernal util for everywhere in this extension
+    └── extension.ts    -- commands register and completion provider binding
+```
+
 ## Extension Settings
 
 Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
