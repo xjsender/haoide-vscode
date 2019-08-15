@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import * as vscode from "vscode";
 import * as xmlParser from "fast-xml-parser";
 import { extensionSettings } from "../settings";
+import * as settingsUtil from "../settings/settingsUtil";
 
 export function openWithBrowser(url: string) {
     opn(url).catch(_ => {
@@ -205,4 +206,64 @@ export function addProjectToWorkspace(projectName: string) {
             name: projectName
         }
     );
+}
+
+/**
+ * Parse metaFolder, folder and name from fileName
+ * @param fileName fileName with relative path, i.e.,
+ *      1. unpackage/triggers/RejectTrigger.trigger
+ *      2. unpackage/aura/CampaignItem/CampaignItemController.js
+ * @returns file attributes, for example, {
+ *      "metaFolder": "aura" | "triggers",
+ *      "folder": "CampaignItem" | "",
+ *      "fullName": "CampaignItemController.js" | "RejectTrigger.trigger"
+ * }
+ */
+export function parseFileName(fileName: string) {
+    let folderCmpInfo: string[] = fileName.split("/");
+    let attributes = {};
+    if (folderCmpInfo.length === 4) {
+        attributes = {
+            "metaFolder": folderCmpInfo[1],
+            "folder": folderCmpInfo[2],
+            "fullName": folderCmpInfo[3]
+        };
+    }
+    else if (folderCmpInfo.length === 3) {
+        attributes = {
+            "metaFolder": folderCmpInfo[1],
+            "folder": "",
+            "fullName": folderCmpInfo[2]
+        };
+    }
+
+    return attributes;
+}
+
+/**
+ * Keep fileProperties from retrieve/deploy response to local disk
+ * @param fileProperties fileProperties from retrieve/deploy response
+ * @returns {
+ *      
+ * }
+ */
+export function setFileProperties(fileProperties: any[]) {
+    let componentMetadata: any = {};
+    for (let fileProperty of fileProperties) {
+        let attributes: any = parseFileName(fileProperty["fileName"]);
+        let fullName = attributes["fullName"];
+        let metaFolder = attributes["metaFolder"];
+
+        // Extend attrbutes to file property
+        fileProperty = _.extend(fileProperty, attributes);
+
+        if (!componentMetadata[metaFolder]) {
+            componentMetadata[metaFolder] = {};
+        }
+
+        componentMetadata[metaFolder][fullName] = fileProperty;
+
+        // Keep component metadata to local disk
+        settingsUtil.setConfigValue("componentMetadata.json", componentMetadata);
+    }
 }

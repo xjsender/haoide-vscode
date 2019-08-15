@@ -2,16 +2,17 @@ import * as os from "os";
 import * as path from "path";
 import * as fs from "fs";
 import * as moment from "moment";
-import * as AdmZip from "adm-zip";
+import * as yazl from "yazl";
 import * as _ from "lodash";
 import { metadata } from "../settings";
 import * as util from "../utils/util";
 import { Buffer } from "buffer";
+import { reject } from "bluebird";
 
 
 export function buildDeployPackage(files: string[]) {
     // Create new instance for zip writer
-    let zip = new AdmZip();
+    let zip = new yazl.ZipFile();
 
     // Add files to zip
     let packageDict = buildPackageDict(files);
@@ -22,6 +23,7 @@ export function buildDeployPackage(files: string[]) {
             for (const member of members) {
                 let metaFolder = member["metaFolder"];
                 let folder = member["folder"];
+                let fullName = member["fullName"];
 
                 if (["lwc", "aura"].includes(metaFolder)) {
                     let dirName = path.dirname(member["dir"]);
@@ -29,20 +31,26 @@ export function buildDeployPackage(files: string[]) {
 
                     for (const fileName of fileNames) {
                         let fileFullName = path.join(dirName, fileName);
-                        zip.addLocalFile(fileFullName,
-                            `src/${metaFolder}/${folder}`
-                        );
+                        zip.addFile(fileFullName, path.join(
+                            metaFolder, folder, fullName
+                        ));
                     }
                 }
                 else if (metaFolder) {
-                    zip.addLocalFile(member["dir"],
-                        `src/${metaFolder}/${folder}`
+                    let zipPath = path.join(
+                        metaFolder, folder || ""
                     );
-                }
-                else {
-                    zip.addLocalFile(member["dir"],
-                        `src/${metaFolder}`
+                    zip.addFile(member["dir"], 
+                        path.join(zipPath, fullName)
                     );
+
+                    // Add -meta.xml file
+                    let metaXmlName = member["dir"] + "-meta.xml";
+                    if (fs.existsSync(metaXmlName)) {
+                        zip.addFile(metaXmlName, 
+                            path.join(zipPath, fullName + "-meta.xml")    
+                        );
+                    }
                 }
             }
         }
@@ -50,21 +58,31 @@ export function buildDeployPackage(files: string[]) {
     
     // Build package.xml
     let xmlContent = buildPackageXml(packageDict);
-    zip.addFile("src/package.xml", Buffer.alloc(
-        xmlContent.length, xmlContent, "utf-8"
-    ));
+    zip.addBuffer(
+        Buffer.alloc(xmlContent.length, xmlContent),
+        "package.xml"
+    );
 
     // Write zip file to local disk
-    let zipFilePath = path.join(os.homedir(), "test.zip");
-    zip.writeZip(zipFilePath);
-    
-    // Read binary data from zipfile
-    let data = fs.readFileSync(zipFilePath);
-    
-    // Convert data to base64 encode
-    let base64Str = Buffer.alloc(data.length, data, "base64");
+    return new Promise<string>( (resolve, reject) => {
+        try {
+            let zipFilePath = path.join(os.homedir(), "test.zip");
+            zip.outputStream
+                .pipe(fs.createWriteStream(zipFilePath))
+                .on("close", () => {
+                    // Read binary data from zipFile
+                    let base64Str = fs.readFileSync(zipFilePath, {
+                        encoding: "base64"
+                    });
 
-    return base64Str.toString();
+                    resolve(base64Str);
+                });
+            zip.end();
+        }
+        catch (err) {
+            reject(err);
+        }
+    });
 }
 
 export function buildPackageDict(files: string[], ignoreFolder=true) {
@@ -87,7 +105,7 @@ export function buildPackageDict(files: string[], ignoreFolder=true) {
         }
 
         // Get file attributes from file address
-        let attributes = getFileAttrs(_file);
+        let attributes = getFileAttributes(_file);
 
         // Get metaObjects according to metaFolder
         let mo = metadata.getMetaObject(attributes["metaFolder"]);
@@ -149,7 +167,7 @@ export function buildPackageXml(packageDict: any) {
  *      folder: "AccountList" | ""
  * }
  */
-export function getFileAttrs(_file: string) {
+export function getFileAttributes(_file: string) {
     let extName = path.extname(_file);
     let cmpName = path.basename(_file, extName);
     let attributes: any = {

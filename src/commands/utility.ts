@@ -2,8 +2,9 @@ import * as vscode from "vscode";
 import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
 import * as util from "../utils/util";
-import { projectSettings, projectSession, metadata } from "../settings";
+import * as packageUtil from "../utils/package";
 import * as settingsUtil from "../settings/settingsUtil";
+import { projectSettings, projectSession, metadata } from "../settings";
 
 
 export function addDefaultProjectToWorkspace() {
@@ -90,6 +91,37 @@ export function switchProject(projectName?: string) {
     quickPick.show();
 }
 
+/**
+ * Command for locate active file in browser
+ */
+export function locateThisInBrowser() {
+    let editor = vscode.window.activeTextEditor;
+    if (editor) {
+        let fileUri = editor.document.fileName;
+        let attribs: any = packageUtil.getFileAttributes(fileUri);
+        let metaFolder = attribs["metaFolder"];
+        let fullName = attribs["fullName"];
+
+        let fileProperties = settingsUtil.getConfig(
+            "componentMetadata.json"
+        );
+
+        try {
+            let fileProperty = fileProperties[metaFolder][fullName];
+            loginToSFDC("/" + fileProperty["id"]);
+        }
+        catch (err) {
+            vscode.window.showErrorMessage(
+                "Not found attributes of this file at local cache"
+            );
+        }
+    }
+}
+
+/**
+ * Login to Salesforce web and redirect to startUrl if have
+ * @param startUrl? Redirect url after login 
+ */
 export function loginToSFDC(startUrl?: string) {
     let session = projectSession.getSession();
 

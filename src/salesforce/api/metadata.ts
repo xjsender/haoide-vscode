@@ -251,7 +251,7 @@ export default class MetadataApi {
                     options = {
                         "asyncProcessId": result["id"]
                     };
-                    ProgressNotification.showProgress(self, "checkRetriveStatus", options)
+                    ProgressNotification.showProgress(self, "checkDeployStatus", options)
                         .then(result => {
                             resolve(result);
                         })

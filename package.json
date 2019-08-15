@@ -38,6 +38,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.locateThisInBrowser",
+				"title": "Locate This File in Browser",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.copyLoginUrl",
 				"title": "Copy Login Url",
 				"category": "Haoide"
@@ -63,6 +68,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.deployThisToServer",
+				"title": "Deploy This File to Server",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.deployFilesToServer",
 				"title": "Deploy Files to Server",
 				"category": "Haoide"
@@ -78,6 +88,15 @@
 				"category": "Haoide"
 			}
 		],
+		"menus": {
+			"editor/context": [{
+				"group": "z_commands",
+				"command": "extension.haoide.deployThisToServer"
+			}, {
+				"group": "z_commands",
+				"command": "extension.haoide.locateThisInBrowser"
+			}]
+		},
 		"keybindings": [
 			{
 				"command": "extension.haoide.switchProject",
@@ -92,6 +111,13 @@
 				"mac": "cmd+shift+e",
 				"win": "ctrl+alt+e",
 				"linux": "ctrl+alt+e"
+			},
+			{
+				"command": "extension.haoide.deployThisToServer",
+				"key": "ctrl+alt+s",
+				"mac": "cmd+alt+s",
+				"win": "ctrl+alt+s",
+				"linux": "ctrl+alt+s"
 			}
 		],
 		"languages": [
@@ -207,7 +233,9 @@
 		"@types/request-promise": "^4.1.44",
 		"@types/lodash": "^4.14.136",
 		"@types/adm-zip": "^0.4.32",
+		"@types/yazl": "^2.4.1",
 		"@types/shelljs": "^0.8.5",
+		"archiver": "^3.1.1",
 		"mocha": "^6.2.0",
 		"request": "*",
 		"moment": "^2.24.0",
@@ -221,6 +249,7 @@
 		"lodash": "^4.17.15",
 		"fast-xml-parser": "^3.12.19",
 		"adm-zip": "^0.4.13",
+		"yazl": "^2.5.1",
 		"shelljs": "^0.8.1"
 	},
 	"dependencies": {
@@ -230,7 +259,10 @@
 		"@types/request-promise": "^4.1.44",
 		"@types/lodash": "^4.14.136",
 		"@types/adm-zip": "^0.4.32",
+		"@types/yazl": "^2.4.1",
+		"@types/archiver": "^3.0.0",
 		"@types/shelljs": "^0.8.5",
+		"archiver": "^3.1.1",
 		"moment": "^2.24.0",
 		"request": "*",
 		"request-promise": "^4.2.4",
@@ -241,6 +273,7 @@
 		"lodash": "^4.17.15",
 		"fast-xml-parser": "^3.12.19",
 		"adm-zip": "^0.4.13",
+		"yazl": "^2.5.1",
 		"shelljs": "^0.8.1",
 		"inherits": "^2.0.4",
 		"npm-update": "^2.1.0"

@@ -87,23 +87,24 @@ export function executeAnonymous(apexCode?: string) {
 //         files: string[], 
 //         switchProject: boolean = false, 
 //         chosenTestClasses: string[]) {
-export function deployFilesToServer() {
-    let deployOptions = projectSettings.getDeployOptions();
-
-    // // If testLevel is RunSpecifiedTests, check testClasses
-    // if (deployOptions["testLevel"] === "RunSpecifiedTests") {
-    //     if (chosenTestClasses) {
-            
-    //     }
-    // }
-
+export function deployThisToServer() {
     let editor = vscode.window.activeTextEditor;
     if (editor) {
         let fileName = editor.document.fileName;
-        let zipFile = packages.buildDeployPackage([fileName]);
-
-        let metadataApi = new MetadataApi();
-        metadataApi.deploy(zipFile);
+        packages.buildDeployPackage([fileName]).then( base64Str => {
+            new MetadataApi().deploy(base64Str).then(result => {
+                // If deploy failed, show error message
+                if (!result["success"]) {
+                    let componentFailures = result.details["componentFailures"];
+                    vscode.window.showErrorMessage(componentFailures["problem"]);
+                }
+                else {
+                    vscode.window.showInformationMessage(
+                        "This file is deployed to server succesfully"
+                    );
+                }
+            });
+        });
     }
 }
 
@@ -151,6 +152,9 @@ export function createProject() {
 
         // Add project to workspace
         utility.addDefaultProjectToWorkspace();
+
+        // Keep fileProperties to local disk
+        util.setFileProperties(result["fileProperties"]);
     })
     .catch ( err => {
         console.log(err);

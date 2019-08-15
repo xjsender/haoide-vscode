@@ -21,7 +21,6 @@ export default class SOAP {
      * @param options options, for example, {"types": {"CustomObject": ["Account"]}, "asyncProcessId": ""}
      */
     public getRequestBody(requestType: string, options = {}) {
-        console.log(requestType, options);
         let methodName = `create${requestType}Request`;
         if (typeof (this as any)[methodName] !== "function") {
             throw new Error(`${methodName} is not function`);
@@ -118,7 +117,7 @@ export default class SOAP {
         let soapBody = `
             <met:checkDeployStatus>
                 <met:asyncProcessId>${options["asyncProcessId"]}</met:asyncProcessId>
-                <met:includeDetails>${options["includeDetails"]}</met:includeDetails>
+                <met:includeDetails>${options["includeDetails"] || true}</met:includeDetails>
             </met:checkDeployStatus>
         `;
 
@@ -219,7 +218,6 @@ export default class SOAP {
      * @returns soap body for ``deploy request``
      */
     private createDeployRequest(options:any) {
-        console.log(options);
         let deployOptions = options["deployOptions"];
         let soapBody = `
             <met:deploy>

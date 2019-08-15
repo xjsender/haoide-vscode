@@ -24,14 +24,15 @@ export function activate(context: vscode.ExtensionContext) {
 		"extension.haoide.authorize.default", auth.authorizeDefaultProject
 	));
 
-	// Create new project command
+	// Register createProject command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.createProject", main.createProject
-	));	
-
-	// Register deployFilesToServer command
+	));
+	
+	// Register deployThisToServer command
 	context.subscriptions.push(vscode.commands.registerCommand(
-		"extension.haoide.deployFilesToServer", main.deployFilesToServer
+		"extension.haoide.deployThisToServer", 
+		main.deployThisToServer
 	));	
 	
 	// Register switchProject command
@@ -67,6 +68,13 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.loginToSFDC", utility.loginToSFDC
 	));
+
+	// Register locateThisInBrowser command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.locateThisInBrowser", 
+		utility.locateThisInBrowser
+	));
+
 
 	// Register copyLoginUrl command
 	context.subscriptions.push(vscode.commands.registerCommand(
