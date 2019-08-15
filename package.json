@@ -115,7 +115,7 @@
 			{
 				"command": "extension.haoide.deployThisToServer",
 				"key": "ctrl+alt+s",
-				"mac": "cmd+alt+s",
+				"mac": "cmd+shift+s",
 				"win": "ctrl+alt+s",
 				"linux": "ctrl+alt+s"
 			}

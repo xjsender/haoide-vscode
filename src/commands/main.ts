@@ -83,29 +83,43 @@ export function executeAnonymous(apexCode?: string) {
         });
 }
 
-// export function deployFilesToServer(
-//         files: string[], 
-//         switchProject: boolean = false, 
-//         chosenTestClasses: string[]) {
+export function refreshThisFromServer() {
+    let editor = vscode.window.activeTextEditor;
+    if (editor) {
+        let fileName = editor.document.fileName;
+    }
+}
+
+/**
+ * Deploy active file to server
+ */
 export function deployThisToServer() {
     let editor = vscode.window.activeTextEditor;
     if (editor) {
         let fileName = editor.document.fileName;
-        packages.buildDeployPackage([fileName]).then( base64Str => {
-            new MetadataApi().deploy(base64Str).then(result => {
-                // If deploy failed, show error message
-                if (!result["success"]) {
-                    let componentFailures = result.details["componentFailures"];
-                    vscode.window.showErrorMessage(componentFailures["problem"]);
-                }
-                else {
-                    vscode.window.showInformationMessage(
-                        "This file is deployed to server succesfully"
-                    );
-                }
-            });
-        });
+        deployFilesToServer([fileName]);
     }
+}
+
+/**
+ * Deploy files to server
+ * @param files files to be deployed
+ */
+export function deployFilesToServer(files: string[]) {
+    packages.buildDeployPackage(files).then(base64Str => {
+        new MetadataApi().deploy(base64Str).then(result => {
+            // If deploy failed, show error message
+            if (!result["success"]) {
+                let componentFailures = result.details["componentFailures"];
+                vscode.window.showErrorMessage(componentFailures["problem"]);
+            }
+            else {
+                vscode.window.showInformationMessage(
+                    "This file is deployed to server succesfully"
+                );
+            }
+        });
+    });
 }
 
 export function createProject() {
