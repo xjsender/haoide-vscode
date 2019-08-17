@@ -33,34 +33,30 @@ export function buildDeployPackage(files: string[]) {
             const members: FileAttributes[] = packageDict[xmlName];
             
             for (const member of members) {
-                let directoryName = member.directoryName;
-                let folder = member["folder"];
-                let fullName = member["fullName"];
-
-                if (["lwc", "aura"].includes(directoryName)) {
-                    let dirName = path.dirname(member["dir"]);
+                if (["lwc", "aura"].includes(member.directoryName)) {
+                    let dirName = path.dirname(member.dir);
                     let fileNames = fs.readdirSync(dirName);
 
                     for (const fileName of fileNames) {
                         let fileFullName = path.join(dirName, fileName);
                         zip.addFile(fileFullName, path.join(
-                            directoryName, folder, fullName
+                            member.directoryName, member.folder, fileName
                         ));
                     }
                 }
-                else if (directoryName) {
-                    let zipPath = path.join(
-                        directoryName, folder || ""
+                else if (member.directoryName) {
+                    let dirName = path.join(
+                        member.directoryName, member.folder || ""
                     );
                     zip.addFile(member["dir"], 
-                        path.join(zipPath, fullName)
+                        path.join(dirName, member.fullName)
                     );
 
                     // Add -meta.xml file
                     let metaXmlName = member["dir"] + "-meta.xml";
                     if (fs.existsSync(metaXmlName)) {
                         zip.addFile(metaXmlName, 
-                            path.join(zipPath, fullName + "-meta.xml")
+                            path.join(dirName, member.fullName + "-meta.xml")
                         );
                     }
                 }

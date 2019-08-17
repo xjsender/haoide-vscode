@@ -26,6 +26,10 @@ export default class Metadata {
         return Metadata.instance;
     }
 
+    /**
+     * Keep metadata describe result to local disk
+     * @param metaObject metadata describe result
+     */
     public setMetaObjects(metaObject: any) {
         settingsUtil.setConfigValue(
             "metadata.json", metaObject

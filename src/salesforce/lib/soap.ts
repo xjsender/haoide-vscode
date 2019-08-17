@@ -1,3 +1,8 @@
+/**
+ * @file soap body builder
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as _ from "lodash";
 
 export default class SOAP {
@@ -12,12 +17,12 @@ export default class SOAP {
     /**
      *  
      * @param requestType request type, available values should be, [
-     *                          "DescribeMetadata", 
-     *                          "CheckStatus",
-     *                          "CheckRetrieveStatus",
-     *                          "CancelDeployment", 
-     *                          "CheckDeployStatus"
-     *                     ]
+     *     "DescribeMetadata", 
+     *     "CheckStatus",
+     *     "CheckRetrieveStatus",
+     *     "CancelDeployment", 
+     *     "CheckDeployStatus"
+     * ]
      * @param options options, for example, {"types": {"CustomObject": ["Account"]}, "asyncProcessId": ""}
      */
     public getRequestBody(requestType: string, options = {}) {

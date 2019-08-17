@@ -62,8 +62,7 @@ export function startServer(projectName: any, loginUrl: string) {
                 projectSession.setSession(session);
 
                 // Describe metadata
-                let metadataApi = new MetadataApi(session);
-                metadataApi.describeMetadata()
+                new MetadataApi(session).describeMetadata()
                     .then( result => {
                         metadata.setMetaObjects(result);
                     })

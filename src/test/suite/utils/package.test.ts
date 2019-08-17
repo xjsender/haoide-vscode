@@ -1,21 +1,24 @@
+/**
+ * @file Test suite for ./utils/package.ts
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as assert from "assert";
 import * as pkg from "../../../utils/package";
 
 describe("Test all functions for ./utils/package", () => {
+    let files: string[] = [
+        "/Users/mouse/Dropbox/SFDC/workspace/pro-trailhead/src/pages/AccountList.page"
+    ];
+
     describe("#getFileAttributes()", () => {
         it("xmlName should be ApexClass", () => {
-            let files = 
-                "/Users/mouse/Dropbox/SFDC/workspace/pro-trailhead/src/pages/AccountList.page";
-
-            let attrs: pkg.FileAttributes = pkg.getFileAttributes(files);
+            let attrs: pkg.FileAttributes = pkg.getFileAttributes(files[0]);
             assert(attrs.xmlName, "ApexPage");
         });
 
         it("fullName should be AccountList.page", () => {
-            let files =
-                "/Users/mouse/Dropbox/SFDC/workspace/pro-trailhead/src/pages/AccountList.page";
-
-            let attrs: pkg.FileAttributes = pkg.getFileAttributes(files);
+            let attrs: pkg.FileAttributes = pkg.getFileAttributes(files[0]);
             assert(attrs.xmlName, "ApexPage");
             assert(attrs.fullName, "AccountList.page");
         });
@@ -23,10 +26,6 @@ describe("Test all functions for ./utils/package", () => {
 
     describe("#getRetrieveTypes()", () => {
         it("RetrieveTypes should have one class", () => {
-            let files = [
-                "/Users/mouse/Dropbox/SFDC/workspace/pro-trailhead/src/pages/AccountList.page"
-            ];
-
             let retrieveTypes: { [key: string]: string[] } = 
                 pkg.getRetrieveTypes(files);
             let members = retrieveTypes["ApexPage"];
@@ -36,16 +35,20 @@ describe("Test all functions for ./utils/package", () => {
 
     describe("#buildPackageXml()", () => {
         it("Package xml content contains AccountList", () => {
-            let files = [
-                "/Users/mouse/Dropbox/SFDC/workspace/pro-trailhead/src/pages/AccountList.page"
-            ];
-
             let packageDict: any = pkg.buildPackageDict(files);
             let packageXmlContent = pkg.buildPackageXml(packageDict);
             let containsAccountListMember: boolean = packageXmlContent.indexOf(
                 "<members>AccountList</members>"
             ) !== -1;
             assert(containsAccountListMember, 'true');
+        });
+    });
+
+    describe("#buildDeployPackage()", () => {
+        it("Should return base64Str", () => {
+            pkg.buildDeployPackage(files).then(base64Str => {
+                assert(base64Str !== null, 'true');
+            });
         });
     });
 });
