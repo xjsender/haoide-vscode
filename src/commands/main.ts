@@ -3,8 +3,6 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import * as _ from "lodash";
-import * as AdmZip from "adm-zip";
-import * as shelljs from "shelljs";
 import * as util from "../utils/util";
 import * as utility from "./utility";
 import * as packages from "../utils/package";
@@ -83,13 +81,6 @@ export function executeAnonymous(apexCode?: string) {
         });
 }
 
-export function refreshThisFromServer() {
-    let editor = vscode.window.activeTextEditor;
-    if (editor) {
-        let fileName = editor.document.fileName;
-    }
-}
-
 /**
  * Deploy active file to server
  */
@@ -122,53 +113,57 @@ export function deployFilesToServer(files: string[]) {
     });
 }
 
+
+/**
+ * Refresh body of active file from server
+ */
+export function refreshThisFromServer() {
+    let editor = vscode.window.activeTextEditor;
+    if (editor) {
+        let fileName = editor.document.fileName;
+        let filep = util.getFilePropertyByFileName(fileName);
+        new RestApi().get(filep["id"]).then(body => {
+            console.log(body);
+        });
+    }
+}
+
+/**
+ * Retireve active file from server
+ */
+export function retrieveThisFromServer() {
+    let editor = vscode.window.activeTextEditor;
+    if (editor) {
+        retrieveFilesFromServer([editor.document.fileName]);
+    }
+}
+
+/**
+ * Retrieve files from server
+ * @param fileNames files to be retrieved
+ */
+export function retrieveFilesFromServer(fileNames: string[]) {
+    let retrieveTypes = packages.getRetrieveTypes(fileNames);
+    console.log(retrieveTypes);
+    new MetadataApi().retrieve({ "types": retrieveTypes })
+        .then(result => {
+            packages.extractZipFile(result);
+        });
+}
+
 export function createProject() {
     let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
     if (!subscribedMetaObjects) {
         return utility.toggleMetadataObjects(createProject);
     }
 
-    let types: any = {};
+    let retrieveTypes: {[key: string]: string[]} = {};
     for (const mo of subscribedMetaObjects) {
-        types[mo] = ["*"];
+        retrieveTypes[mo] = ["*"];
     }
 
-    let metadataApi = new MetadataApi();
-    metadataApi.retrieve({ "types": types}).then( result => {
-        let zipFilePath = path.join(os.homedir(), "haoide.zip");
-        fs.writeFileSync(
-            zipFilePath, result["zipFile"], "base64"
-        );
-        
-        let zip = new AdmZip(zipFilePath);
-        for (const zipEntry of zip.getEntries()) {
-            let entryName = zipEntry.entryName.replace("unpackaged", "src");
-            let fileName = zipEntry.name;
-
-            // Get file path for every file
-            let filePath = path.join(
-                util.getProjectPath(), 
-                entryName.substr(0, entryName.lastIndexOf(fileName) - 1)
-            );
-            
-            // If folder is not exist, just make it
-            // https://stackoverflow.com/questions/31645738/how-to-create-full-path-with-nodes-fs-mkdirsync
-            if (!fs.existsSync(filePath)) {
-                shelljs.mkdir("-p", filePath);
-            }
-
-            // Write file to local disk
-            fs.writeFileSync(
-                path.join(filePath, fileName),
-                zipEntry.getData()
-            );
-        }
-
-        // Add project to workspace
-        utility.addDefaultProjectToWorkspace();
-
-        // Keep fileProperties to local disk
-        util.setFileProperties(result["fileProperties"]);
+    new MetadataApi().retrieve({ "types": retrieveTypes}).then( result => {
+        packages.extractZipFile(result, true);
     })
     .catch ( err => {
         console.log(err);

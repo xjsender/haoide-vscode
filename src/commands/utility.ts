@@ -97,24 +97,17 @@ export function switchProject(projectName?: string) {
 export function locateThisInBrowser() {
     let editor = vscode.window.activeTextEditor;
     if (editor) {
-        let fileUri = editor.document.fileName;
-        let attribs: any = packageUtil.getFileAttributes(fileUri);
-        let metaFolder = attribs["metaFolder"];
-        let fullName = attribs["fullName"];
+        let fileName = editor.document.fileName;
 
-        let fileProperties = settingsUtil.getConfig(
-            "componentMetadata.json"
+        let fileProperty = util.getFilePropertyByFileName(fileName);
+        console.log(fileProperty);
+        if (fileProperty["id"]) {
+            return loginToSFDC("/" + fileProperty["id"]);
+        }
+
+        vscode.window.showErrorMessage(
+            "Not found attributes of this file at local cache"
         );
-
-        try {
-            let fileProperty = fileProperties[metaFolder][fullName];
-            loginToSFDC("/" + fileProperty["id"]);
-        }
-        catch (err) {
-            vscode.window.showErrorMessage(
-                "Not found attributes of this file at local cache"
-            );
-        }
     }
 }
 

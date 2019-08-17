@@ -1,6 +1,4 @@
-import * as vscode from "vscode";
 import * as request from "request-promise";
-import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
 import * as auth from "../../commands/auth";
 import * as util from "../../utils/util";
@@ -42,7 +40,6 @@ export default class MetadataApi {
         let self = this;
 
         return new Promise<any>(function(resolve, reject) {
-            console.log(options);
             let requestType = options["requestType"];
             let soapBody = self.soap.getRequestBody(requestType, options);
 

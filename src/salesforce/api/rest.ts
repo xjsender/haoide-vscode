@@ -3,7 +3,7 @@ import * as request from "request-promise";
 import * as auth from "../../commands/auth";
 import { projectSettings, projectSession } from "../../settings";
 
-export default class MetadataApi {
+export default class RestApi {
     private session: any;
     private sessionId!: string;
     private instanceUrl!: string;
@@ -61,8 +61,8 @@ export default class MetadataApi {
                 body: options.data
             };
 
-            request(requestOptions).then( response => {
-                resolve(response);
+            request(requestOptions).then( body => {
+                resolve(body);
             })
             .catch(err => {
                 // If session is expired, just login again

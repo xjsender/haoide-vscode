@@ -1,11 +1,17 @@
-import * as path from "path";
-import * as fs from "fs";
 import * as settingsUtil from "./settingsUtil";
+
+export interface MetaObject {
+    directoryName: string;
+    inFolder: boolean;
+    metaFile: string;
+    suffix: string;
+    xmlName: string;
+}
 
 export default class Metadata {
     private static instance: Metadata;
     private metaFileName = "metadata.json";
-    private metaObjects: any;
+    private metaObjects!: MetaObject[];
 
     public static getInstance() {
         if (!Metadata.instance) {
@@ -24,16 +30,19 @@ export default class Metadata {
     /**
      * Get metaobjects array
      */
-    public getMetaObjects() {
-        return settingsUtil.getConfig(
+    public getMetaObjects(): MetaObject[] {
+        let metadataObjects = settingsUtil.getConfig(
             this.metaFileName
         )["metadataObjects"];
+
+        return metadataObjects as MetaObject[];
     }
 
     /**
      * Get metaObject by metaFolder(directoryName)
      * @param metaFolder metadata folder (directoryName)
-     * @returns metaObject,for example, {
+     * @returns metaObject,
+     * i.e., {
      *      "directoryName": "classes",
      *      "inFolder": "false",
      *      "metaFile": "true",
@@ -41,18 +50,18 @@ export default class Metadata {
      *      "xmlName": "ApexClass"
      *  }
      */
-    public getMetaObject(metaFolder: string): any {
+    public getMetaObject(metaFolder: string): MetaObject {
         if (this.metaObjects === undefined) {
             this.metaObjects = this.getMetaObjects();
         }
 
         for (const metaObject of this.metaObjects) {
-            if (metaObject["directoryName"] === metaFolder) {
+            if (metaObject.directoryName === metaFolder) {
                 return metaObject;
             }
         }
 
-        return {};
+        return {} as MetaObject;
     }
 
     /**
@@ -61,6 +70,7 @@ export default class Metadata {
      * @returns xmlName xmlName in the metaObject
      */
     public getXmlName(metaFolder: string) {
-        return (this.getMetaObject(metaFolder))["xmlName"];
+        let metaObject = this.getMetaObject(metaFolder);
+        return metaObject.xmlName;
     }
 }

@@ -5,8 +5,10 @@ import * as os from "os";
 import * as _ from "lodash";
 import * as vscode from "vscode";
 import * as xmlParser from "fast-xml-parser";
-import { extensionSettings } from "../settings";
+import * as packageUtil from "../utils/package";
 import * as settingsUtil from "../settings/settingsUtil";
+import { extensionSettings } from "../settings";
+import { FileAttributes } from "../utils/package";
 
 export function openWithBrowser(url: string) {
     opn(url).catch(_ => {
@@ -265,5 +267,27 @@ export function setFileProperties(fileProperties: any[]) {
 
         // Keep component metadata to local disk
         settingsUtil.setConfigValue("componentMetadata.json", componentMetadata);
+    }
+}
+
+/**
+ * Get file property by file uri
+ * @param fileName file Uri
+ * @returns fileProperty, including, id, metaFolder, xmlName...
+ */
+export function getFilePropertyByFileName(fileName: string) {
+    let attrs: FileAttributes = packageUtil.getFileAttributes(fileName);
+    
+    let fileProperties = settingsUtil.getConfig(
+        "componentMetadata.json"
+    );
+    console.log(fileProperties);
+
+    try {
+        return fileProperties[attrs.directoryName][attrs.fullName];
+    }
+    catch (err) {
+        console.error(err);
+        return {};
     }
 }

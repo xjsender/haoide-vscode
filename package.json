@@ -68,13 +68,13 @@
 				"category": "Haoide"
 			},
 			{
-				"command": "extension.haoide.deployThisToServer",
-				"title": "Deploy This File to Server",
+				"command": "extension.haoide.retrieveThisFromServer",
+				"title": "Retrieve This File to Server",
 				"category": "Haoide"
 			},
 			{
-				"command": "extension.haoide.deployFilesToServer",
-				"title": "Deploy Files to Server",
+				"command": "extension.haoide.deployThisToServer",
+				"title": "Deploy This Files to Server",
 				"category": "Haoide"
 			},
 			{
@@ -90,6 +90,9 @@
 		],
 		"menus": {
 			"editor/context": [{
+				"group": "z_commands",
+				"command": "extension.haoide.retrieveThisFromServer"
+			},{
 				"group": "z_commands",
 				"command": "extension.haoide.deployThisToServer"
 			}, {
@@ -111,6 +114,13 @@
 				"mac": "cmd+shift+e",
 				"win": "ctrl+alt+e",
 				"linux": "ctrl+alt+e"
+			},
+			{
+				"command": "extension.haoide.retrieveThisFromServer",
+				"key": "ctrl+alt+r",
+				"mac": "ctrl+shift+r",
+				"win": "ctrl+alt+r",
+				"linux": "ctrl+alt+r"
 			},
 			{
 				"command": "extension.haoide.deployThisToServer",
