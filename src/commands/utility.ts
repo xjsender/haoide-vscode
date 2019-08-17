@@ -7,7 +7,6 @@ import * as vscode from "vscode";
 import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
 import * as util from "../utils/util";
-import * as packageUtil from "../utils/package";
 import * as settingsUtil from "../settings/settingsUtil";
 import { projectSettings, projectSession, metadata } from "../settings";
 
@@ -18,7 +17,7 @@ export function addDefaultProjectToWorkspace() {
     util.addProjectToWorkspace(projectName);
 }
 
-export async function toggleMetadataObjects(callback?: Function) {
+export function toggleMetadataObjects() {
     // Get all meta objects
     let metadataObjects = metadata.getMetaObjects();
     let metaObjects = _.sortBy(metadataObjects, mo => mo.xmlName);
@@ -26,7 +25,7 @@ export async function toggleMetadataObjects(callback?: Function) {
     // Get already subscribed meta objects
     let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
     
-    const selecteItems = await vscode.window.showQuickPick(
+    return vscode.window.showQuickPick(
         _.map(metaObjects, mo => {
             let isPicked = _.indexOf(subscribedMetaObjects, mo.xmlName) !== -1;
 
@@ -42,18 +41,31 @@ export async function toggleMetadataObjects(callback?: Function) {
             ignoreFocusOut: true,
             matchOnDescription: true
         }
-    );
+    ).then( selectedItems => {
+        return new Promise<string[]>( (resolve, reject) => {
+            if (!selectedItems || selectedItems.length === 0) {
+                resolve([]);
 
-    // Keep subscribedMetaObjects to project settings
-    settingsUtil.setConfigValue("settings.json", {
-        "subscribedMetaObjects": _.map(selecteItems, si => si.label)
+                return util.showCommandWarning(
+                    "You should select one metaObject at least"
+                );
+            }
+
+            // Keep subscribedMetaObjects to project settings
+            let subscribedMetaObjects = _.map(
+                selectedItems, si => si.label
+            );
+            settingsUtil.setConfigValue("settings.json", {
+                "subscribedMetaObjects": subscribedMetaObjects
+            });
+
+            vscode.window.showInformationMessage(
+                "You subscribed metadata objects are updated"
+            );
+
+            resolve(subscribedMetaObjects);
+        });
     });
-
-    vscode.window.showInformationMessage("You subscribed metadata objects are updated");
-
-    if (callback) {
-        callback();
-    }
 }
 
 export function switchProject(projectName?: string) {

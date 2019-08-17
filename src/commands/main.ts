@@ -153,22 +153,34 @@ export function retrieveFilesFromServer(fileNames: string[]) {
         });
 }
 
+/**
+ * Create new project based on subscribed metadata objects
+ */
 export function createProject() {
     let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
-    if (!subscribedMetaObjects) {
-        return utility.toggleMetadataObjects(createProject);
-    }
 
-    let retrieveTypes: {[key: string]: string[]} = {};
-    for (const mo of subscribedMetaObjects) {
-        retrieveTypes[mo] = ["*"];
-    }
+    // If there is no subscribed metaObjects, so subscribe first
+    if (!subscribedMetaObjects || subscribedMetaObjects.length === 0) {
+        return utility.toggleMetadataObjects().then( metaObjects => {
+            if (!metaObjects || metaObjects.length === 0) {
+                return vscode.window.showWarningMessage(
+                    "No subscribed metaObjects for this project"
+                );
+            }
 
-    new MetadataApi().retrieve({ "types": retrieveTypes}).then( result => {
-        packages.extractZipFile(result, true);
-    })
-    .catch ( err => {
-        console.log(err);
-        vscode.window.showErrorMessage(err.message);
-    });
+            let retrieveTypes: any = {};
+            for (const mo of metaObjects) {
+                retrieveTypes[mo] = ["*"];
+            }
+
+            new MetadataApi().retrieve({ "types": retrieveTypes })
+                .then(result => {
+                    packages.extractZipFile(result, true);
+                })
+                .catch(err => {
+                    console.error(err);
+                    vscode.window.showErrorMessage(err.message);
+                });
+        });
+    }
 }
