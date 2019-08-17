@@ -1,3 +1,8 @@
+/**
+ * @file utility for parsing /tooling/completions?type=apex
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as fs from "fs";
 import * as path from "path";
 import { publicDeclarations } from "./server/apex";

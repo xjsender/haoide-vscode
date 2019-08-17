@@ -1,3 +1,9 @@
+/**
+ * @file Express service to start oauth login and parse callback
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
+
 import * as express from "express";
 import * as opn from "open";
 import * as vscode from "vscode";

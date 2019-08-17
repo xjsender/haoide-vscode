@@ -4,6 +4,7 @@ import * as util from "../utils/util";
 
 /**
  * Get all configs or get value of spcified key
+ * 
  * @param fileName file name, for example, settings
  * @param key if no specified, means get all key-values
  * @returns value of specified key or all key-values
@@ -16,6 +17,7 @@ export function getConfigValue(fileName: string, key: string) {
 
 /**
  * Get all configs or get value of spcified key
+ * 
  * @param fileName file name, for example, settings
  * @returns value of specified key or all key-values
  */
@@ -33,6 +35,11 @@ export function getConfig(fileName: string) {
     return config;
 }
 
+/**
+ * Replace exist config with specified k-vs 
+ * @param fileName config file name
+ * @param options k-vs to replace in the config file
+ */
 export function setConfigValue(fileName: string, options: any): any | Object {
     let filePath = getFilePath(fileName);
 
@@ -55,7 +62,9 @@ export function setConfigValue(fileName: string, options: any): any | Object {
 
 /**
  * Get local file path, if not exists, just make it
+ * 
  * @param fileName file Name which contains extension
+ * @returns the full uri of specified config file
  */
 export function getFilePath(fileName: string): string {
     let projectFolder = util.getProjectPath(); // Get default project

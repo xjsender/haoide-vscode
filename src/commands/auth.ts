@@ -4,6 +4,9 @@ import { projectSession } from "../settings";
 import { OAuth } from "../salesforce/lib/auth/oauth";
 import * as util from "../utils/util";
 
+/**
+ * Authorized new project and also keep information to local disk
+ */
 export async function authorizeNewProject() {
     // Get projectName from user input
     let projectName = await vscode.window.showInputBox({

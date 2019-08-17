@@ -1,3 +1,7 @@
+/**
+ * @file OAuth2 requests
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
 
 import { appConfig } from "./config";
 import * as querystring from "querystring";
@@ -14,6 +18,12 @@ export class OAuth {
         this.authorizeUrl = `${loginUrl}/services/oauth2/authorize`;
     }
 
+    /**
+     * Get code authrorization url
+     * 
+     * @param parms reserved param for future use
+     * @returns code authorization url
+     */
     public getAuthorizationUrl(parms?: any) {
         let params = {
             response_type: "code",
@@ -23,6 +33,13 @@ export class OAuth {
         return `${this.authorizeUrl}?` + querystring.stringify(params);
     }
 
+    /**
+     * Common service for invoking oauth request, 
+     * i.e., requestToken, refreshToken
+     * 
+     * @param params utility for invoke request
+     * @returns request response
+     */
     private _invokeTokenRequest(params: any) {
         let self = this;
 
@@ -46,6 +63,12 @@ export class OAuth {
         });
     }
 
+    /**
+     * Get accessToken, instanceUrl by code
+     * 
+     * @param code response code after user login succeed
+     * @returns Promise<response>
+     */
     public requestToken(code: string) {
         let params = {
             grant_type: "authorization_code",
@@ -58,6 +81,12 @@ export class OAuth {
         return this._invokeTokenRequest(params);
     }
 
+    /**
+     * Get refreshed accessToken by refreshToken
+     * 
+     * @param refreshToken got from code request response
+     * @returns Promise<response>
+     */
     public refreshToken(refreshToken: string) {
         let params = {
             grant_type: "refresh_token",

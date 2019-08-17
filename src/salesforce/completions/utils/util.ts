@@ -1,9 +1,17 @@
+/**
+ * @file Utility for language completion
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range, SnippetString } from "vscode";
 
 /**
  * Get last character in the cursor position
+ * 
  * @param document Current TextDocument
  * @param postition current cursor postion
+ * 
+ * @returns last char of focus postion
  */
 export function getLastCharOfPosition(document: TextDocument, postition: Position) {
     let startPos = postition.translate(0, -1);
@@ -14,8 +22,11 @@ export function getLastCharOfPosition(document: TextDocument, postition: Positio
 
 /**
  * Get completion for class methods
+ * 
  * @param _class class completion json from tooling api
  * @param isStatic if true, menas just return static method
+ * 
+ * @returns completion item of std apex method
  */
 export function getMethodCompletionItem(_class: any, isStatic=true): CompletionItem[] {
     let completionItems = [];
@@ -65,6 +76,16 @@ export function getMethodCompletionItem(_class: any, isStatic=true): CompletionI
     return completionItems;
 }
 
+/**
+ * Get vscode completion item by speicfied attributes
+ * 
+ * @param label label to be displayed
+ * @param kind completion type, i.e., interface, class or variable...
+ * @param detail detail information of item
+ * @param doc rich description in html or markdown format
+ * @param insertText text to be inserted when click the selected one
+ * @returns vscode completion item
+ */
 export function createCompletionItem(label: string, kind?: any, 
     detail?: string, doc?: string, insertText?: string) {
 

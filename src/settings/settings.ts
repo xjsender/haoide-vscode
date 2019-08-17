@@ -1,4 +1,8 @@
-import * as moment from "moment";
+/**
+ * @file settings
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as settingsUtil from "./settingsUtil";
 
 export default class ProjectSettings {

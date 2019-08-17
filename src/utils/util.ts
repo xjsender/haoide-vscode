@@ -10,6 +10,11 @@ import * as settingsUtil from "../settings/settingsUtil";
 import { extensionSettings } from "../settings";
 import { FileAttributes } from "../utils/package";
 
+/**
+ * Open specified url with os default browser
+ * 
+ * @param url url to open in browser
+ */
 export function openWithBrowser(url: string) {
     opn(url).catch(_ => {
         console.log(`Has error when open ${url}`);
@@ -18,6 +23,7 @@ export function openWithBrowser(url: string) {
 
 /**
  * Replace all matched oldText to newText in the spcified text
+ * 
  * @param text Text to be replaced
  * @param from oldText
  * @param to newText
@@ -32,6 +38,7 @@ export function replaceAll(text: string, from: string, to: string) {
 
 /**
  * Parse Metadata api response body as JSON format
+ * 
  * @param body Metadata Api request response body
  * @param requestType Metadata Api request type, i.e., executeAnonymous, retrieve
  * @returns JSON formated body
@@ -46,6 +53,7 @@ export function parseResult(body: string, requestType: string) {
 
 /**
  * Create status bar item
+ * 
  * @param text text to show in the status bar
  * @param tooltip text to display when hove on it
  */
@@ -71,6 +79,7 @@ export function parseIdUrl(idUrl: string) {
 
 /**
  * Open a new untitled file and display specified content
+ * 
  * @param content Content to display in the newUntitile file
  */
 export function openNewUntitledFile(content: string, languageId?: string) {
@@ -93,6 +102,11 @@ export function openNewUntitledFile(content: string, languageId?: string) {
         });
 }
 
+/**
+ * Get plugin level workspace
+ * 
+ * @returns workspace setting
+ */
 export function getExtensionWorkspace() {
     let _workspace = extensionSettings.getConfigValue(
         "workspace", ""
@@ -109,6 +123,11 @@ export function getExtensionWorkspace() {
     return _workspace;
 }
 
+/**
+ * Get all authorized projects at homedir/.haoide/config.json
+ * 
+ * @returns {projectName: default<boolean>}
+ */
 export function getProjects() {
     try {
         let configFile = path.join(os.homedir(), ".haoide", "config.json");
@@ -122,6 +141,7 @@ export function getProjects() {
 
 /**
  * Set project as default one in the same workspace
+ * 
  * @param projectName project name to be set as default
  */
 export function setDefaultProject(projectName: string) {
@@ -154,6 +174,7 @@ export function setDefaultProject(projectName: string) {
 
 /**
  * Get default projectName in config.json under the home dir
+ * 
  * @returns Default projectName
  */
 export function getDefaultProject(): string {
@@ -179,7 +200,8 @@ export function getDefaultProject(): string {
 }
 
 /**
- * Get path of project
+ * Get project path by specified project name
+ * 
  * @param projectName If null, means default project
  * @returns project path
  */
@@ -199,6 +221,11 @@ export function getProjectPath(projectName?: string) {
     return projectPath;
 }
 
+/**
+ * Add specified project to workspace
+ * 
+ * @param projectName project to be added to workspace
+ */
 export function addProjectToWorkspace(projectName: string) {
     let projectFolder = getProjectPath(projectName);
     let folders = vscode.workspace.workspaceFolders || [];
@@ -212,10 +239,12 @@ export function addProjectToWorkspace(projectName: string) {
 
 /**
  * Parse metaFolder, folder and name from fileName
+ * 
  * @param fileName fileName with relative path, i.e.,
  *      1. unpackage/triggers/RejectTrigger.trigger
  *      2. unpackage/aura/CampaignItem/CampaignItemController.js
- * @returns file attributes, for example, {
+ * @returns file attributes, 
+ * i.e., {
  *      "metaFolder": "aura" | "triggers",
  *      "folder": "CampaignItem" | "",
  *      "fullName": "CampaignItemController.js" | "RejectTrigger.trigger"
@@ -244,10 +273,8 @@ export function parseFileName(fileName: string) {
 
 /**
  * Keep fileProperties from retrieve/deploy response to local disk
+ * 
  * @param fileProperties fileProperties from retrieve/deploy response
- * @returns {
- *      
- * }
  */
 export function setFileProperties(fileProperties: any[]) {
     let componentMetadata: any = {};
@@ -272,6 +299,7 @@ export function setFileProperties(fileProperties: any[]) {
 
 /**
  * Get file property by file uri
+ * 
  * @param fileName file Uri
  * @returns fileProperty, including, id, metaFolder, xmlName...
  */
@@ -281,7 +309,6 @@ export function getFilePropertyByFileName(fileName: string) {
     let fileProperties = settingsUtil.getConfig(
         "componentMetadata.json"
     );
-    console.log(fileProperties);
 
     try {
         return fileProperties[attrs.directoryName][attrs.fullName];

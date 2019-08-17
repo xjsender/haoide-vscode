@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 
 export default class ProgressNotification {
     /**
+     * Start vscode progress notfication
      * 
      * @param self the context of invoker
      * @param methodName the method name in the metadata Api

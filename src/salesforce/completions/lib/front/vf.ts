@@ -1,3 +1,9 @@
+/**
+ * @file got from /tooling/completions?type=visualforce
+ * Since 2019, Summer19, v46
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 export let vf_tag_defs: {[key: string]: any} = {
     "apex:pageBlockSection": {
         "simple": false,

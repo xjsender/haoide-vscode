@@ -1,9 +1,17 @@
+/**
+ * @file Apex completion provider
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as vscode from "vscode";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
 import { namespaces, classes } from "../lib";
-import { getLastCharOfPosition, createCompletionItem } from "../utils";
+import { 
+    getLastCharOfPosition, 
+    createCompletionItem, 
+    getMethodCompletionItem 
+} from "../utils";
 import { extensionSettings } from "../../../settings";
-import  * as util from "../utils/util";
 
 export class ApexCompletionItemProvider implements vscode.CompletionItemProvider {
     public constructor() { }
@@ -57,7 +65,7 @@ export class ApexCompletionItemProvider implements vscode.CompletionItemProvider
                 let className = _class["name"];
 
                 // Add static method completion
-                let methodCompletionItems = util.getMethodCompletionItem(_class);
+                let methodCompletionItems = getMethodCompletionItem(_class);
                 completionItems.push(...methodCompletionItems);
 
                 // Add property completion

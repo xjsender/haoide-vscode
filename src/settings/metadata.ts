@@ -1,3 +1,8 @@
+/**
+ * @file MetadataObjects
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as settingsUtil from "./settingsUtil";
 
 export interface MetaObject {

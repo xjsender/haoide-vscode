@@ -1,3 +1,8 @@
+/**
+ * @file Extension settings
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as vscode from 'vscode';
 
 export default class ExtensionSettings {

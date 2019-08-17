@@ -1,3 +1,9 @@
+/**
+ * @file parsed namespaces from /tooling/completions?type=apex
+ * Since 2019, Summer19, v46
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 export let namespaces: any = {
     "AITools": [
         "MLCustom",

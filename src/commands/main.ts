@@ -1,7 +1,9 @@
+/**
+ * @file core commands
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as vscode from "vscode";
-import * as fs from "fs";
-import * as path from "path";
-import * as os from "os";
 import * as _ from "lodash";
 import * as util from "../utils/util";
 import * as utility from "./utility";

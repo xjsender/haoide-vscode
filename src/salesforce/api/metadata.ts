@@ -1,3 +1,8 @@
+/**
+ * @file metadata api methods
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as request from "request-promise";
 import * as _ from "lodash";
 import * as auth from "../../commands/auth";

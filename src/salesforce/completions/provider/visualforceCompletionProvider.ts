@@ -1,3 +1,8 @@
+/**
+ * @file visualforce compeltion provider
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as vscode from "vscode";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
 import { vfTagDefs } from "../lib";

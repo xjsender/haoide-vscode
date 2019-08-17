@@ -50,6 +50,11 @@ export default class SOAP {
         return requestEnvelope;
     }
 
+    /**
+     * Create metadata describe request body by spcified api version
+     * 
+     * @returns soap body for metadata describe request
+     */
     private createDescribeMetadataRequest() {
         let soapBody = `
             <met:describeMetadata>
@@ -62,6 +67,7 @@ export default class SOAP {
 
     /**
      * Before v31.0, we need to invoke check_status before check_retrieve_status
+     * 
      * @param options {"asyncProcessId": string}
      * @returns Soap body for ``Check Status`` request
      */
@@ -77,6 +83,7 @@ export default class SOAP {
 
     /**
      * Build soap body for retrieve status check operation
+     * 
      * @param options {"asyncProcessId": string}
      * @returns Soap body for ``Check Retrieve Status`` request
      */
@@ -92,6 +99,7 @@ export default class SOAP {
     
     /**
      * Build soap body for deployment cancel operation
+     * 
      * @param options {"asyncProcessId": string}
      * @returns Soap body for ``Check Retrieve Status`` request
      */
@@ -107,6 +115,7 @@ export default class SOAP {
 
     /**
      * Build soap body for deployment check operation
+     * 
      * @param options {
      *      "asyncProcessId": string,
      *      "includeDetails": true | false
@@ -125,6 +134,7 @@ export default class SOAP {
     }
 
     /**
+     * Build soap body for listPackage request
      * 
      * @param options {"asyncProcessId": string}
      * @param includeDetails true means including deploy details in the deployment result
@@ -169,6 +179,7 @@ export default class SOAP {
 
     /**
      * Build soap body for retrieve request
+     * 
      * @param options for example, {"types": {"CustomObject": ["Account"]}}
      * @returns soap body for ``retrieve request``
      */
@@ -213,6 +224,7 @@ export default class SOAP {
 
     /**
      * Build soap body for deploy request
+     * 
      * @param zipFile base64 encoded package to be deployed
      * @param options deploy options, for example, {"checkOnly", true, ...}
      * @returns soap body for ``deploy request``
@@ -242,6 +254,7 @@ export default class SOAP {
 
     /**
      * Build apex soap request envelope
+     * 
      * @param soapBody soap body string
      * @param options for example, {"logLevels": []}
      */
@@ -295,7 +308,9 @@ export default class SOAP {
 
     /**
      * Build soap body for run all test request
+     * 
      * @param options reserved params
+     * @returns soap body for runAllTest request
      */
     private createRunAllTestRequest(options: any) {
         let soapBody = `
@@ -310,7 +325,10 @@ export default class SOAP {
     }
 
     /**
-     * Partner API Request Envelope
+     * Wrap soapBody into partner envelope
+     * 
+     * @param soapBody soap body to be wrapped
+     * @returns wrapped partner request body
      */
     private createPartnerEnvelope(soapBody:string) {
         let partnerRequestEnvelope = `<soapenv:Envelope 
@@ -331,7 +349,9 @@ export default class SOAP {
 
     /**
      * Build soap body for layout describe reqeust
+     * 
      * @param options sobject & RecordTypeId pairs
+     * @returns soap body for layout describe request
      */
     private createDescribeLayoutRequest(options: any) {
         let soapBody = `

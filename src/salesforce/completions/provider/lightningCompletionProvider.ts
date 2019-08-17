@@ -1,3 +1,8 @@
+/**
+ * @file Lightning completion provider, including lwc and aura
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as vscode from "vscode";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
 import { ltnTagDefs } from "../lib";

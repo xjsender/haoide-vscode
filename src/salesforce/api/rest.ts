@@ -1,3 +1,8 @@
+/**
+ * @file rest api
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as vscode from "vscode";
 import * as request from "request-promise";
 import * as auth from "../../commands/auth";
@@ -34,6 +39,16 @@ export default class RestApi {
         return this;
     }
     
+    /**
+     * Get full rest url by serverUrl, i.e.,
+     *      1. /sobjects/Account/describe
+     *      2. /services/data/v45.0/sobjects/Account/describe
+     *      3. /apexrest/CustomApexService
+     *      4. https://.../sobjects/Account/describe
+     * 
+     * @param serverUrl url in string format
+     * @returns full rest url
+     */
     private buildFullUrl(serverUrl: string): string {
         serverUrl = serverUrl.trim();
 
@@ -84,8 +99,10 @@ export default class RestApi {
 
     /**
      * REST GET Request
+     * 
      * @param serverUrl rest url, which can be relative or absolute
      * @param timeout request timeout seconds
+     * @returns Promise<string>
      */
     public get(serverUrl: string, timeout=120) {
         return this._invoke_method({
@@ -96,10 +113,12 @@ export default class RestApi {
     }
 
     /**
-     * REST GET Request
+     * REST POST Request
+     * 
      * @param serverUrl rest url, which can be relative or absolute
      * @param data request post body
      * @param timeout request timeout seconds
+     * @returns Promise<string>
      */
     public post(serverUrl: string, data: any, timeout=120) {
         return this._invoke_method({
@@ -110,10 +129,12 @@ export default class RestApi {
     }
 
     /**
-     * REST GET Request
+     * REST PATCH Request
+     * 
      * @param serverUrl rest url, which can be relative or absolute
      * @param data request patch body
      * @param timeout request timeout seconds
+     * @returns Promise<string>
      */
     public patch(serverUrl: string, data: any, timeout=120) {
         return this._invoke_method({

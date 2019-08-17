@@ -1,3 +1,8 @@
+/**
+ * @file apex api
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as request from "request-promise";
 import * as xmlParser from "fast-xml-parser";
 import * as auth from "../../commands/auth";

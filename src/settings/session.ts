@@ -1,3 +1,8 @@
+/**
+ * @file session
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as moment from "moment";
 import * as settingsUtil from "./settingsUtil";
 

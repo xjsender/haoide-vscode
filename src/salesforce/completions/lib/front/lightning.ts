@@ -1,4 +1,8 @@
-// Since 2019, Summer19, v45
+/**
+ * @file manually collected from lightning guide
+ * Since 2019, Summer19, v45
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
 
 // events count: 69
 const std_events = {

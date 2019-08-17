@@ -1,3 +1,8 @@
+/**
+ * @file utility commands
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as vscode from "vscode";
 import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
