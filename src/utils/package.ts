@@ -240,17 +240,17 @@ export function getFileAttributes(_file: string): FileAttributes {
 export function getRetrieveTypes(files: string[]) {
     let packageDict = buildPackageDict(files);
 
-    let types: {[key: string]: string[]} = {};
+    let retrieveTypes: {[key: string]: string[]} = {};
     for (const xmlName in packageDict) {
         if (packageDict.hasOwnProperty(xmlName)) {
             const members: FileAttributes[] = packageDict[xmlName];
-            types[xmlName] = _.map(members, member => {
+            retrieveTypes[xmlName] = _.map(members, member => {
                 return member.memberName;
             });
         }
     }
 
-    return types;
+    return retrieveTypes;
 }
 
 export function extractZipFile(result: any, addProjectToWorkspace=false) {
