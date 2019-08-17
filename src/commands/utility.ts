@@ -101,19 +101,19 @@ export function switchProject(projectName?: string) {
  */
 export function locateThisInBrowser() {
     let editor = vscode.window.activeTextEditor;
-    if (editor) {
-        let fileName = editor.document.fileName;
-
-        let fileProperty = util.getFilePropertyByFileName(fileName);
-        console.log(fileProperty);
-        if (fileProperty["id"]) {
-            return loginToSFDC("/" + fileProperty["id"]);
-        }
-
-        vscode.window.showErrorMessage(
-            "Not found attributes of this file at local cache"
-        );
+    if (!editor) {
+        return util.showCommandWarning();
     }
+
+    let fileName = editor.document.fileName;
+    let fileProperty = util.getFilePropertyByFileName(fileName);
+    if (fileProperty["id"]) {
+        return loginToSFDC("/" + fileProperty["id"]);
+    }
+
+    vscode.window.showErrorMessage(
+        "Not found attributes of this file at local cache"
+    );
 }
 
 /**
@@ -152,7 +152,11 @@ export function copyLoginUrl() {
 export function convertXml2Json(xmlStr="") {
     // Get selection in the active editor if no jsonStr param
     let editor = vscode.window.activeTextEditor;
-    if (!xmlStr && editor && editor.selection) {
+    if (!editor) {
+        return util.showCommandWarning();
+    }
+
+    if (!xmlStr) {
         xmlStr = editor.document.getText(editor.selection) || "{}";
     }
     

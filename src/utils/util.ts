@@ -10,6 +10,12 @@ import * as settingsUtil from "../settings/settingsUtil";
 import { extensionSettings } from "../settings";
 import { FileAttributes } from "../utils/package";
 
+export function showCommandWarning(warningMessage?: string) {
+    return vscode.window.showQuickPick([{
+        label: warningMessage || "No text editor active at this time"
+    }]);
+}
+
 /**
  * Open specified url with os default browser
  * 
@@ -27,6 +33,7 @@ export function openWithBrowser(url: string) {
  * @param text Text to be replaced
  * @param from oldText
  * @param to newText
+ * @returns return replaced result
  */
 export function replaceAll(text: string, from: string, to: string) {
     while (text.indexOf(from) !== -1) {
