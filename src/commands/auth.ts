@@ -1,3 +1,8 @@
+/**
+ * @file Authorization commands
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
 import * as vscode from "vscode";
 import { startLogin, startServer } from "../salesforce/lib/auth/server";
 import { projectSession } from "../settings";
