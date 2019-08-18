@@ -245,6 +245,53 @@ export default class RestApi {
     }
 
     /**
+     * REST getLimits request
+     * 
+     * @returns Promise<any>
+     */
+    public getLimits() {
+        return this.get("/limits");
+    }
+
+    /**
+     * Get deleted records during spcified date time range
+     * 
+     * @param sobject sobject name
+     * @param start start date time string literal
+     * @param end end date time string literal
+     * @returns Promise<any>
+     */
+    public getDeletedRecords(sobject: string, 
+                             start: string, 
+                             end: string) {
+        return this.get(
+            `/sobjects/${sobject}/deleted` + 
+            querystring.stringify({
+                "start": start, "end": end
+            })
+        );
+    }
+
+    /**
+     * Get updated records during speicfied date time range
+     * 
+     * @param sobject sobject name
+     * @param start start date time string literal
+     * @param end end date time string literal
+     * @returns Promise<any>
+     */
+    public getUpdatedRecords(sobject: string,
+                             start: string,
+                             end: string) {
+        return this.get(
+            `/sobjects/${sobject}/updated` +
+            querystring.stringify({
+                "start": start, "end": end
+            })
+        );
+    }
+
+    /**
      * REST describe global request
      * 
      * @returns Promise<any>
