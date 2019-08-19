@@ -19,17 +19,17 @@
 		"commands": [
 			{
 				"command": "extension.haoide.authorize.new",
-				"title": "Authorize New Project",
+				"title": "%extension.haoide.authorize.new.title%",
 				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.authorize.default",
-				"title": "Authorize Default Project",
+				"title": "%extension.haoide.authorize.default.title%",
 				"category": "Haoide"
 			},
 			{
 				"command": "extension.haoide.addDefaultProjectToWorkspace",
-				"title": "Add Default Project to Workspace",
+				"title": "%extension.haoide.addDefaultProjectToWorkspace.title%",
 				"category": "Haoide"
 			},
 			{
@@ -89,16 +89,20 @@
 			}
 		],
 		"menus": {
-			"editor/context": [{
-				"group": "z_commands",
-				"command": "extension.haoide.retrieveThisFromServer"
-			},{
-				"group": "z_commands",
-				"command": "extension.haoide.deployThisToServer"
-			}, {
-				"group": "z_commands",
-				"command": "extension.haoide.locateThisInBrowser"
-			}]
+			"editor/context": [
+				{
+					"group": "z_commands",
+					"command": "extension.haoide.retrieveThisFromServer"
+				},
+				{
+					"group": "z_commands",
+					"command": "extension.haoide.deployThisToServer"
+				},
+				{
+					"group": "z_commands",
+					"command": "extension.haoide.locateThisInBrowser"
+				}
+			]
 		},
 		"keybindings": [
 			{
@@ -263,28 +267,29 @@
 	},
 	"dependencies": {
 		"@salesforce/apex-tmlanguage": "^1.1.0",
-		"@types/node": "^10.12.21",
-		"@types/express": "^4.16.3",
-		"@types/request-promise": "^4.1.44",
-		"@types/lodash": "^4.14.136",
 		"@types/adm-zip": "^0.4.32",
-		"@types/yazl": "^2.4.1",
 		"@types/archiver": "^3.0.0",
+		"@types/express": "^4.16.3",
+		"@types/lodash": "^4.14.136",
+		"@types/node": "^10.12.21",
+		"@types/request-promise": "^4.1.44",
 		"@types/shelljs": "^0.8.5",
+		"@types/yazl": "^2.4.1",
+		"adm-zip": "^0.4.13",
 		"archiver": "^3.1.1",
-		"moment": "^2.24.0",
-		"request": "*",
-		"request-promise": "^4.2.4",
-		"typescript": "^3.3.1",
 		"express": "^4.16.4",
+		"fast-xml-parser": "^3.12.19",
+		"gulp": "^4.0.2",
+		"inherits": "^2.0.4",
+		"lodash": "^4.17.15",
+		"moment": "^2.24.0",
+		"npm-update": "^2.1.0",
 		"open": "^6.4.0",
 		"querystring": "v0.2.0",
-		"lodash": "^4.17.15",
-		"fast-xml-parser": "^3.12.19",
-		"adm-zip": "^0.4.13",
-		"yazl": "^2.5.1",
+		"request": "*",
+		"request-promise": "^4.2.4",
 		"shelljs": "^0.8.1",
-		"inherits": "^2.0.4",
-		"npm-update": "^2.1.0"
+		"typescript": "^3.3.1",
+		"yazl": "^2.5.1"
 	}
 }
