@@ -35,6 +35,50 @@ export function executeRestTest() {
     });
 }
 
+/**
+ * Describe sobjects and keep it to local disk
+ * 
+ * @param sobjects sobjects array, if not spcified, just describe global
+ */
+export async function reloadSobjectCache(sobjects?: string[]) {
+    let restApi = new RestApi();
+
+    // If sobjects is not specified, describe global
+    if (!sobjects || sobjects.length === 0) {
+        restApi.describeGlobal().then( body => {
+            let sobjectsDesc: any[] = body["sobjects"];
+            sobjects = _.map(sobjectsDesc, sobjectDesc => {
+                console.log(sobjectDesc);
+                return sobjectDesc["name"];
+            });
+            console.log(sobjects);
+
+            reloadSobjectCache(sobjects);
+        })
+        .catch (err => {
+            vscode.window.showErrorMessage(err.message);
+        });
+        return;
+    }
+    console.log(sobjects);
+    
+    let chuckedSobjectsList = _.chunk(sobjects, 30);
+
+    let resultList: any[] = [];
+    for (const chunkedSobjects of chuckedSobjectsList) {
+        await restApi.describeSobjects(chunkedSobjects, 120)
+            .then( result => {
+                resultList.push(result);
+            });
+    }
+
+    console.log(resultList);
+}
+
+/**
+ * Execute anonymous apex code
+ * @param apexCode apex code to be exuected
+ */
 export function executeAnonymous(apexCode?: string) {
     // Get selection in the active editor
     let editor = vscode.window.activeTextEditor;
@@ -183,4 +227,8 @@ export function createProject() {
                 });
         });
     }
+}
+
+export function createMetaObject(metaObject: string) {
+
 }

@@ -78,6 +78,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.reloadSobjectCache",
+				"title": "Reload sObject Cache",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.formatJson",
 				"title": "Format JSON",
 				"category": "Haoide"

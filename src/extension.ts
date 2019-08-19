@@ -70,6 +70,12 @@ export function activate(context: vscode.ExtensionContext) {
 	// 	utility.executeRestTest
 	// ));
 
+	// Register reloadSobjectCache command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.reloadSobjectCache",
+		main.reloadSobjectCache
+	));
+
 	// Register loginToSFDC command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.loginToSFDC", utility.loginToSFDC
