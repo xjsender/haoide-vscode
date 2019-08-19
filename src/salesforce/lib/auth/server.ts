@@ -10,10 +10,10 @@ import * as vscode from "vscode";
 import * as moment from "moment";
 import * as xmlParser from "fast-xml-parser";
 import * as config from "./config";
-import { projectSession, metadata } from "../../../settings";
 import * as util from "../../../utils/util";
 import MetadataApi from "../../api/metadata";
 import OAuth from "./oauth";
+import { projectSession, metadata } from "../../../settings";
 
 let oauthLoginUrl = "/oauth/login";
 let oauthCallbackUrl = "/oauth/callback";
@@ -57,6 +57,7 @@ export function startServer(projectName: any, loginUrl: string) {
                     "refreshToken": body["refresh_token"],
                     "instanceUrl": body["instance_url"],
                     "loginUrl": loginUrl,
+                    "projectName": projectName,
                     "lastUpdatedTime": moment().format()
                 };
                 projectSession.setSession(session);
@@ -72,7 +73,9 @@ export function startServer(projectName: any, loginUrl: string) {
                     });
 
                 // Login successful message
-                vscode.window.showInformationMessage("You have been successfully login.");
+                vscode.window.showInformationMessage(
+                    "You have been successfully login."
+                );
 
                 // Redirect to salesforce home page
                 res.redirect(`${session["instanceUrl"]}/home/home.jsp`);

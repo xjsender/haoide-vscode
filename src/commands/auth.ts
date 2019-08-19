@@ -11,14 +11,25 @@ import { projectSession } from "../settings";
 
 /**
  * Authorized new project and also keep information to local disk
+ * @param projectName project name
+ * @param loginUrl login url
  */
-export async function authorizeNewProject() {
-    // Get projectName from user input
-    let projectName = await vscode.window.showInputBox({
-        placeHolder: "Please input your project name..."
-    });
+export async function authorizeNewProject(projectName?: string, loginUrl?: string) {
+    // Get projectName from user input if not specified
     if (!projectName) {
-        return vscode.window.showErrorMessage("projectName is required");
+        projectName = await vscode.window.showInputBox({
+            placeHolder: "Please input your project name..."
+        });
+        if (!projectName) {
+            return util.showCommandWarning("projectName is required");
+        }
+    }
+
+    // If loginUrl is spcified, just start oauth login process
+    if (loginUrl) {
+        return startServer(projectName, loginUrl).then(function (message: any) {
+            startLogin();
+        });
     }
 
     // Get login url from user selection
@@ -54,25 +65,36 @@ export function authorizeDefaultProject() {
     let oauth = new OAuth(session["loginUrl"]);
 
     return new Promise( (resolve, reject) => {
-        oauth.refreshToken(session["refreshToken"]).then(function(response) {
-            let body = JSON.parse(response["body"]);
-            projectSession.setSessionId(body["access_token"]);
+        oauth.refreshToken(session["refreshToken"])
+            .then(function(response) {
+                let body = JSON.parse(response["body"]);
+                projectSession.setSessionId(body["access_token"]);
 
-            // Add project to workspace
-            let projectName = util.getDefaultProject();
-            util.addProjectToWorkspace(projectName);
+                // Add project to workspace
+                let projectName = util.getDefaultProject();
+                util.addProjectToWorkspace(projectName);
 
-            // Show success information
-            vscode.window.showInformationMessage(
-                "Session information is refreshed"
-            );
+                // Show success information
+                vscode.window.setStatusBarMessage(
+                    "Session information is refreshed"
+                );
 
-            resolve();
-        })
-        .catch(err => {
-            console.error(err);
-            vscode.window.showErrorMessage(err);
-            reject(err);
-        });
+                resolve();
+            })
+            .catch( err => {
+                if (err.message.indexOf("expired access/refresh token")) {
+                    vscode.window.showWarningMessage(
+                        "Refresh token expired, will start authorization"
+                    );
+
+                    // Refresh token expired, start new authorization
+                    authorizeNewProject(
+                        session["projectName"], 
+                        session["loginUrl"]
+                    );
+                }
+
+                reject(err);
+            });
     });
 }

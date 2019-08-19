@@ -70,14 +70,13 @@ export default class ApexApi {
             .catch( err => {
                 // If session is expired, just login again
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
-                    return auth.authorizeDefaultProject().then(() => {
+                    return auth.authorizeDefaultProject().then( () => {
                         self.initiate()._invoke_method(options, progress);
+                    })
+                    .catch( err => {
+                        // Stop notification progress if any exception
+                        resolve("");
                     });
-                }
-
-                // If network is timeout, just throw exception
-                if (err.message.indexOf("getaddrinfo ENOTFOUND")) {
-                    err.message = "Connection timeout, please check your network.";
                 }
                 
                 reject(err);

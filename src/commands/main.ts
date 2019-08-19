@@ -167,39 +167,41 @@ export function executeAnonymous(apexCode?: string) {
     }
 
     if (!apexCode) {
-        let errorMsg = "There is no code to execute";
-        console.log(errorMsg);
-        return vscode.window.showErrorMessage(errorMsg);
+        return vscode.window.showErrorMessage(
+            "There is no code to execute"
+        );
     }
 
     let apexApi = new ApexApi();
     let requestType = "executeAnonymous";
     ProgressNotification.showProgress(apexApi, requestType, { "apexCode": apexCode })
         .then( (body: string) => {
-            // If there is compile error, parse it as human-readable
-            if (body.indexOf("<success>false</success>") !== -1) {
-                let result = util.parseResult(body, requestType);
+            if (body) {
+                // If there is compile error, parse it as human-readable
+                if (body.indexOf("<success>false</success>") !== -1) {
+                    let result = util.parseResult(body, requestType);
 
-                let compileProblem = result["compileProblem"] as string;
+                    let compileProblem = result["compileProblem"] as string;
 
-                // Replace all &apos; to '
-                compileProblem = util.replaceAll(
-                    compileProblem, "&apos;", "'"
-                );
-                
-                // Replace all &quot; to ""
-                compileProblem = util.replaceAll(
-                    compileProblem, "&quot;", '"'
-                );
+                    // Replace all &apos; to '
+                    compileProblem = util.replaceAll(
+                        compileProblem, "&apos;", "'"
+                    );
+                    
+                    // Replace all &quot; to ""
+                    compileProblem = util.replaceAll(
+                        compileProblem, "&quot;", '"'
+                    );
 
-                let errorMsg = `${compileProblem} at line ` + 
-                    `${result["line"]} column ${result["column"]}`;
-                console.log(errorMsg);
+                    let errorMsg = `${compileProblem} at line ` + 
+                        `${result["line"]} column ${result["column"]}`;
+                    console.log(errorMsg);
 
-                return vscode.window.showErrorMessage(errorMsg);
+                    return vscode.window.showErrorMessage(errorMsg);
+                }
+
+                util.openNewUntitledFile(body, "apex");
             }
-
-            util.openNewUntitledFile(body, "apex");
         })
         .catch( err => {
             console.log(err);

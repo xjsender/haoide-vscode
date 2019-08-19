@@ -1,5 +1,6 @@
 /**
  * @file sobject describe model
+ * Copied from sfdx-vscode
  * @author Mouse Liu <mouse.mliu@gmail.com>
  */
 
