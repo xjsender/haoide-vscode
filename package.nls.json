@@ -1,0 +1,17 @@
+{
+    "extension.haoide.authorize.new.title": "Authorize New Project",
+    "extension.haoide.authorize.default.title": "Authorize Default Project",
+    "extension.haoide.addDefaultProjectToWorkspace.title": "Add Default Project to Workspace",
+    "extension.haoide.loginToSFDC.title": "Open Default Org",
+    "extension.haoide.locateThisInBrowser.title": "Locate This File in Browser",
+    "extension.haoide.copyLoginUrl.title": "Copy Login Url",
+    "extension.haoide.executeAnonymous.title": "Execute Anonymous Code",
+    "extension.haoide.switchProject.title": "Switch Project",
+    "extension.haoide.toggleMetadataObjects.title": "Toggle Metadata Objects",
+    "extension.haoide.createProject.title": "Create New Project",
+    "extension.haoide.retrieveThisFromServer.title": "Retrieve This File From Server",
+    "extension.haoide.deployThisToServer.title": "Deploy This Files to Server",
+    "extension.haoide.reloadSobjectCache.title": "Reload sObject Cache",
+    "extension.haoide.formatJson.title": "Format JSON",
+    "extension.haoide.convertXml2Json.title": "Convert XML to JSON"
+}
