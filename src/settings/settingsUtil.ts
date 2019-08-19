@@ -36,11 +36,12 @@ export function getConfig(fileName: string) {
 }
 
 /**
- * Replace exist config with specified k-vs 
+ * Replace exist config with specified k-vs
+ * 
  * @param fileName config file name
  * @param options k-vs to replace in the config file
  */
-export function setConfigValue(fileName: string, options: any): any | Object {
+export function setConfigValue(fileName: string, options: any) {
     let filePath = getFilePath(fileName);
 
     // Get config info if config is already exists

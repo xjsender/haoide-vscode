@@ -4,10 +4,10 @@
  */
 
 import * as vscode from "vscode";
+import * as util from "../utils/util";
+import OAuth from "../salesforce/lib/auth/oauth";
 import { startLogin, startServer } from "../salesforce/lib/auth/server";
 import { projectSession } from "../settings";
-import { OAuth } from "../salesforce/lib/auth/oauth";
-import * as util from "../utils/util";
 
 /**
  * Authorized new project and also keep information to local disk

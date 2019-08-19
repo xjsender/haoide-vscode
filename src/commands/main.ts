@@ -9,11 +9,11 @@ import * as util from "../utils/util";
 import * as utility from "./utility";
 import * as packages from "../utils/package";
 import * as settingsUtil from "../settings/settingsUtil";
+import * as sobject from "../models/sobject";
 import MetadataApi from "../salesforce/api/metadata";
 import ApexApi from "../salesforce/api/apex";
 import RestApi from "../salesforce/api/rest";
 import ProgressNotification from "../utils/progress";
-import * as sobject from "../models/sobject";
 import { projectSettings } from "../settings";
 
 
@@ -122,7 +122,7 @@ export async function reloadSobjectCache(sobjects?: string[]) {
                     }
 
                     // Write file to local disk
-                    
+                    // Will write every sobject to separated file
 
                     for (const field of sobjectDesc.fields) {
                         if (field.referenceTo.length !== 1) {
@@ -143,6 +143,15 @@ export async function reloadSobjectCache(sobjects?: string[]) {
                 }
             }
         }
+
+        settingsUtil.setConfigValue("sobjects.json", {
+            "sobjects": allSobjectDesc,
+            "parentRelationships": parentRelationships
+        });
+    })
+    .catch( err => {
+        console.log(err);
+        vscode.window.showErrorMessage(err.message);
     });
 }
 

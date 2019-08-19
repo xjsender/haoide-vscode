@@ -6,6 +6,7 @@
     "extension.haoide.locateThisInBrowser.title": "Locate This File in Browser",
     "extension.haoide.copyLoginUrl.title": "Copy Login Url",
     "extension.haoide.executeAnonymous.title": "Execute Anonymous Code",
+    "extension.haoide.executeQuery.title": "Execute Query",
     "extension.haoide.switchProject.title": "Switch Project",
     "extension.haoide.toggleMetadataObjects.title": "Toggle Metadata Objects",
     "extension.haoide.createProject.title": "Create New Project",

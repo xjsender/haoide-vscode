@@ -53,6 +53,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.executeQuery",
+				"title": "%extension.haoide.executeQuery.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.switchProject",
 				"title": "%extension.haoide.switchProject.title%",
 				"category": "Haoide"

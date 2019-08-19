@@ -7,7 +7,7 @@ import { appConfig } from "./config";
 import * as querystring from "querystring";
 import * as request from "request-promise";
 
-export class OAuth {
+export default class OAuth {
     private authorizeUrl: string;
     private tokenUrl: string;
     private revokeUrl: string;

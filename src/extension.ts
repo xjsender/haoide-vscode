@@ -4,9 +4,9 @@ import * as vscode from 'vscode';
 import { 
 	ltnCompletionProvider, 
 	vfCompletionProvider, 
-	apexCompletionProvider 
-} 
-from "./salesforce/completions/provider";
+	apexCompletionProvider,
+	sobjectCompletionProvider
+} from "./salesforce/completions/provider";
 import { auth, utility, main } from "./commands";
 
 // this method is called when your extension is activated
@@ -70,6 +70,12 @@ export function activate(context: vscode.ExtensionContext) {
 	// 	utility.executeRestTest
 	// ));
 
+	// Register executeQuery command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.executeQuery",
+		main.executeQuery
+	));
+
 	// Register reloadSobjectCache command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.reloadSobjectCache",
@@ -108,6 +114,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let apexProvider = vscode.languages.registerCompletionItemProvider(
 		'apex', apexCompletionProvider, ".", "="
+	);
+
+	let sobjectProvider = vscode.languages.registerCompletionItemProvider(
+		'apex', sobjectCompletionProvider, ".", "="
 	);
 }
 

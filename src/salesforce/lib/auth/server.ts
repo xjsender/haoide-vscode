@@ -13,7 +13,7 @@ import * as config from "./config";
 import { projectSession, metadata } from "../../../settings";
 import * as util from "../../../utils/util";
 import MetadataApi from "../../api/metadata";
-import { OAuth } from "./oauth";
+import OAuth from "./oauth";
 
 let oauthLoginUrl = "/oauth/login";
 let oauthCallbackUrl = "/oauth/callback";
