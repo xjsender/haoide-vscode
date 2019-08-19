@@ -1,0 +1,17 @@
+{
+    "extension.haoide.authorize.new.title": "授权新项目",
+    "extension.haoide.authorize.default.title": "授权默认项目",
+    "extension.haoide.addDefaultProjectToWorkspace.title": "将默认项目添加至工作台",
+    "extension.haoide.loginToSFDC.title": "打开默认Org",
+    "extension.haoide.locateThisInBrowser.title": "Locate This File in Browser",
+    "extension.haoide.copyLoginUrl.title": "复制登陆URL",
+    "extension.haoide.executeAnonymous.title": "执行匿名代码",
+    "extension.haoide.switchProject.title": "转换项目",
+    "extension.haoide.toggleMetadataObjects.title": "切换 Metadata Objects",
+    "extension.haoide.createProject.title": "创建新项目",
+    "extension.haoide.retrieveThisFromServer.title": "从服务器获取该文件",
+    "extension.haoide.deployThisToServer.title": "将该文件部署至服务器",
+    "extension.haoide.reloadSobjectCache.title": "重新加载SObject缓存",
+    "extension.haoide.formatJson.title": "格式化 JSON",
+    "extension.haoide.convertXml2Json.title": "转换 XML 为 JSON"
+}
