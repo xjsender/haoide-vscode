@@ -8,18 +8,24 @@ import * as _ from "lodash";
 import * as util from "../utils/util";
 import * as utility from "./utility";
 import * as packages from "../utils/package";
-import { projectSettings } from "../settings";
+import * as settingsUtil from "../settings/settingsUtil";
 import MetadataApi from "../salesforce/api/metadata";
 import ApexApi from "../salesforce/api/apex";
 import RestApi from "../salesforce/api/rest";
 import ProgressNotification from "../utils/progress";
+import * as sobject from "../models/sobject";
+import { projectSettings } from "../settings";
 
 
 export function executeRestTest() {
     // Get selection in the active editor
     let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return util.showCommandWarning();
+    }
+
     let serverUrl = "";
-    if (editor && editor.selection) {
+    if (editor.selection) {
         serverUrl = editor.document.getText(editor.selection);
     }
 
@@ -36,6 +42,34 @@ export function executeRestTest() {
 }
 
 /**
+ * Execute query and display result in new untitled file
+ */
+export function executeQuery() {
+    // Get selection in the active editor
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return util.showCommandWarning();
+    }
+
+    let soql = "";
+    if (editor.selection) {
+        soql = editor.document.getText(editor.selection);
+    }
+
+    let restApi = new RestApi();
+    ProgressNotification.showProgress(restApi, "query", soql)
+        .then(  body => {
+            util.openNewUntitledFile(
+                JSON.stringify(body, null, 4)
+            );
+        })
+        .catch (err => {
+            console.log(err);
+            vscode.window.showErrorMessage(err.message);
+        });
+}
+
+/**
  * Describe sobjects and keep it to local disk
  * 
  * @param sobjects sobjects array, if not spcified, just describe global
@@ -45,34 +79,71 @@ export async function reloadSobjectCache(sobjects?: string[]) {
 
     // If sobjects is not specified, describe global
     if (!sobjects || sobjects.length === 0) {
-        restApi.describeGlobal().then( body => {
-            let sobjectsDesc: any[] = body["sobjects"];
-            sobjects = _.map(sobjectsDesc, sobjectDesc => {
-                console.log(sobjectDesc);
-                return sobjectDesc["name"];
-            });
-            console.log(sobjects);
+        return restApi.describeGlobal()
+            .then( body => {
+                let sobjectsDesc: any[] = body["sobjects"];
+                sobjects = _.map(sobjectsDesc, sobjectDesc => {
+                    return sobjectDesc["name"];
+                });
 
-            reloadSobjectCache(sobjects);
-        })
-        .catch (err => {
-            vscode.window.showErrorMessage(err.message);
-        });
-        return;
+                reloadSobjectCache(sobjects);
+            })
+            .catch (err => {
+                vscode.window.showErrorMessage(err.message);
+            });
     }
-    console.log(sobjects);
     
-    let chuckedSobjectsList = _.chunk(sobjects, 30);
+    let chunkedSobjectsList = _.chunk(sobjects, 30);
+    Promise.all(_.map(chunkedSobjectsList, chunkedSobjects => {
+        return new Promise<any>( (resolve, reject) => {
+            restApi.describeSobjects(chunkedSobjects)
+                .then( result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    console.log(err);
+                    reject(err);
+                });
+        });
+    }))
+    .then( result => {
+        let parentRelationships: any = {};
+        let allSobjectDesc: any = {};
 
-    let resultList: any[] = [];
-    for (const chunkedSobjects of chuckedSobjectsList) {
-        await restApi.describeSobjects(chunkedSobjects, 120)
-            .then( result => {
-                resultList.push(result);
-            });
-    }
+        for (const key in result) {
+            if (result.hasOwnProperty(key)) {
+                const sobjectsDesc: sobject.SObject[] = result[key];
 
-    console.log(resultList);
+                // Collect parentRelationships
+                for (const sobjectDesc of sobjectsDesc) {
+                    // If no name, skip
+                    if (!sobjectDesc.name) {
+                        continue;
+                    }
+
+                    // Write file to local disk
+                    
+
+                    for (const field of sobjectDesc.fields) {
+                        if (field.referenceTo.length !== 1) {
+                            continue;
+                        }
+
+                        let rsName = field.relationshipName;
+                        let referenceTo = field.referenceTo[0];
+                        if (parentRelationships[rsName]) {
+                            let referenceTos: string[] = parentRelationships[rsName];
+                            referenceTos.push(referenceTo);
+                            parentRelationships[rsName] = _.uniq(referenceTos);
+                        }
+                        else {
+                            parentRelationships[rsName] = [referenceTo];
+                        }
+                    }
+                }
+            }
+        }
+    });
 }
 
 /**
