@@ -1,7 +1,6 @@
 # haoide-vscode README
 
-haoide-vscode is migrated from haoide, so far, it just supports lightning component completion and not released to vscode marketplace, more and more feat
-ures will be delivered in the next months.
+haoide-vscode is migrated from haoide, so far, it just supports lightning component completion and not released to vscode marketplace, more and more features will be delivered in the next months.
 
 ## Features
 
