@@ -28,6 +28,51 @@ export function openWithBrowser(url: string) {
 }
 
 /**
+ * Convert salesforce 15Id to 18Id
+ * 
+ * @param the15Id the 15Id to be converted
+ * @returns the 18Id
+ */
+export function convert15Id218Id(the15Id: string) {
+    if (!the15Id || the15Id.length !== 15) {
+        return the15Id;
+    }
+
+    let charMap: any = {
+        "00000": "A", "00001": "B", "00010": "C", 
+        "00011": "D", "00100": "E",
+        "00101": "F", "00110": "G", "00111": "H", 
+        "01000": "I", "01001": "J",
+        "01010": "K", "01011": "L", "01100": "M", 
+        "01101": "N", "01110": "O",
+        "01111": "P", "10000": "Q", "10001": "R", 
+        "10010": "S", "10011": "T",
+        "10100": "U", "10101": "V", "10110": "W", 
+        "10111": "X", "11000": "Y",
+        "11001": "Z", "11010": "0", "11011": "1", 
+        "11100": "2", "11101": "3",
+        "11110": "4", "11111": "5"
+    };
+    
+    let the18Id = the15Id;
+    for (const chars of _.chunk(the15Id, 5)) {
+        let digitals: string[] = [];
+        for (const char of _.reverse(chars)) {
+            if (char === char.toUpperCase()) {
+                digitals.push("1");
+            }
+            else {
+                digitals.push("0");
+            }
+        }
+
+        the18Id += charMap[digitals.join("")];
+    }
+
+    return the18Id;
+}
+
+/**
  * Unescape string
  * 
  * @param escapedStr string to be unescaped

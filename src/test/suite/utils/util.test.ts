@@ -13,6 +13,14 @@ describe("Test for ./utils/package", () => {
         });
     });
 
+    describe("#convert15Id218Id()", () => {
+        it("0017F00000Dhyf1 = 0017F00000Dhyf1QAB", () => {
+            let the18Id = util.convert15Id218Id('0017F00000Dhyf1');
+
+            assert(the18Id, '0017F00000Dhyf1QAB');
+        });
+    });
+
     describe("#replaceAll()", () => {
         it("All matched result should be replaced", () => {
             let result = util.replaceAll(
