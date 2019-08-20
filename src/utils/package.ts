@@ -227,6 +227,7 @@ export function getFileAttributes(_file: string): FileAttributes {
 
 /**
  * Get retrieve types by files
+ * 
  * @param files files to be retrieved
  * @returns types, 
  * i.e., {
@@ -249,6 +250,14 @@ export function getRetrieveTypes(files: string[]) {
     return retrieveTypes;
 }
 
+/**
+ * Extract base64 encoded zipfile to local disk
+ * and keep fileProperties to local cache
+ * 
+ * @param result retrieve result, 
+ *      which contains base64 encoded zipFile and fileProperties
+ * @param addProjectToWorkspace true means add default project to workspace
+ */
 export function extractZipFile(result: any, addProjectToWorkspace=false) {
     let zipFilePath = path.join(os.homedir(), "haoide.zip");
     fs.writeFileSync(

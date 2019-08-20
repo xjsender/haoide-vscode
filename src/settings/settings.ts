@@ -18,6 +18,7 @@ export default class ProjectSettings {
 
     /**
      * Get settings of default project
+     * 
      * @returns settings of project
      */
     public getSettings(): {} {
@@ -26,6 +27,7 @@ export default class ProjectSettings {
 
     /**
      * Get settings of default project
+     * 
      * @returns settings of project
      */
     public getSettingValue(key: string): any {
@@ -36,6 +38,7 @@ export default class ProjectSettings {
 
     /**
      * Get subscribed metaObjects
+     * 
      * @returns subscribed metaObjects array
      */
     public getSubscribedMetaObjects(): Array<string> {
@@ -47,6 +50,7 @@ export default class ProjectSettings {
 
     /**
      * Set subscribed metaObjects settings by spcified values
+     * 
      * @param subscribedMetaObjects subscribed metaObjects array
      */
     public setSubscribedMetaObjects(subscribedMetaObjects: []): void {
@@ -58,6 +62,7 @@ export default class ProjectSettings {
     /**
      * Get deployOptions of this project if have,
      * otherwise, set it as default one
+     * 
      * @returns Metadata Deployment options
      */
     public getDeployOptions() {
