@@ -157,6 +157,7 @@ export async function reloadSobjectCache(sobjects?: string[]) {
 
 /**
  * Execute anonymous apex code
+ * 
  * @param apexCode apex code to be exuected
  */
 export function executeAnonymous(apexCode?: string) {
@@ -302,21 +303,23 @@ export function createNewProject() {
                 );
             }
 
-            let retrieveTypes: any = {};
-            for (const mo of metaObjects) {
-                retrieveTypes[mo] = ["*"];
-            }
-
-            new MetadataApi().retrieve({ "types": retrieveTypes })
-                .then(result => {
-                    packages.extractZipFile(result, true);
-                })
-                .catch(err => {
-                    console.error(err);
-                    vscode.window.showErrorMessage(err.message);
-                });
+            createNewProject();
         });
     }
+
+    let retrieveTypes: any = {};
+    for (const mo of subscribedMetaObjects) {
+        retrieveTypes[mo] = ["*"];
+    }
+
+    new MetadataApi().retrieve({ "types": retrieveTypes })
+        .then(result => {
+            packages.extractZipFile(result, true);
+        })
+        .catch(err => {
+            console.error(err);
+            vscode.window.showErrorMessage(err.message);
+        });
 }
 
 export function createMetaObject(metaObject: string) {
