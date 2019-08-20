@@ -28,6 +28,26 @@ export function openWithBrowser(url: string) {
 }
 
 /**
+ * Unescape string
+ * 
+ * @param escapedStr string to be unescaped
+ * @returns unescaped string
+ */
+export function unescape(escapedStr: string) {
+    // Replace all &apos; to ""
+    escapedStr = replaceAll(
+        escapedStr, "&apos;", ""
+    );
+
+    // Replace all &quot; to ""
+    escapedStr = replaceAll(
+        escapedStr, "&quot;", ""
+    );
+
+    return escapedStr;
+}
+
+/**
  * Replace all matched oldText to newText in the spcified text
  * 
  * @param text Text to be replaced

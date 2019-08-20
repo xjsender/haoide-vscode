@@ -174,39 +174,32 @@ export function executeAnonymous(apexCode?: string) {
 
     let apexApi = new ApexApi();
     let requestType = "executeAnonymous";
-    ProgressNotification.showProgress(apexApi, requestType, { "apexCode": apexCode })
-        .then( (body: string) => {
-            if (body) {
-                // If there is compile error, parse it as human-readable
-                if (body.indexOf("<success>false</success>") !== -1) {
-                    let result = util.parseResult(body, requestType);
+    ProgressNotification.showProgress(apexApi, requestType, { 
+        "apexCode": apexCode 
+    })
+    .then( (body: string) => {
+        if (body) {
+            // If there is compile error, parse it as human-readable
+            if (body.indexOf("<success>false</success>") !== -1) {
+                let result = util.parseResult(body, requestType);
 
-                    let compileProblem = result["compileProblem"] as string;
+                let compileProblem = util.unescape(
+                    result["compileProblem"]
+                );
+                let errorMsg = `${compileProblem} at line ` + 
+                    `${result["line"]} column ${result["column"]}`;
+                console.log(errorMsg);
 
-                    // Replace all &apos; to '
-                    compileProblem = util.replaceAll(
-                        compileProblem, "&apos;", "'"
-                    );
-                    
-                    // Replace all &quot; to ""
-                    compileProblem = util.replaceAll(
-                        compileProblem, "&quot;", '"'
-                    );
-
-                    let errorMsg = `${compileProblem} at line ` + 
-                        `${result["line"]} column ${result["column"]}`;
-                    console.log(errorMsg);
-
-                    return vscode.window.showErrorMessage(errorMsg);
-                }
-
-                util.openNewUntitledFile(body, "apex");
+                return vscode.window.showErrorMessage(errorMsg);
             }
-        })
-        .catch( err => {
-            console.log(err);
-            vscode.window.showErrorMessage(err.message);
-        });
+
+            util.openNewUntitledFile(body, "apex");
+        }
+    })
+    .catch( err => {
+        console.log(err);
+        vscode.window.showErrorMessage(err.message);
+    });
 }
 
 /**
@@ -275,6 +268,21 @@ export function retrieveFilesFromServer(fileNames: string[]) {
     console.log(retrieveTypes);
     new MetadataApi().retrieve({ "types": retrieveTypes })
         .then(result => {
+            // Show error message as friendly format if have
+            let messages: Object | any[] = result["messages"];
+            if (_.isObject(messages)) {
+                messages = [messages];
+            }
+
+            if (_.isArray(messages)) {
+                let problem: string = "";
+                for (const msg of messages) {
+                    problem += util.unescape(msg.problem) + "\n";
+                }
+
+                return vscode.window.showErrorMessage(problem);
+            }
+
             packages.extractZipFile(result);
         });
 }
