@@ -5,6 +5,7 @@
 
 import * as vscode from "vscode";
 import * as _ from "lodash";
+import * as fs from "fs";
 import * as util from "../utils/util";
 import * as utility from "./utility";
 import * as packages from "../utils/package";
@@ -122,7 +123,7 @@ export async function reloadSobjectCache(sobjects?: string[]) {
                     }
 
                     // Write file to local disk
-                    // Will write every sobject to separated file
+                    settingsUtil.saveSobjectCache(sobjectDesc);
 
                     for (const field of sobjectDesc.fields) {
                         if (field.referenceTo.length !== 1) {
@@ -144,8 +145,7 @@ export async function reloadSobjectCache(sobjects?: string[]) {
             }
         }
 
-        settingsUtil.setConfigValue("sobjects.json", {
-            "sobjects": allSobjectDesc,
+        settingsUtil.setConfigValue("parentRelationships.json", {
             "parentRelationships": parentRelationships
         });
     })
@@ -290,7 +290,7 @@ export function retrieveFilesFromServer(fileNames: string[]) {
 /**
  * Create new project based on subscribed metadata objects
  */
-export function createProject() {
+export function createNewProject() {
     let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
 
     // If there is no subscribed metaObjects, so subscribe first

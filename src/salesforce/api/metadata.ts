@@ -167,6 +167,7 @@ export default class MetadataApi {
 
             ProgressNotification.showProgress(self, "_invoke_method", options)
                 .then( result => {
+                    console.log(result);
                     options["asyncProcessId"] = result["id"];
                     ProgressNotification.showProgress(self, "checkRetriveStatus", options)
                         .then( result => {

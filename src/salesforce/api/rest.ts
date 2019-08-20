@@ -112,7 +112,7 @@ export default class RestApi {
     }
 
     /**
-     * REST GET Request
+     * REST Get Request
      * 
      * @param serverUrl rest url, which can be relative or absolute
      * @param timeout request timeout seconds
@@ -127,7 +127,7 @@ export default class RestApi {
     }
 
     /**
-     * REST POST Request
+     * REST Post Request
      * 
      * @param serverUrl rest url, which can be relative or absolute
      * @param data request post body
@@ -143,7 +143,7 @@ export default class RestApi {
     }
 
     /**
-     * REST PATCH Request
+     * REST Patch Request
      * 
      * @param serverUrl rest url, which can be relative or absolute
      * @param data request patch body

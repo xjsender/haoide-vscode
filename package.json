@@ -68,8 +68,8 @@
 				"category": "Haoide"
 			},
 			{
-				"command": "extension.haoide.createProject",
-				"title": "%extension.haoide.createProject.title%",
+				"command": "extension.haoide.createNewProject",
+				"title": "%extension.haoide.createNewProject.title%",
 				"category": "Haoide"
 			},
 			{

@@ -1,3 +1,4 @@
+import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import * as util from "../utils/util";
@@ -41,8 +42,11 @@ export function getConfig(fileName: string) {
  * @param fileName config file name
  * @param options k-vs to replace in the config file
  */
-export function setConfigValue(fileName: string, options: any) {
-    let filePath = getFilePath(fileName);
+export function setConfigValue(fileName: string, 
+                               options: any, 
+                               containsPath?: string) {
+    // Get fileName 
+    let filePath = getFilePath(fileName, containsPath);
 
     // Get config info if config is already exists
     let config: any = {};
@@ -62,14 +66,40 @@ export function setConfigValue(fileName: string, options: any) {
 }
 
 /**
+ * Replace exist config with specified k-vs
+ * 
+ * @param fileName config file name
+ * @param options k-vs to replace in the config file
+ */
+export function saveSobjectCache(sobjectDesc: any) {
+    // Get fileName 
+    let filePath = getFilePath(
+        sobjectDesc.name.toLowerCase() + ".json", 
+        "sobjects"
+    );
+
+    // Write file to cache
+    fs.writeFile(filePath, 
+        JSON.stringify(sobjectDesc, null, 4),
+        err => {
+            vscode.window.setStatusBarMessage(
+                `{sobjectDesc.name} is saved to ${filePath}`
+            );
+        }
+    );
+}
+
+/**
  * Get local file path, if not exists, just make it
  * 
  * @param fileName file Name which contains extension
  * @returns the full uri of specified config file
  */
-export function getFilePath(fileName: string): string {
+export function getFilePath(fileName: string, containsPath?: string): string {
     let projectFolder = util.getProjectPath(); // Get default project
-    let fileFolder = path.join(projectFolder, ".haoide");
+    let fileFolder = path.join(
+        projectFolder, ".haoide", containsPath || ""
+    );
 
     if (!fs.existsSync(fileFolder)) {
         fs.mkdirSync(fileFolder);
