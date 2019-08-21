@@ -5,7 +5,6 @@
 
 import * as vscode from "vscode";
 import * as _ from "lodash";
-import * as fs from "fs";
 import * as util from "../utils/util";
 import * as utility from "./utility";
 import * as packages from "../utils/package";
@@ -60,16 +59,18 @@ export function executeQuery() {
     }
 
     let restApi = new RestApi();
-    ProgressNotification.showProgress(restApi, "query", soql)
-        .then(  body => {
-            util.openNewUntitledFile(
-                JSON.stringify(body, null, 4)
-            );
-        })
-        .catch (err => {
-            console.log(err);
-            vscode.window.showErrorMessage(err.message);
-        });
+    ProgressNotification.showRESTProgress(restApi, "query", {
+        soql: soql
+    })
+    .then( body => {
+        util.openNewUntitledFile(
+            JSON.stringify(body, null, 4)
+        );
+    })
+    .catch (err => {
+        console.log(err);
+        vscode.window.showErrorMessage(err.message);
+    });
 }
 
 /**
@@ -82,37 +83,43 @@ export async function reloadSobjectCache(sobjects?: string[]) {
 
     // If sobjects is not specified, describe global
     if (!sobjects || sobjects.length === 0) {
-        return restApi.describeGlobal()
-            .then( body => {
-                let sobjectsDesc: any[] = body["sobjects"];
-                sobjects = _.map(sobjectsDesc, sobjectDesc => {
-                    return sobjectDesc["name"];
-                });
-
-                reloadSobjectCache(sobjects);
-            })
-            .catch (err => {
-                vscode.window.showErrorMessage(err.message);
+        return ProgressNotification.showRESTProgress(
+            restApi, "describeGlobal", {}
+        )
+        .then( body => {
+            let sobjectsDesc: any[] = body["sobjects"];
+            sobjects = _.map(sobjectsDesc, sobjectDesc => {
+                return sobjectDesc["name"];
             });
+
+            reloadSobjectCache(sobjects);
+        })
+        .catch (err => {
+            vscode.window.showErrorMessage(err.message);
+        });
     }
     
+    sobjects = ["Account", "Opportunity"];
     let chunkedSobjectsList = _.chunk(sobjects, 30);
     Promise.all(_.map(chunkedSobjectsList, chunkedSobjects => {
         return new Promise<any>( (resolve, reject) => {
-            restApi.describeSobjects(chunkedSobjects)
-                .then( result => {
-                    resolve(result);
-                })
-                .catch(err => {
-                    console.log(err);
-                    reject(err);
-                });
+            restApi.describeSobjects({
+                sobjects: chunkedSobjects
+            })
+            .then( result => {
+                resolve(result);
+            })
+            .catch(err => {
+                console.log(err);
+                reject(err);
+            });
         });
     }))
     .then( result => {
         let parentRelationships: any = {};
-        let allSobjectDesc: any = {};
+        let allSobjects: any = {};
 
+        console.log(result);
         for (const key in result) {
             if (result.hasOwnProperty(key)) {
                 const sobjectsDesc: sobject.SObject[] = result[key];
@@ -124,7 +131,11 @@ export async function reloadSobjectCache(sobjects?: string[]) {
                         continue;
                     }
 
-                    // Write file to local disk
+                    // Collect sobjects
+                    allSobjects[sobjectDesc.name.toLowerCase()] =
+                        sobjectDesc.name;
+
+                    // Write sobject.json to local disk
                     settingsUtil.saveSobjectCache(sobjectDesc);
 
                     for (const field of sobjectDesc.fields) {
@@ -147,7 +158,8 @@ export async function reloadSobjectCache(sobjects?: string[]) {
             }
         }
 
-        settingsUtil.setConfigValue("parentRelationships.json", {
+        settingsUtil.setConfigValue("sobjects.json", {
+            "sobjects": allSobjects,
             "parentRelationships": parentRelationships
         });
     })
@@ -214,6 +226,9 @@ export function deployThisToServer() {
         let fileName = editor.document.fileName;
         deployFilesToServer([fileName]);
     }
+    else {
+        util.showCommandWarning();
+    }
 }
 
 /**
@@ -244,11 +259,21 @@ export function deployFilesToServer(files: string[]) {
 export function refreshThisFromServer() {
     let editor = vscode.window.activeTextEditor;
     if (editor) {
+        // Get file property
         let fileName = editor.document.fileName;
         let filep = util.getFilePropertyByFileName(fileName);
-        new RestApi().get(filep["id"]).then(body => {
+
+        // Send get request
+        let restApi = new RestApi();
+        ProgressNotification.showRESTProgress(restApi, "query", {
+            serverUrl: `/${filep["id"]}`
+        })
+        .then( body => {
             console.log(body);
         });
+    } 
+    else {
+        util.showCommandWarning();
     }
 }
 
@@ -268,7 +293,6 @@ export function retrieveThisFromServer() {
  */
 export function retrieveFilesFromServer(fileNames: string[]) {
     let retrieveTypes = packages.getRetrieveTypes(fileNames);
-    console.log(retrieveTypes);
     new MetadataApi().retrieve({ "types": retrieveTypes })
         .then(result => {
             // Show error message as friendly format if have

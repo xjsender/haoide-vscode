@@ -91,7 +91,7 @@ export interface Field {
     namePointing: boolean;
     nillable: boolean;
     permissionable: boolean;
-    picklistValues: any[];
+    picklistValues: PicklistValue[];
     polymorphicForeignKey: boolean;
     precision: number;
     queryByDistance: boolean;
@@ -109,6 +109,14 @@ export interface Field {
     unique: boolean;
     updateable: boolean;
     writeRequiresMasterRead: boolean;
+}
+
+export interface PicklistValue {
+    active: boolean;
+    validFor: any;
+    defaultValue: boolean;
+    label: string;
+    value: string;
 }
 
 export interface Urls {

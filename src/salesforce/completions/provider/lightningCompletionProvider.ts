@@ -4,10 +4,20 @@
  */
 
 import * as vscode from "vscode";
-import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
 import { ltnTagDefs } from "../lib";
-import { getLastCharOfPosition, createCompletionItem } from "../utils";
+import { 
+    getLastCharOfPosition, 
+    createCompletionItem 
+} from "../utils";
+import { 
+    TextDocument, 
+    Position, 
+    CompletionItem, 
+    CompletionItemKind, 
+    Range 
+} from "vscode";
 import { extensionSettings } from "../../../settings";
+import { PositionOption } from "../models/completion";
 
 export class LightningCompletionItemProvider implements vscode.CompletionItemProvider {
     public constructor() { }
@@ -18,32 +28,28 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
             "enable-debug-mode", false
         );
 
-        let positionOffset = document.offsetAt(position);
-        let wholeText = document.getText();
-        let lineText = document.lineAt(position.line).text;
-        let char = getLastCharOfPosition(document, position);
-
         // We can't get correct word if remove -1
         let wordRange = document.getWordRangeAtPosition(
-            new Position(position.line, position.character - 1), /[\w]+[\w-:]*/g
+            new Position(position.line, position.character - 1), /[\w]+[\w-]*/g
         ) || new Range(position, position);
-        let word = document.getText(wordRange).trim();
+
+        let pos: PositionOption = {
+            offset: document.offsetAt(position),
+            wholeText: document.getText(),
+            lineText: document.lineAt(position.line).text,
+            char: getLastCharOfPosition(document, position),
+            word: document.getText(wordRange).trim()
+        };
 
         if (enableDebugMode) {
-            console.log({
-                'position': JSON.stringify(position),
-                "positionOffset": positionOffset,
-                "lineText": lineText,
-                "lastChar": char,
-                "word": word
-            });
+            console.log(pos);
         }
 
         // Initiate completion list
         let completionItems: CompletionItem[] = [];
 
         // Completion for tag
-        if (char === "<") {
+        if (pos.char === "<") {
             for (const tag in ltnTagDefs) {
                 if (ltnTagDefs.hasOwnProperty(tag)) {
                     let attr = ltnTagDefs[tag];
@@ -57,15 +63,15 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
             }
         }
         // completion for tag, such lighting-input
-        else if (char === '-') {
+        else if (pos.char === '-') {
             for (const tag in ltnTagDefs) {
                 if (ltnTagDefs.hasOwnProperty(tag)) {
                     // If position char is :, remove the < in the word
-                    if (word.startsWith('-')) {
-                        word = word.substr(1, word.length);
+                    if (pos.word.startsWith('-')) {
+                        pos.word = pos.word.substr(1, pos.word.length);
                     }
 
-                    if (tag.startsWith(word)) {
+                    if (tag.startsWith(pos.word)) {
                         let tag_suffix = tag.split('-')[1];
 
                         let attr = ltnTagDefs[tag];
@@ -80,15 +86,15 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
             }
         }
         // completion for tag, such lighting:input
-        else if (char === ':') {
+        else if (pos.char === ':') {
             for (const tag in ltnTagDefs) {
                 if (ltnTagDefs.hasOwnProperty(tag)) {
                     // If position char is :, remove the < in the word
-                    if (word.startsWith('<')) {
-                        word = word.substr(1, word.length);
+                    if (pos.word.startsWith('<')) {
+                        pos.word = pos.word.substr(1, pos.word.length);
                     }
 
-                    if (tag.startsWith(word)) {
+                    if (tag.startsWith(pos.word)) {
                         let tag_suffix = tag.split(':')[1];
 
                         let attr = ltnTagDefs[tag];
@@ -102,13 +108,13 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
             }
         }
         // completion for tag attribute
-        else if (char === ' ') {
+        else if (pos.char === ' ') {
             let pattern = /<\w+[:-\s]*\w+[\w\W]*?>/g;
             let match, matchedText;
             
             // Get matched string which contains cursor
-            while (match = pattern.exec(wholeText)) {
-                if (match.index > positionOffset) {
+            while (match = pattern.exec(pos.wholeText)) {
+                if (match.index > pos.offset) {
                     break;
                 }
                 matchedText = match[0];
@@ -150,13 +156,13 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
             }
         }
         // Attribute values completion
-        else if (char === "=") {
+        else if (pos.char === "=") {
             let pattern = /<\w+[:-\s]+\w+[\w\W]*?/g;
             let match, matchedText;
 
             // Get matched string which contains cursor
-            while (match = pattern.exec(wholeText)) {
-                if (match.index > positionOffset) {
+            while (match = pattern.exec(pos.wholeText)) {
+                if (match.index > pos.offset) {
                     break;
                 }
                 matchedText = match[0];
@@ -170,7 +176,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
 
                 let tagAttrib = ltnTagDefs[matchedTag] || {};
                 let attribs: Object = tagAttrib["attribs"] || {};
-                let attrName = word;
+                let attrName = pos.word;
                 let attr = (<any>attribs)[attrName];
 
                 if (enableDebugMode) {

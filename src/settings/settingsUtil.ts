@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import * as util from "../utils/util";
+import { SObject } from "../models/sobject";
 
 /**
  * Get all configs or get value of spcified key
@@ -74,7 +75,7 @@ export function setConfigValue(fileName: string,
 export function saveSobjectCache(sobjectDesc: any) {
     // Get fileName 
     let filePath = getFilePath(
-        sobjectDesc.name.toLowerCase() + ".json", 
+        `${sobjectDesc.name}.json`, 
         "sobjects"
     );
 
@@ -83,10 +84,51 @@ export function saveSobjectCache(sobjectDesc: any) {
         JSON.stringify(sobjectDesc, null, 4),
         err => {
             vscode.window.setStatusBarMessage(
-                `{sobjectDesc.name} is saved to ${filePath}`
+                `${sobjectDesc.name} is saved to ${filePath}`
             );
         }
     );
+}
+
+/**
+ * Get sobjects cache
+ * 
+ * @returns sobjects cache, i.e. {
+ *      "account": Account,
+ *      "opportunity": "Opportunity"
+ * }
+ */
+export function getSobjectsCache() {
+    let filePath = getFilePath("sobjects.json");
+    
+    // Read file as Sobject
+    if (fs.existsSync(filePath)) {
+        let data = fs.readFileSync(filePath, "utf-8");
+        return JSON.parse(data.toString());
+    }
+
+    return {};
+}
+
+/**
+ * Get describe result of specified sobject
+ * 
+ * @param sobjectName sobject name, i.e., Account
+ * @returns sobject describe result
+ */
+export function getSobjectDesc(sobjectName: string): SObject {
+    // Get file path of {sobjectName}.json
+    let filePath = getFilePath(
+        `${sobjectName}.json`, "sobjects"
+    );
+
+    // Read file as Sobject
+    if (fs.existsSync(filePath)) {
+        let data = fs.readFileSync(filePath, "utf-8");
+        return JSON.parse(data.toString()) as SObject;
+    }
+
+    return {} as SObject;
 }
 
 /**

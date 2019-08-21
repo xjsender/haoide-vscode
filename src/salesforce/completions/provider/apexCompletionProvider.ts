@@ -4,14 +4,22 @@
  */
 
 import * as vscode from "vscode";
-import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
-import { namespaces, classes } from "../lib";
+import * as _ from "lodash";
+import {
+    TextDocument,
+    Position,
+    CompletionItem,
+    CompletionItemKind,
+    Range
+} from "vscode";
 import { 
     getLastCharOfPosition, 
     createCompletionItem, 
     getMethodCompletionItem 
 } from "../utils";
+import { namespaces, classes } from "../lib";
 import { extensionSettings } from "../../../settings";
+import { PositionOption } from "../models/completion";
 
 export class ApexCompletionItemProvider implements vscode.CompletionItemProvider {
     public constructor() { }
@@ -24,44 +32,42 @@ export class ApexCompletionItemProvider implements vscode.CompletionItemProvider
             "enable-debug-mode", true
         );
 
-        let positionOffset = document.offsetAt(position);
-        let wholeText = document.getText();
-        let lineText = document.lineAt(position.line).text;
-        let char = getLastCharOfPosition(document, position);
-
         // We can't get correct word if remove -1
         let wordRange = document.getWordRangeAtPosition(
-            new Position(position.line, position.character - 1), /[\w]+[\w-:]*/g
+            new Position(position.line, position.character - 1), /[\w]+[\w-]*/g
         ) || new Range(position, position);
-        let word = document.getText(wordRange).trim();
+
+        let pos: PositionOption = {
+            offset: document.offsetAt(position),
+            wholeText: document.getText(),
+            lineText: document.lineAt(position.line).text,
+            char: getLastCharOfPosition(document, position),
+            word: document.getText(wordRange).trim()
+        };
 
         if (enableDebugMode) {
-            console.log({
-                'position': JSON.stringify(position),
-                "positionOffset": positionOffset,
-                "lineText": lineText,
-                "lastChar": char,
-                "word": word
-            });
+            console.log(pos);
         }
 
         // Initiate completion list
         let completionItems: CompletionItem[] = [];
 
         // Completion for Namespace
-        if (char === ".") {
+        if (pos.char === ".") {
             // Completion for classes of specified namespace
-            let _classeNames = namespaces[word];
-            for (const _class of _classeNames) {
-                completionItems.push(createCompletionItem(
-                    _class, CompletionItemKind.Class,
-                    undefined, undefined, _class
-                ));
+            let _classeNames = namespaces[pos.word];
+            if (_.isArray(_classeNames)) {
+                for (const _class of _classeNames) {
+                    completionItems.push(createCompletionItem(
+                        _class, CompletionItemKind.Class,
+                        undefined, undefined, _class
+                    ));
+                }
             }
 
             // Static method or property for class
-            if (classes.hasOwnProperty(word.toLowerCase())) {
-                let _class = classes[word.toLowerCase()];
+            if (classes.hasOwnProperty(pos.word.toLowerCase())) {
+                let _class = classes[pos.word.toLowerCase()];
                 let className = _class["name"];
 
                 // Add static method completion
@@ -80,14 +86,14 @@ export class ApexCompletionItemProvider implements vscode.CompletionItemProvider
                 }
             }
         }
-        else if (char === "=") {
+        else if (pos.char === "=") {
             
         }
         else {
             // Namespace completion
             for (const namespace in namespaces) {
                 if (namespaces.hasOwnProperty(namespace)) {
-                    if (namespace.toLowerCase().startsWith(char.toLowerCase())) {
+                    if (namespace.toLowerCase().startsWith(pos.char.toLowerCase())) {
                         completionItems.push(createCompletionItem(
                             namespace, CompletionItemKind.Module,
                             undefined, undefined, namespace
