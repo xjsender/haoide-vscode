@@ -78,13 +78,14 @@ export default class RestApi {
                 body: options.data,
                 json: true
             };
-
+            console.log(requestOptions);
+            
             // Send notification
             ProgressNotification.notify(
                 progress, `Start rest ${options.method} request...`
             );
 
-            request(requestOptions).then(body => {
+            request(requestOptions).then( body => {
                 // Send finish notification
                 ProgressNotification.notify(
                     progress, `${options.method} is finished`, 100
@@ -118,12 +119,12 @@ export default class RestApi {
      * @param timeout request timeout seconds
      * @returns Promise<any>
      */
-    public get(serverUrl: string, progress?: any, timeout=120) {
+    public get(options: any, progress?: any, timeout=120) {
         return this._invoke_method({
             method: "GET",
-            serverUrl: serverUrl,
+            serverUrl: options.serverUrl,
             timeout: timeout
-        });
+        }, progress);
     }
 
     /**
@@ -134,10 +135,11 @@ export default class RestApi {
      * @param timeout request timeout seconds
      * @returns Promise<any>
      */
-    public post(serverUrl: string, data: any, progress?: any, timeout=120) {
+    public post(options: any, data: any, progress?: any, timeout=120) {
         return this._invoke_method({
             method: "POST",
-            serverUrl: serverUrl,
+            serverUrl: options.serverUrl,
+            data: data,
             timeout: timeout
         }, progress);
     }
@@ -150,12 +152,9 @@ export default class RestApi {
      * @param timeout request timeout seconds
      * @returns Promise<any>
      */
-    public patch(serverUrl: string, data: any, progress?: any, timeout=120) {
-        return this._invoke_method({
-            method: "PATCH",
-            serverUrl: serverUrl,
-            timeout: timeout
-        }, progress);
+    public patch(options: any, data: any) {
+        options["method"] = "PATCH";
+        return this._invoke_method(options);
     }
 
     /**
@@ -166,12 +165,9 @@ export default class RestApi {
      * @param timeout request timeout seconds
      * @returns Promise<any>
      */
-    public put(serverUrl: string, data: any, progress?: any, timeout = 120) {
-        return this._invoke_method({
-            method: "PUT",
-            serverUrl: serverUrl,
-            timeout: timeout
-        }, progress);
+    public put(options: any) {
+        options["method"] = "PUT";
+        return this._invoke_method(options);
     }
 
     /**
@@ -181,28 +177,23 @@ export default class RestApi {
      * @param timeout request timeout seconds
      * @returns Promise<any>
      */
-    public delete(serverUrl: string, progress?: any, timeout = 120) {
-        return this._invoke_method({
-            method: "DELETE",
-            serverUrl: serverUrl,
-            timeout: timeout
-        }, progress);
+    public delete(options: any, progress?: any, timeout = 120) {
+        options["method"] = "DELETE";
+        return this._invoke_method(options);
     }
 
     /**
      * REST query request
      * 
-     * @param serverUrl rest url, which can be relative or absolute
-     * @param data request put body
-     * @param timeout request timeout seconds
-     * @returns Promise<any>
+    * @param options, options, {soql: "", progress?, timeout?: 120}
+    * @returns Promise<any>
      */
-    public query(soql: string, progress?: any, timeout = 120): Promise<any> {
+    public query(options: any) {
         let pattern = /select\s+\*\s+from[\s\t]+\w+/i;
         let match, matchedText;
 
         // Get matched string which contains cursor
-        while (match = pattern.exec(soql)) {
+        while (match = pattern.exec(options.soql)) {
             matchedText = match[0];
             break;
         }
@@ -212,68 +203,87 @@ export default class RestApi {
             let splitTexts: string[] = matchedText.split(" ");
             let sObject = splitTexts[splitTexts.length-1].trim();
 
-            return this.describeSobject(sObject, progress)
-                .then( result => {
-                    let fieldNames = _.map(result["fields"], field => {
-                        return field["name"];
-                    });
-
-                    // Replace * with all fields of this sobject
-                    soql = soql.replace("*", fieldNames.join(","));
-
-                    let queryUrl = "/query?" + querystring.stringify({
-                        "q": soql
-                    });
-
-                    return this.get(queryUrl, progress, timeout);
+            return this.describeSobject({
+                sobject: sObject,
+                progress: options.progress,
+                timout: options.timeout
+            })
+            .then( result => {
+                let fieldNames = _.map(result["fields"], field => {
+                    return field["name"];
                 });
+
+                // Replace * with all fields of this sobject
+                options.soql = options.soql.replace("*", fieldNames.join(","));
+
+                let queryUrl = "/query?" + querystring.stringify({
+                    "q": options.soql
+                });
+
+                return this.get(options);
+            });
         }
 
-        let queryUrl = "/query?" + querystring.stringify({
-            "q": soql
+        options.serverUrl = "/query?" + querystring.stringify({
+            "q": options.soql
         });
-        return this.get(queryUrl, progress, timeout);
+        return this.get(options);
     }
 
     /**
     * REST queryMore request
     * 
-    * @param nextRecordUrl nextRecordUrl when query is not done
-    * @param timeout request timeout seconds
+    * @param options, options, {nextRecordUrl: "", progress?, timeout?: 120}
     * @returns Promise<any>
     */
-    public queryMore(nextRecordUrl: string, progress?: any, timeout = 120) {
-        return this.get(nextRecordUrl);
+    public queryMore(options: any) {
+        return this.get({
+            serverUrl: options.nextRecordUrl,
+            progress: options.progress,
+            timeout: options.timeout || 120
+        });
     }
 
     /**
     * REST queryAll request
     * 
-    * @param soql rest url, which can be relative or absolute
-    * @param timeout request timeout seconds
+    * @param options, options, {soql: "", progress?, timeout?: 120}
     * @returns Promise<any>
     */
-    public queryAll(soql: string, progress?: any, timeout = 120) {
-        return this.get("/queryAll" + querystring.stringify({
-            "q": soql
-        }), progress, timeout);
+    public queryAll(options: any) {
+        return this.get({
+            serverUrl: "/queryAll" + querystring.stringify({
+                "q": options.soql
+            }),
+            progress: options.progress,
+            timeout: options.timeout || 120
+        });
     }
 
     /**
      * REST getLimits request
-     * 
+     *
+     * @param options, options, {progress?, timeout?: 120}
      * @returns Promise<any>
      */
-    public getLimits(progress?: any, timeout = 120) {
-        return this.get("/limits", progress, timeout);
+    public getLimits(options: any) {
+        return this.get({
+            serverUrl: `/limits`,
+            progress: options.progress,
+            timeout: options.timeout || 120
+        });
     }
 
     /**
      * Get deleted records during spcified date time range
      * 
-     * @param sobject sobject name
-     * @param start start date time string literal
-     * @param end end date time string literal
+     * @param options options, {
+     *      sobject: "",
+     *      start: "",
+     *      end: "",
+     *      progress?,
+     *      timeout?
+     * }
      * @returns Promise<any>
      */
     public getDeletedRecords(sobject: string, 
@@ -282,70 +292,78 @@ export default class RestApi {
                              progress?: any,
                              timeout = 120) {
         return this.get(
-            `/sobjects/${sobject}/deleted` + 
-                querystring.stringify({
-                    "start": start, "end": end
-                }), 
-            progress, timeout
+            `/sobjects/${sobject}/deleted` + querystring.stringify({
+                "start": start, "end": end
+            }), progress, timeout
         );
     }
 
     /**
      * Get updated records during speicfied date time range
      * 
-     * @param sobject sobject name
-     * @param start start date time string literal
-     * @param end end date time string literal
+     * @param options options, {
+     *      sobject: "", 
+     *      start: "", 
+     *      end: "", 
+     *      progress?, 
+     *      timeout?
+     * }
      * @returns Promise<any>
      */
-    public getUpdatedRecords(sobject: string,
-                             start: string,
-                             end: string,
-                             progress: any,
-                             timeout = 120) {
-        return this.get(
-            `/sobjects/${sobject}/updated` +
+    public getUpdatedRecords(options: any) {
+        return this.get({
+            serverUrl: `/sobjects/${options.sobject}/updated` +
                 querystring.stringify({
-                    "start": start, "end": end
+                    start: options.start, 
+                    end: options.end
                 }),
-            progress, timeout
-        );
+            progress: options.progress,
+            timeout: options.timeout || 120
+        });
     }
 
     /**
      * REST describe global request
      * 
+     * @param options, options, {progress?, timeout?: 120}
      * @returns Promise<any>
      */
-    public describeGlobal(progress?: any, timeout = 120) {
-        return this.get("/sobjects", progress, timeout);
+    public describeGlobal(options: any) {
+        return this.get({
+            serverUrl: `/sobjects`,
+            progress: options.progress,
+            timeout: options.timeout || 120
+        });
     }
 
     /**
      * REST describeSobject request
      * 
-     * @param sobject sObject name
-     * @param timeout request timeout seconds
+     * @param options options, {sobject: "", progress?, timout?}
      * @returns Promise<any>
      */
-    public describeSobject(sobject: string, progress?: any, timeout=120) {
-        return this.get(
-            `/sobjects/${sobject}/describe`, 
-            progress, timeout
-        );
+    public describeSobject(options: any) {
+        return this.get({
+            serverUrl: `/sobjects/${options.sobject}/describe`,
+            progress: options.progress,
+            timeout: options.timeout || 120
+        });
     }
 
     /**
      * Get array of sobjects describe result
      * 
-     * @param sobjects sobject array
-     * @param timeout request timeout seconds
+     * @param options options, {sobjects: [], progress?, timeout?: 120}
      * @returns  any[], describe result array
      */
-    public describeSobjects(sobjects: string[], progress?: any, timeout=120) {
+    public describeSobjects(options: any) {
         let self = this;
-        return Promise.all(_.map(sobjects, sobject => {
-            return self.describeSobject(sobject, progress, timeout);
+        return Promise.all(_.map(options.sobjects, sobject => {
+            return self.describeSobject({
+                sobject: sobject,
+                progress: options.progress,
+                timeout: options.timeout || 120
+            });
         }));
     }
 }
