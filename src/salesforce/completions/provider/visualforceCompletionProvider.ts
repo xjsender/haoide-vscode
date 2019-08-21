@@ -9,7 +9,7 @@ import { vfTagDefs } from "../lib";
 import { getLastCharOfPosition, createCompletionItem } from "../utils";
 import { extensionSettings } from "../../../settings";
 
-export class VisualforceompletionItemProvider implements vscode.CompletionItemProvider {
+export class VisualforceCompletionItemProvider implements vscode.CompletionItemProvider {
     public constructor() { }
 
     public provideCompletionItems(document: TextDocument, position: Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {

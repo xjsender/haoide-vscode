@@ -21,6 +21,12 @@ export default class ProjectSession {
         return settingsUtil.getConfig(this.sessionFileName);
     }
 
+    /**
+     * Update spcified info in the session, i.e., 
+     * update accessToken after requestToken request
+     * 
+     * @param options k-vs to update in the session
+     */
     public setSession(options: {}) {
         return settingsUtil.setConfigValue(
             this.sessionFileName, options
@@ -29,6 +35,7 @@ export default class ProjectSession {
 
     /**
      * Update session id when refresh token
+     * 
      * @param sessionId sessionId to update
      */
     public setSessionId(sessionId: string): void {

@@ -10,10 +10,10 @@ import * as vscode from "vscode";
 import * as moment from "moment";
 import * as xmlParser from "fast-xml-parser";
 import * as config from "./config";
-import { projectSession, metadata } from "../../../settings";
 import * as util from "../../../utils/util";
 import MetadataApi from "../../api/metadata";
-import { OAuth } from "./oauth";
+import OAuth from "./oauth";
+import { projectSession, metadata } from "../../../settings";
 import * as nls from 'vscode-nls';
 
 const localize = nls.loadMessageBundle();
@@ -60,6 +60,7 @@ export function startServer(projectName: any, loginUrl: string) {
                     "refreshToken": body["refresh_token"],
                     "instanceUrl": body["instance_url"],
                     "loginUrl": loginUrl,
+                    "projectName": projectName,
                     "lastUpdatedTime": moment().format()
                 };
                 projectSession.setSession(session);

@@ -38,6 +38,8 @@ export default class Metadata {
 
     /**
      * Get metaobjects array
+     * 
+     * @returns MetaObject array of active project
      */
     public getMetaObjects(): MetaObject[] {
         let metadataObjects = settingsUtil.getConfig(
@@ -49,6 +51,7 @@ export default class Metadata {
 
     /**
      * Get metaObject by metaFolder(directoryName)
+     * 
      * @param metaFolder metadata folder (directoryName)
      * @returns metaObject,
      * i.e., {
@@ -75,6 +78,7 @@ export default class Metadata {
 
     /**
      * Get xmlName by metaFolder(directoryName)
+     * 
      * @param metaFolder metadata folder (directoryName)
      * @returns xmlName xmlName in the metaObject
      */

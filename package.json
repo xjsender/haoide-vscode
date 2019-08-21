@@ -53,6 +53,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.executeQuery",
+				"title": "%extension.haoide.executeQuery.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.switchProject",
 				"title": "%extension.haoide.switchProject.title%",
 				"category": "Haoide"
@@ -63,8 +68,8 @@
 				"category": "Haoide"
 			},
 			{
-				"command": "extension.haoide.createProject",
-				"title": "%extension.haoide.createProject.title%",
+				"command": "extension.haoide.createNewProject",
+				"title": "%extension.haoide.createNewProject.title%",
 				"category": "Haoide"
 			},
 			{

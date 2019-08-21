@@ -5,24 +5,30 @@
 
 import * as vscode from "vscode";
 import * as _ from "lodash";
+import * as fs from "fs";
 import * as util from "../utils/util";
 import * as utility from "./utility";
 import * as packages from "../utils/package";
-import { projectSettings } from "../settings";
+import * as settingsUtil from "../settings/settingsUtil";
+import * as sobject from "../models/sobject";
 import MetadataApi from "../salesforce/api/metadata";
 import ApexApi from "../salesforce/api/apex";
 import RestApi from "../salesforce/api/rest";
 import ProgressNotification from "../utils/progress";
+import { projectSettings } from "../settings";
 import * as nls from 'vscode-nls';
 
 const localize = nls.loadMessageBundle();
 
-
 export function executeRestTest() {
     // Get selection in the active editor
     let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return util.showCommandWarning();
+    }
+
     let serverUrl = "";
-    if (editor && editor.selection) {
+    if (editor.selection) {
         serverUrl = editor.document.getText(editor.selection);
     }
 
@@ -39,6 +45,34 @@ export function executeRestTest() {
 }
 
 /**
+ * Execute query and display result in new untitled file
+ */
+export function executeQuery() {
+    // Get selection in the active editor
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return util.showCommandWarning();
+    }
+
+    let soql = "";
+    if (editor.selection) {
+        soql = editor.document.getText(editor.selection);
+    }
+
+    let restApi = new RestApi();
+    ProgressNotification.showProgress(restApi, "query", soql)
+        .then(  body => {
+            util.openNewUntitledFile(
+                JSON.stringify(body, null, 4)
+            );
+        })
+        .catch (err => {
+            console.log(err);
+            vscode.window.showErrorMessage(err.message);
+        });
+}
+
+/**
  * Describe sobjects and keep it to local disk
  * 
  * @param sobjects sobjects array, if not spcified, just describe global
@@ -48,38 +82,84 @@ export async function reloadSobjectCache(sobjects?: string[]) {
 
     // If sobjects is not specified, describe global
     if (!sobjects || sobjects.length === 0) {
-        restApi.describeGlobal().then( body => {
-            let sobjectsDesc: any[] = body["sobjects"];
-            sobjects = _.map(sobjectsDesc, sobjectDesc => {
-                console.log(sobjectDesc);
-                return sobjectDesc["name"];
-            });
-            console.log(sobjects);
+        return restApi.describeGlobal()
+            .then( body => {
+                let sobjectsDesc: any[] = body["sobjects"];
+                sobjects = _.map(sobjectsDesc, sobjectDesc => {
+                    return sobjectDesc["name"];
+                });
 
-            reloadSobjectCache(sobjects);
-        })
-        .catch (err => {
-            vscode.window.showErrorMessage(err.message);
-        });
-        return;
+                reloadSobjectCache(sobjects);
+            })
+            .catch (err => {
+                vscode.window.showErrorMessage(err.message);
+            });
     }
-    console.log(sobjects);
     
-    let chuckedSobjectsList = _.chunk(sobjects, 30);
+    let chunkedSobjectsList = _.chunk(sobjects, 30);
+    Promise.all(_.map(chunkedSobjectsList, chunkedSobjects => {
+        return new Promise<any>( (resolve, reject) => {
+            restApi.describeSobjects(chunkedSobjects)
+                .then( result => {
+                    resolve(result);
+                })
+                .catch(err => {
+                    console.log(err);
+                    reject(err);
+                });
+        });
+    }))
+    .then( result => {
+        let parentRelationships: any = {};
+        let allSobjectDesc: any = {};
 
-    let resultList: any[] = [];
-    for (const chunkedSobjects of chuckedSobjectsList) {
-        await restApi.describeSobjects(chunkedSobjects, 120)
-            .then( result => {
-                resultList.push(result);
-            });
-    }
+        for (const key in result) {
+            if (result.hasOwnProperty(key)) {
+                const sobjectsDesc: sobject.SObject[] = result[key];
 
-    console.log(resultList);
+                // Collect parentRelationships
+                for (const sobjectDesc of sobjectsDesc) {
+                    // If no name, skip
+                    if (!sobjectDesc.name) {
+                        continue;
+                    }
+
+                    // Write file to local disk
+                    settingsUtil.saveSobjectCache(sobjectDesc);
+
+                    for (const field of sobjectDesc.fields) {
+                        if (field.referenceTo.length !== 1) {
+                            continue;
+                        }
+
+                        let rsName = field.relationshipName;
+                        let referenceTo = field.referenceTo[0];
+                        if (parentRelationships[rsName]) {
+                            let referenceTos: string[] = parentRelationships[rsName];
+                            referenceTos.push(referenceTo);
+                            parentRelationships[rsName] = _.uniq(referenceTos);
+                        }
+                        else {
+                            parentRelationships[rsName] = [referenceTo];
+                        }
+                    }
+                }
+            }
+        }
+
+        settingsUtil.setConfigValue("parentRelationships.json", {
+            "parentRelationships": parentRelationships
+        });
+    })
+    .catch( err => {
+        console.log(err);
+        vscode.window.showErrorMessage(err.message);
+    });
 }
 
 /**
  * Execute anonymous apex code
+ * 
  * @param apexCode apex code to be exuected
  */
 export function executeAnonymous(apexCode?: string) {
@@ -97,24 +177,18 @@ export function executeAnonymous(apexCode?: string) {
 
     let apexApi = new ApexApi();
     let requestType = "executeAnonymous";
-    ProgressNotification.showProgress(apexApi, requestType, { "apexCode": apexCode })
-        .then( (body: string) => {
+    ProgressNotification.showProgress(apexApi, requestType, { 
+        "apexCode": apexCode 
+    })
+    .then( (body: string) => {
+        if (body) {
             // If there is compile error, parse it as human-readable
             if (body.indexOf("<success>false</success>") !== -1) {
                 let result = util.parseResult(body, requestType);
 
-                let compileProblem = result["compileProblem"] as string;
-
-                // Replace all &apos; to '
-                compileProblem = util.replaceAll(
-                    compileProblem, "&apos;", "'"
+                let compileProblem = util.unescape(
+                    result["compileProblem"]
                 );
-                
-                // Replace all &quot; to ""
-                compileProblem = util.replaceAll(
-                    compileProblem, "&quot;", '"'
-                );
-
                 let errorMsg = `${compileProblem} at line ` + 
                     `${result["line"]} column ${result["column"]}`;
                 console.log(errorMsg);
@@ -123,11 +197,12 @@ export function executeAnonymous(apexCode?: string) {
             }
 
             util.openNewUntitledFile(body, "apex");
-        })
-        .catch( err => {
-            console.log(err);
-            vscode.window.showErrorMessage(err.message);
-        });
+        }
+    })
+    .catch( err => {
+        console.log(err);
+        vscode.window.showErrorMessage(err.message);
+    });
 }
 
 /**
@@ -196,6 +271,21 @@ export function retrieveFilesFromServer(fileNames: string[]) {
     console.log(retrieveTypes);
     new MetadataApi().retrieve({ "types": retrieveTypes })
         .then(result => {
+            // Show error message as friendly format if have
+            let messages: Object | any[] = result["messages"];
+            if (_.isObject(messages)) {
+                messages = [messages];
+            }
+
+            if (_.isArray(messages)) {
+                let problem: string = "";
+                for (const msg of messages) {
+                    problem += util.unescape(msg.problem) + "\n";
+                }
+
+                return vscode.window.showErrorMessage(problem);
+            }
+
             packages.extractZipFile(result);
         });
 }
@@ -203,7 +293,7 @@ export function retrieveFilesFromServer(fileNames: string[]) {
 /**
  * Create new project based on subscribed metadata objects
  */
-export function createProject() {
+export function createNewProject() {
     let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
 
     // If there is no subscribed metaObjects, so subscribe first
@@ -215,21 +305,23 @@ export function createProject() {
                 );
             }
 
-            let retrieveTypes: any = {};
-            for (const mo of metaObjects) {
-                retrieveTypes[mo] = ["*"];
-            }
-
-            new MetadataApi().retrieve({ "types": retrieveTypes })
-                .then(result => {
-                    packages.extractZipFile(result, true);
-                })
-                .catch(err => {
-                    console.error(err);
-                    vscode.window.showErrorMessage(err.message);
-                });
+            createNewProject();
         });
     }
+
+    let retrieveTypes: any = {};
+    for (const mo of subscribedMetaObjects) {
+        retrieveTypes[mo] = ["*"];
+    }
+
+    new MetadataApi().retrieve({ "types": retrieveTypes })
+        .then(result => {
+            packages.extractZipFile(result, true);
+        })
+        .catch(err => {
+            console.error(err);
+            vscode.window.showErrorMessage(err.message);
+        });
 }
 
 export function createMetaObject(metaObject: string) {

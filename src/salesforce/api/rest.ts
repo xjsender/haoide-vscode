@@ -7,6 +7,7 @@ import * as _ from "lodash";
 import * as request from "request-promise";
 import * as auth from "../../commands/auth";
 import * as querystring from "querystring";
+import ProgressNotification from "../../utils/progress";
 import { projectSession } from "../../settings";
 
 export default class RestApi {
@@ -67,19 +68,28 @@ export default class RestApi {
         return fullUrl;
     }
 
-    private _invoke_method(options: any = {}) {
+    private _invoke_method(options: any = {}, progress?: any) {
         let self = this;
         return new Promise<any>(function (resolve, reject) {
             let requestOptions = {
                 method: options.method,
                 headers: self.headers,
                 uri: self.buildFullUrl(options.serverUrl),
-                body: options.data
+                body: options.data,
+                json: true
             };
 
-            request(requestOptions).then( body => {
-                console.log(body["sobjects"].length);
-                console.log(body);
+            // Send notification
+            ProgressNotification.notify(
+                progress, `Start rest ${options.method} request...`
+            );
+
+            request(requestOptions).then(body => {
+                // Send finish notification
+                ProgressNotification.notify(
+                    progress, `${options.method} is finished`, 100
+                );
+
                 resolve(body);
             })
             .catch(err => {
@@ -87,13 +97,14 @@ export default class RestApi {
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
                     return auth.authorizeDefaultProject().then(() => {
                         self.initiate()._invoke_method(options);
-                    });
+                    })
+                    .catch( err => {});
                 }
 
                 // If network is timeout, just throw exception
-                if (err.message.indexOf("getaddrinfo ENOTFOUND")) {
-                    err.message = "Connection timeout, please check your network.";
-                }
+                // if (err.message.indexOf("getaddrinfo ENOTFOUND")) {
+                //     err.message = "Connection timeout, please check your network.";
+                // }
 
                 reject(err);
             });
@@ -101,13 +112,13 @@ export default class RestApi {
     }
 
     /**
-     * REST GET Request
+     * REST Get Request
      * 
      * @param serverUrl rest url, which can be relative or absolute
      * @param timeout request timeout seconds
-     * @returns Promise<string>
+     * @returns Promise<any>
      */
-    public get(serverUrl: string, timeout=120) {
+    public get(serverUrl: string, progress?: any, timeout=120) {
         return this._invoke_method({
             method: "GET",
             serverUrl: serverUrl,
@@ -116,35 +127,35 @@ export default class RestApi {
     }
 
     /**
-     * REST POST Request
+     * REST Post Request
      * 
      * @param serverUrl rest url, which can be relative or absolute
      * @param data request post body
      * @param timeout request timeout seconds
-     * @returns Promise<string>
+     * @returns Promise<any>
      */
-    public post(serverUrl: string, data: any, timeout=120) {
+    public post(serverUrl: string, data: any, progress?: any, timeout=120) {
         return this._invoke_method({
             method: "POST",
             serverUrl: serverUrl,
             timeout: timeout
-        });
+        }, progress);
     }
 
     /**
-     * REST PATCH Request
+     * REST Patch Request
      * 
      * @param serverUrl rest url, which can be relative or absolute
      * @param data request patch body
      * @param timeout request timeout seconds
-     * @returns Promise<string>
+     * @returns Promise<any>
      */
-    public patch(serverUrl: string, data: any, timeout=120) {
+    public patch(serverUrl: string, data: any, progress?: any, timeout=120) {
         return this._invoke_method({
             method: "PATCH",
             serverUrl: serverUrl,
             timeout: timeout
-        });
+        }, progress);
     }
 
     /**
@@ -153,14 +164,29 @@ export default class RestApi {
      * @param serverUrl rest url, which can be relative or absolute
      * @param data request put body
      * @param timeout request timeout seconds
-     * @returns Promise<string>
+     * @returns Promise<any>
      */
-    public put(serverUrl: string, data: any, timeout = 120) {
+    public put(serverUrl: string, data: any, progress?: any, timeout = 120) {
         return this._invoke_method({
             method: "PUT",
             serverUrl: serverUrl,
             timeout: timeout
-        });
+        }, progress);
+    }
+
+    /**
+     * REST delete request
+     * 
+     * @param serverUrl rest url, which can be relative or absolute
+     * @param timeout request timeout seconds
+     * @returns Promise<any>
+     */
+    public delete(serverUrl: string, progress?: any, timeout = 120) {
+        return this._invoke_method({
+            method: "DELETE",
+            serverUrl: serverUrl,
+            timeout: timeout
+        }, progress);
     }
 
     /**
@@ -169,10 +195,10 @@ export default class RestApi {
      * @param serverUrl rest url, which can be relative or absolute
      * @param data request put body
      * @param timeout request timeout seconds
-     * @returns Promise<string>
+     * @returns Promise<any>
      */
-    public query(soql: string, timeout = 120): Promise<any> {
-        let pattern = /select\s+\*\s+from[\s\t]+\w+/g;
+    public query(soql: string, progress?: any, timeout = 120): Promise<any> {
+        let pattern = /select\s+\*\s+from[\s\t]+\w+/i;
         let match, matchedText;
 
         // Get matched string which contains cursor
@@ -184,25 +210,29 @@ export default class RestApi {
         // If it is a select * query, describe sobject firstly
         if (matchedText) {
             let splitTexts: string[] = matchedText.split(" ");
-            let sObject = splitTexts[splitTexts.length].trim();
+            let sObject = splitTexts[splitTexts.length-1].trim();
 
-            return this.describeSobject(sObject).then( result => {
-                let fieldNames = _.map(result["fields"], field => {
-                    return field["name"];
+            return this.describeSobject(sObject, progress)
+                .then( result => {
+                    let fieldNames = _.map(result["fields"], field => {
+                        return field["name"];
+                    });
+
+                    // Replace * with all fields of this sobject
+                    soql = soql.replace("*", fieldNames.join(","));
+
+                    let queryUrl = "/query?" + querystring.stringify({
+                        "q": soql
+                    });
+
+                    return this.get(queryUrl, progress, timeout);
                 });
-
-                // Replace * with all fields of this sobject
-                soql = soql.replace("*", fieldNames.join(","));
-
-                return this.get("/query" + querystring.stringify({
-                    "q": soql
-                }), timeout);
-            });
         }
 
-        return this.get("/query" + querystring.stringify({
+        let queryUrl = "/query?" + querystring.stringify({
             "q": soql
-        }), timeout);
+        });
+        return this.get(queryUrl, progress, timeout);
     }
 
     /**
@@ -212,7 +242,7 @@ export default class RestApi {
     * @param timeout request timeout seconds
     * @returns Promise<any>
     */
-    public queryMore(nextRecordUrl: string, timeout = 120) {
+    public queryMore(nextRecordUrl: string, progress?: any, timeout = 120) {
         return this.get(nextRecordUrl);
     }
 
@@ -223,25 +253,10 @@ export default class RestApi {
     * @param timeout request timeout seconds
     * @returns Promise<any>
     */
-    public queryAll(soql: string, timeout = 120) {
+    public queryAll(soql: string, progress?: any, timeout = 120) {
         return this.get("/queryAll" + querystring.stringify({
             "q": soql
-        }));
-    }
-
-    /**
-     * REST delete request
-     * 
-     * @param serverUrl rest url, which can be relative or absolute
-     * @param timeout request timeout seconds
-     * @returns Promise<any>
-     */
-    public delete(serverUrl: string, timeout = 120) {
-        return this._invoke_method({
-            method: "DELETE",
-            serverUrl: serverUrl,
-            timeout: timeout
-        });
+        }), progress, timeout);
     }
 
     /**
@@ -249,8 +264,8 @@ export default class RestApi {
      * 
      * @returns Promise<any>
      */
-    public getLimits() {
-        return this.get("/limits");
+    public getLimits(progress?: any, timeout = 120) {
+        return this.get("/limits", progress, timeout);
     }
 
     /**
@@ -263,12 +278,15 @@ export default class RestApi {
      */
     public getDeletedRecords(sobject: string, 
                              start: string, 
-                             end: string) {
+                             end: string,
+                             progress?: any,
+                             timeout = 120) {
         return this.get(
             `/sobjects/${sobject}/deleted` + 
-            querystring.stringify({
-                "start": start, "end": end
-            })
+                querystring.stringify({
+                    "start": start, "end": end
+                }), 
+            progress, timeout
         );
     }
 
@@ -282,12 +300,15 @@ export default class RestApi {
      */
     public getUpdatedRecords(sobject: string,
                              start: string,
-                             end: string) {
+                             end: string,
+                             progress: any,
+                             timeout = 120) {
         return this.get(
             `/sobjects/${sobject}/updated` +
-            querystring.stringify({
-                "start": start, "end": end
-            })
+                querystring.stringify({
+                    "start": start, "end": end
+                }),
+            progress, timeout
         );
     }
 
@@ -296,9 +317,8 @@ export default class RestApi {
      * 
      * @returns Promise<any>
      */
-    public describeGlobal() {
-        console.log("start desc");
-        return this.get("/sobjects");
+    public describeGlobal(progress?: any, timeout = 120) {
+        return this.get("/sobjects", progress, timeout);
     }
 
     /**
@@ -308,8 +328,11 @@ export default class RestApi {
      * @param timeout request timeout seconds
      * @returns Promise<any>
      */
-    public describeSobject(sobject: string, timeout=120) {
-        return this.get(`/sobject/get/${sobject}/describe`, timeout);
+    public describeSobject(sobject: string, progress?: any, timeout=120) {
+        return this.get(
+            `/sobjects/${sobject}/describe`, 
+            progress, timeout
+        );
     }
 
     /**
@@ -319,15 +342,10 @@ export default class RestApi {
      * @param timeout request timeout seconds
      * @returns  any[], describe result array
      */
-    public async describeSobjects(sobjects: string[], timeout=120) {
-        let result: any[] = [];
-        for (const sobject of sobjects) {
-            await this.describeSobject(sobject, timeout)
-                .then( body => {
-                    result.push(body);
-                });
-        }
-
-        return result;
+    public describeSobjects(sobjects: string[], progress?: any, timeout=120) {
+        let self = this;
+        return Promise.all(_.map(sobjects, sobject => {
+            return self.describeSobject(sobject, progress, timeout);
+        }));
     }
 }

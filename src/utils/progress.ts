@@ -24,7 +24,14 @@ export default class ProgressNotification {
             return self[methodName](options, progress);
         }) as Promise<any>;
     }
-
+    
+    /**
+     * Notify user with the api request progress
+     * 
+     * @param progress vscode progress instance
+     * @param message message to report
+     * @param increment progress rate, from 0 - 100
+     */
     public static notify(progress: any, message: string, increment?: number) {
         if (progress) {
             progress.report({
