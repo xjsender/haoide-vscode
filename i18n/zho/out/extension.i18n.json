@@ -1,0 +1,5 @@
+{
+    "activated.text": "已启用: {0}",
+    "deactivated.text": "已禁用：{0}",
+    "testMessage.text": "这是测试消息 {0}"
+}

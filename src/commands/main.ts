@@ -16,7 +16,9 @@ import ApexApi from "../salesforce/api/apex";
 import RestApi from "../salesforce/api/rest";
 import ProgressNotification from "../utils/progress";
 import { projectSettings } from "../settings";
+import * as nls from 'vscode-nls';
 
+const localize = nls.loadMessageBundle();
 
 export function executeRestTest() {
     // Get selection in the active editor
@@ -168,9 +170,9 @@ export function executeAnonymous(apexCode?: string) {
     }
 
     if (!apexCode) {
-        return vscode.window.showErrorMessage(
-            "There is no code to execute"
-        );
+        let errorMsg = localize("noCodeExecute.text", "There is no code to execute");
+        console.log(errorMsg);
+        return vscode.window.showErrorMessage(errorMsg);
     }
 
     let apexApi = new ApexApi();
@@ -228,7 +230,7 @@ export function deployFilesToServer(files: string[]) {
             }
             else {
                 vscode.window.showInformationMessage(
-                    "This file is deployed to server succesfully"
+                    localize("fileDeployed.text", "This file has deployed to server succesfully")
                 );
             }
         });
@@ -299,7 +301,7 @@ export function createNewProject() {
         return utility.toggleMetadataObjects().then( metaObjects => {
             if (!metaObjects || metaObjects.length === 0) {
                 return vscode.window.showWarningMessage(
-                    "No subscribed metaObjects for this project"
+                    localize("noSubscribedMetadata.text", "No subscribed metaObjects for this project")
                 );
             }
 

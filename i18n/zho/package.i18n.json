@@ -13,5 +13,6 @@
     "extension.haoide.deployThisToServer.title": "将该文件部署至服务器",
     "extension.haoide.reloadSobjectCache.title": "重新加载SObject缓存",
     "extension.haoide.formatJson.title": "格式化 JSON",
-    "extension.haoide.convertXml2Json.title": "转换 XML 为 JSON"
+    "extension.haoide.convertXml2Json.title": "转换 XML 为 JSON",
+    "extension.haoide.testCmd.title": "测试命令"
 }
