@@ -1,0 +1,8 @@
+{
+    "inputProjectName.text": "请输入项目名称...",
+    "projectNameRequired.text": "必须输入项目名称！",
+    "productionEnv.text": "生产环境",
+    "sandboxEnv.text": "沙盒环境",
+    "chooseLoginUrl.text": "请选择登陆URL",
+    "sessionRefreshed.text": "回话信息已更新"
+}

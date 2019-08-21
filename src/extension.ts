@@ -1,3 +1,8 @@
+import * as nls from 'vscode-nls';
+
+// config nls
+const localize = nls.config({ messageFormat: nls.MessageFormat.file })();
+
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
@@ -109,7 +114,11 @@ export function activate(context: vscode.ExtensionContext) {
 	let apexProvider = vscode.languages.registerCompletionItemProvider(
 		'apex', apexCompletionProvider, ".", "="
 	);
+
+	console.log(localize("activated.text", "Activated at {0}", Date.now()));
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {
+	console.log(localize("deactivated.text", "Deactivated at {0}", Date.now()));
+ }

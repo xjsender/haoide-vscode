@@ -1,5 +1,8 @@
-out/
+/out
 node_modules/
 .DS_Store
 .sfdx
-.vsix
+// These files will be generated from the i18n folder
+*nls.*.json
+*.vsix
+*.vscode-test

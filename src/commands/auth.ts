@@ -8,6 +8,9 @@ import { startLogin, startServer } from "../salesforce/lib/auth/server";
 import { projectSession } from "../settings";
 import { OAuth } from "../salesforce/lib/auth/oauth";
 import * as util from "../utils/util";
+import * as nls from 'vscode-nls';
+
+const localize = nls.loadMessageBundle();
 
 /**
  * Authorized new project and also keep information to local disk
@@ -15,24 +18,25 @@ import * as util from "../utils/util";
 export async function authorizeNewProject() {
     // Get projectName from user input
     let projectName = await vscode.window.showInputBox({
-        placeHolder: "Please input your project name..."
+        placeHolder: localize('inputProjectName.text', "Please input your project name...")
     });
     if (!projectName) {
-        return vscode.window.showErrorMessage("projectName is required");
+        const msg = localize("projectNameRequired.text", "Project name is required");
+        return vscode.window.showErrorMessage(msg);
     }
 
     // Get login url from user selection
     let pickItems = [{
             label: "https://login.salesforce.com",
-            description: "Production Enviroment"
+            description: localize("productionEnv.text", "Production Enviroment")
         }, {
             label: "https://test.salesforce.com",
-            description: "Test Enviroment"
+            description: localize("sandboxEnv.text", "Sandbox Enviroment")
         }
     ];
 
     const quickPick = vscode.window.createQuickPick();
-    quickPick.placeholder = "Please choose the login url";
+    quickPick.placeholder = localize("chooseLoginUrl.text", "Please choose the login url");
     quickPick.items = pickItems;
 
     // Add event listener
@@ -64,7 +68,7 @@ export function authorizeDefaultProject() {
 
             // Show success information
             vscode.window.showInformationMessage(
-                "Session information is refreshed"
+                localize("sessionRefreshed.text","Session information is refreshed")
             );
 
             resolve();

@@ -13,5 +13,6 @@
     "extension.haoide.deployThisToServer.title": "Deploy This Files to Server",
     "extension.haoide.reloadSobjectCache.title": "Reload sObject Cache",
     "extension.haoide.formatJson.title": "Format JSON",
-    "extension.haoide.convertXml2Json.title": "Convert XML to JSON"
+    "extension.haoide.convertXml2Json.title": "Convert XML to JSON",
+    "extension.haoide.testCmd.title": "Test Haoide"
 }

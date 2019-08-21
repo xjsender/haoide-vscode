@@ -14,6 +14,9 @@ import { projectSession, metadata } from "../../../settings";
 import * as util from "../../../utils/util";
 import MetadataApi from "../../api/metadata";
 import { OAuth } from "./oauth";
+import * as nls from 'vscode-nls';
+
+const localize = nls.loadMessageBundle();
 
 let oauthLoginUrl = "/oauth/login";
 let oauthCallbackUrl = "/oauth/callback";
@@ -22,7 +25,7 @@ export function startLogin(url?: string) {
     url = url || config.entryPoint + oauthLoginUrl;
 
     opn(url).catch(_ => {
-        console.log(`Has error when open ${url}`);
+        console.log(localize("errorOpenUrl.text", "Has error when open {0}", url));
     });
 }
 
@@ -72,22 +75,27 @@ export function startServer(projectName: any, loginUrl: string) {
                     });
 
                 // Login successful message
-                vscode.window.showInformationMessage("You have been successfully login.");
+                const msg = localize("successLogin.text", "You have been successfully login.");
+                vscode.window.showInformationMessage(msg);
 
                 // Redirect to salesforce home page
                 res.redirect(`${session["instanceUrl"]}/home/home.jsp`);
             })
             .catch(err => {
                 console.error(err);
-                let errorMsg = `There has problem with login: ${err}`;
+                let errorMsg = localize("errorLogin.text", "There has problem with login: {0}", err);
                 vscode.window.showErrorMessage(errorMsg);
             });
         });
 
         app.listen(config.port, () => {
-            resolve(`Server started at ${config.entryPoint}`);
+            let startMsg = localize("serverStartAt.text", "Server started at {0}", config.entryPoint);
+            // resolve(`Server started at ${config.entryPoint}`);
+            resolve(startMsg);
         }).on('error', function(err) {
-            resolve(`Server is already started at ${config.entryPoint}`);
+            let startedMsg = localize("serverStartedAt.text", "Server is already started at {0}", config.entryPoint);
+            resolve(startedMsg);
+            // resolve(`Server is already started at ${config.entryPoint}`);
         });
     });
 }

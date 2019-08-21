@@ -9,7 +9,9 @@ import * as _ from "lodash";
 import * as util from "../utils/util";
 import * as settingsUtil from "../settings/settingsUtil";
 import { projectSettings, projectSession, metadata } from "../settings";
+import * as nls from 'vscode-nls';
 
+const localize = nls.loadMessageBundle();
 
 export function addDefaultProjectToWorkspace() {
     // Add project to workspace
@@ -36,7 +38,7 @@ export function toggleMetadataObjects() {
                 alwaysShow: isPicked
             };
         }), {
-            placeHolder: "Choose the metadata objects to be subscribed",
+            placeHolder: localize("chooseMetadataObject.text", "Choose the metadata objects to be subscribed"),
             canPickMany: true,
             ignoreFocusOut: true,
             matchOnDescription: true
@@ -47,7 +49,7 @@ export function toggleMetadataObjects() {
                 resolve([]);
 
                 return util.showCommandWarning(
-                    "You should select one metaObject at least"
+                    localize("selectOneMetadata.text", "You should select one metaObject at least")
                 );
             }
 
@@ -60,7 +62,7 @@ export function toggleMetadataObjects() {
             });
 
             vscode.window.showInformationMessage(
-                "You subscribed metadata objects are updated"
+                localize("metadataObjectUpdated.text", "Your subscribed metadata objects are updated")
             );
 
             resolve(subscribedMetaObjects);
@@ -82,8 +84,8 @@ export function switchProject(projectName?: string) {
     }
 
     const quickPick = vscode.window.createQuickPick();
-    quickPick.placeholder = "Please choose the project to be default";
-    quickPick.title = "Default Project Choose Panel";
+    quickPick.placeholder = localize("chooseDefaultProject.text", "Please choose the project to be default");
+    quickPick.title = localize("defaultProjectPanel.text", "Default Project Choose Panel");
     quickPick.items = pickItems;
 
     // Add event listener
@@ -101,7 +103,7 @@ export function switchProject(projectName?: string) {
         
         // Show success message
         vscode.window.showInformationMessage(
-            `Your current default project is changed to ${chosenItem.label}`
+            localize("defaultProjectChanged.text", "Your current default project is changed to {0}", chosenItem.label)
         );
     });
 
