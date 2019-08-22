@@ -119,7 +119,6 @@ export async function reloadSobjectCache(sobjects?: string[]) {
         let parentRelationships: any = {};
         let allSobjects: any = {};
 
-        console.log(result);
         for (const key in result) {
             if (result.hasOwnProperty(key)) {
                 const sobjectsDesc: sobject.SObject[] = result[key];

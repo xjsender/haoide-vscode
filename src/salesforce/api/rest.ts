@@ -68,7 +68,7 @@ export default class RestApi {
         return fullUrl;
     }
 
-    private _invoke_method(options: any = {}, progress?: any) {
+    private _invoke_method(options: any = {}) {
         let self = this;
         return new Promise<any>(function (resolve, reject) {
             let requestOptions = {
@@ -78,17 +78,16 @@ export default class RestApi {
                 body: options.data,
                 json: true
             };
-            console.log(requestOptions);
             
             // Send notification
             ProgressNotification.notify(
-                progress, `Start rest ${options.method} request...`
+                options.progress, `Start rest ${options.method} request...`
             );
 
             request(requestOptions).then( body => {
                 // Send finish notification
                 ProgressNotification.notify(
-                    progress, `${options.method} is finished`, 100
+                    options.progress, `${options.method} is finished`, 100
                 );
 
                 resolve(body);
@@ -97,9 +96,18 @@ export default class RestApi {
                 // If session is expired, just login again
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
                     return auth.authorizeDefaultProject().then(() => {
-                        self.initiate()._invoke_method(options);
+                        self.initiate()._invoke_method(options)
+                            .then( body => {
+                                resolve(body);
+                            });
                     })
                     .catch( err => {});
+                }
+
+                // If this is invoked from promise.all, wrap err with success
+                if (options.ignoreError) {
+                    console.log(`${err.message} is ignored`);
+                    return resolve({});
                 }
 
                 // If network is timeout, just throw exception
@@ -115,16 +123,12 @@ export default class RestApi {
     /**
      * REST Get Request
      * 
-     * @param serverUrl rest url, which can be relative or absolute
-     * @param timeout request timeout seconds
+     * @param options, options, {serverUrl: "", progress?, timeout?: 120}
      * @returns Promise<any>
      */
-    public get(options: any, progress?: any, timeout=120) {
-        return this._invoke_method({
-            method: "GET",
-            serverUrl: options.serverUrl,
-            timeout: timeout
-        }, progress);
+    public get(options: any) {
+        options["method"] = "GET";
+        return this._invoke_method(options);
     }
 
     /**
@@ -135,24 +139,18 @@ export default class RestApi {
      * @param timeout request timeout seconds
      * @returns Promise<any>
      */
-    public post(options: any, data: any, progress?: any, timeout=120) {
-        return this._invoke_method({
-            method: "POST",
-            serverUrl: options.serverUrl,
-            data: data,
-            timeout: timeout
-        }, progress);
+    public post(options: any) {
+        options["method"] = "POST";
+        return this._invoke_method(options);
     }
 
     /**
      * REST Patch Request
      * 
-     * @param serverUrl rest url, which can be relative or absolute
-     * @param data request patch body
-     * @param timeout request timeout seconds
+     * @param options, options, {serverUrl: "", data: "", progress?, timeout?: 120}
      * @returns Promise<any>
      */
-    public patch(options: any, data: any) {
+    public patch(options: any) {
         options["method"] = "PATCH";
         return this._invoke_method(options);
     }
@@ -160,9 +158,7 @@ export default class RestApi {
     /**
      * REST put request
      * 
-     * @param serverUrl rest url, which can be relative or absolute
-     * @param data request put body
-     * @param timeout request timeout seconds
+     * @param options, options, {serverUrl: "", data: "", progress?, timeout?: 120}
      * @returns Promise<any>
      */
     public put(options: any) {
@@ -173,11 +169,10 @@ export default class RestApi {
     /**
      * REST delete request
      * 
-     * @param serverUrl rest url, which can be relative or absolute
-     * @param timeout request timeout seconds
+     * @param options, options, {serverUrl: "", progress?, timeout?: 120}
      * @returns Promise<any>
      */
-    public delete(options: any, progress?: any, timeout = 120) {
+    public delete(options: any) {
         options["method"] = "DELETE";
         return this._invoke_method(options);
     }
@@ -214,10 +209,10 @@ export default class RestApi {
                 });
 
                 // Replace * with all fields of this sobject
-                options.soql = options.soql.replace("*", fieldNames.join(","));
-
-                let queryUrl = "/query?" + querystring.stringify({
-                    "q": options.soql
+                options.serverUrl = "/query?" + querystring.stringify({
+                    "q": options.soql.replace(
+                        "*", fieldNames.join(",")
+                    )
                 });
 
                 return this.get(options);
@@ -286,16 +281,16 @@ export default class RestApi {
      * }
      * @returns Promise<any>
      */
-    public getDeletedRecords(sobject: string, 
-                             start: string, 
-                             end: string,
-                             progress?: any,
-                             timeout = 120) {
-        return this.get(
-            `/sobjects/${sobject}/deleted` + querystring.stringify({
-                "start": start, "end": end
-            }), progress, timeout
-        );
+    public getDeletedRecords(options: any) {
+        return this.get({
+            serverUrl: `/sobjects/${options.sobject}/deleted` +
+                querystring.stringify({
+                    start: options.start,
+                    end: options.end
+                }),
+            progress: options.progress,
+            timeout: options.timeout || 120
+        });
     }
 
     /**
@@ -362,7 +357,8 @@ export default class RestApi {
             return self.describeSobject({
                 sobject: sobject,
                 progress: options.progress,
-                timeout: options.timeout || 120
+                timeout: options.timeout || 120,
+                ignoreError: true
             });
         }));
     }

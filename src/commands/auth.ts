@@ -14,6 +14,7 @@ const localize = nls.loadMessageBundle();
 
 /**
  * Authorized new project and also keep information to local disk
+ * 
  * @param projectName project name
  * @param loginUrl login url
  */
@@ -64,6 +65,11 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
     quickPick.show();
 }
 
+/**
+ * Authorize default project with kept projectName and loginUrl
+ * 
+ * @returns Promise<any>
+ */
 export function authorizeDefaultProject() {
     let session = projectSession.getSession();
     let oauth = new OAuth(session["loginUrl"]);
