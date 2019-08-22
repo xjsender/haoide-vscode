@@ -76,7 +76,10 @@ export default class MetadataApi {
                 // If session is expired, just login again
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
                     return auth.authorizeDefaultProject().then(() => {
-                        self.initiate().retrieve(options);
+                        self.initiate()._invoke_method(options)
+                            .then( body => {
+                                resolve(util.parseResult(body, requestType));
+                            });
                     });
                 }
 

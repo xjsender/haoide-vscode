@@ -71,7 +71,10 @@ export default class ApexApi {
                 // If session is expired, just login again
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
                     return auth.authorizeDefaultProject().then( () => {
-                        self.initiate()._invoke_method(options, progress);
+                        self.initiate()._invoke_method(options, progress)
+                            .then( body => {
+                                resolve(body);
+                            });
                     })
                     .catch( err => {
                         // Stop notification progress if any exception
