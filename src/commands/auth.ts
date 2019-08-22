@@ -9,6 +9,7 @@ import OAuth from "../salesforce/lib/auth/oauth";
 import { startLogin, startServer } from "../salesforce/lib/auth/server";
 import { projectSession } from "../settings";
 import * as nls from 'vscode-nls';
+import ProgressNotification from "../utils/progress";
 
 const localize = nls.loadMessageBundle();
 
@@ -74,37 +75,34 @@ export function authorizeDefaultProject() {
     let session = projectSession.getSession();
     let oauth = new OAuth(session["loginUrl"]);
 
-    return new Promise( (resolve, reject) => {
-        oauth.refreshToken(session["refreshToken"])
-            .then(function(response) {
-                let body = JSON.parse(response["body"]);
-                projectSession.setSessionId(body["access_token"]);
+    return ProgressNotification.showProgress(
+        oauth, "refreshToken", {
+            refresh_token: session["refreshToken"]
+        }
+    )
+    .then( body => {
+        projectSession.setSessionId(body["access_token"]);
 
-                // Add project to workspace
-                let projectName = util.getDefaultProject();
-                util.addProjectToWorkspace(projectName);
+        // Add project to workspace
+        let projectName = util.getDefaultProject();
+        util.addProjectToWorkspace(projectName);
 
-                // Show success information
-                vscode.window.setStatusBarMessage(
-                    localize("sessionRefreshed.text","Session information is refreshed")
-                );
+        // Show success information
+        vscode.window.setStatusBarMessage(
+            localize("sessionRefreshed.text","Session information is refreshed")
+        );
+    })
+    .catch( err => {
+        if (err.message.indexOf("expired access/refresh token")) {
+            vscode.window.showWarningMessage(
+                "Refresh token expired, will start authorization"
+            );
 
-                resolve();
-            })
-            .catch( err => {
-                if (err.message.indexOf("expired access/refresh token")) {
-                    vscode.window.showWarningMessage(
-                        "Refresh token expired, will start authorization"
-                    );
-
-                    // Refresh token expired, start new authorization
-                    authorizeNewProject(
-                        session["projectName"], 
-                        session["loginUrl"]
-                    );
-                }
-
-                reject(err);
-            });
+            // Refresh token expired, start new authorization
+            authorizeNewProject(
+                session["projectName"], 
+                session["loginUrl"]
+            );
+        }
     });
 }

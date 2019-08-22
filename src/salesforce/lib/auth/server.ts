@@ -42,8 +42,7 @@ export function startServer(projectName: any, loginUrl: string) {
         app.get(oauthCallbackUrl, function (req: any, res: any) {
             const code = req.query.code;
 
-            oauth.requestToken(code).then(function(response) {
-                let body = JSON.parse(response["body"]);
+            oauth.requestToken({code: code}).then( body => {
                 let {userId, organizationId} = util.parseIdUrl(body["id"]);
 
                 // Set the new authorized project as default
