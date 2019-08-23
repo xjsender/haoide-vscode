@@ -258,7 +258,7 @@ export function getRetrieveTypes(files: string[]) {
  *      which contains base64 encoded zipFile and fileProperties
  * @param addProjectToWorkspace true means add default project to workspace
  */
-export function extractZipFile(result: any, addProjectToWorkspace=false) {
+export function extractZipFile(result: any) {
     let zipFilePath = path.join(os.homedir(), "haoide.zip");
     fs.writeFileSync(
         zipFilePath, result["zipFile"], "base64"
@@ -286,11 +286,6 @@ export function extractZipFile(result: any, addProjectToWorkspace=false) {
             path.join(filePath, fileName),
             zipEntry.getData()
         );
-    }
-
-    // Add project to workspace
-    if (addProjectToWorkspace) {
-        utility.addDefaultProjectToWorkspace();
     }
 
     // Keep fileProperties to local disk

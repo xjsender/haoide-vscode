@@ -14,7 +14,7 @@ import MetadataApi from "../salesforce/api/metadata";
 import ApexApi from "../salesforce/api/apex";
 import RestApi from "../salesforce/api/rest";
 import ProgressNotification from "../utils/progress";
-import { projectSettings } from "../settings";
+import { projectSettings, metadata } from "../settings";
 import * as nls from 'vscode-nls';
 
 const localize = nls.loadMessageBundle();
@@ -217,6 +217,19 @@ export function executeAnonymous(apexCode?: string) {
 }
 
 /**
+ * Describe metadata and kept it to local cache
+ */
+export function describeMetadata() {
+    let metadataApi = new MetadataApi();
+    ProgressNotification.showProgress(
+        metadataApi, "describeMetadata", {}
+    )
+    .then( result => {
+        metadata.setMetaObjects(result);
+    });
+}
+
+/**
  * Deploy active file to server
  */
 export function deployThisToServer() {
@@ -339,7 +352,7 @@ export function createNewProject() {
 
     new MetadataApi().retrieve({ "types": retrieveTypes })
         .then(result => {
-            packages.extractZipFile(result, true);
+            packages.extractZipFile(result);
         })
         .catch(err => {
             console.error(err);

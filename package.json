@@ -68,6 +68,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.describeMetadata",
+				"title": "%extension.haoide.describeMetadata.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.createNewProject",
 				"title": "%extension.haoide.createNewProject.title%",
 				"category": "Haoide"

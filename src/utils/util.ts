@@ -293,6 +293,31 @@ export function getProjectPath(projectName?: string) {
     return projectPath;
 }
 
+export function createNewWorkspace(projectName: string) {
+    // Get workspace default folder
+    let workspacePath = getExtensionWorkspace();
+    let workspaceFilePath = path.join(
+        workspacePath, "haoide.code-workspace"
+    );
+
+    // Create new workspace
+    fs.writeFileSync(workspaceFilePath, JSON.stringify({
+        "folders": [{
+            path: getProjectPath(projectName)
+        }],
+        "settings": {
+            "typescript.tsc.autoDetect": "off"
+        }
+    }, null, 4));
+
+    // Open workspace
+    return vscode.commands.executeCommand(
+        "vscode.openFolder", 
+        vscode.Uri.file(workspaceFilePath),
+        false
+    );
+}
+
 /**
  * Add specified project to workspace
  * 

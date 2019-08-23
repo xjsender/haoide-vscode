@@ -41,7 +41,7 @@ export default class MetadataApi {
         return this;
     }
 
-    private _invoke_method(options: any, progress?: any) {
+    private _invoke_method(options: any) {
         let self = this;
 
         return new Promise<any>(function(resolve, reject) {
@@ -52,13 +52,12 @@ export default class MetadataApi {
                 method: options["method"] || "POST",
                 headers: self.headers,
                 uri: self.metadataUrl,
-                resolveWithFullResponse: false,
                 body: soapBody
             };
 
             // Send notification
             ProgressNotification.notify(
-                progress, `Start ${requestType}...`
+                options.progress, `Start ${requestType}...`
             );
 
             request(requestOptions).then(body => {
@@ -67,7 +66,7 @@ export default class MetadataApi {
 
                 // If request is finished, notify user and stop future notification
                 ProgressNotification.notify(
-                    progress, `${requestType} submitted successfully`, 100
+                    options.progress, `${requestType} submitted successfully`, 100
                 );
 
                 resolve(result);
@@ -95,22 +94,26 @@ export default class MetadataApi {
 
     /**
      * Describe Metadata
+     * 
+     * @param options options, {"progress": progress}
      * @returns {Promise.<Response>}
      */
-    public describeMetadata() {
+    public describeMetadata(options: any) {
         return this._invoke_method({
-            "requestType": "DescribeMetadata"
+            "requestType": "DescribeMetadata",
+            "progress": options.progress
         });
     }
 
     /**
-     * Check Status
+     * Check retrieve status
+     * 
      * @param options {
      *      "asyncProcessId": string
      * }
      * @returns {Promise.<Response>}
      */
-    public checkRetriveStatus(options: any, progress?: any) {
+    public checkRetriveStatus(options: any) {
         let self = this;
         let requestType = "CheckRetrieveStatus";
         let soapBody = self.soap.getRequestBody(
@@ -133,7 +136,7 @@ export default class MetadataApi {
 
                     // Show progress status
                     ProgressNotification.notify(
-                        progress, 
+                        options.progress, 
                         `[sf:retrieve] Request Status: ${result["status"]}`,
                         result["done"] ? 100 : undefined
                     );
@@ -150,9 +153,11 @@ export default class MetadataApi {
     }
 
     /**
-     *  1. Issue a retrieve request to get asyncProcessId
-     *  2. Issue a resursive checkRetrieveStatus util done
-     *  3. After that, you will get the zipFile(base64) 
+     * Retrieve files from server
+     * 1. Issue a retrieve request to get asyncProcessId
+     * 2. Issue a resursive checkRetrieveStatus util done
+     * 3. After that, you will get the zipFile(base64)
+     * 
      * @param options {
      *      "types" : {"ApexClass": ["*"], "ApexTrigger": ["A", "B"]}, 
      *      "package_names": Array<string>,
@@ -187,11 +192,12 @@ export default class MetadataApi {
     }
 
     /**
-     * Check Status
+     * Check deploy status
+     * 
      * @param asyncProcessId async process Id
      * @returns {Promise.<Response>}
      */
-    public checkDeployStatus(options: any, progress?: any) {
+    public checkDeployStatus(options: any) {
         let self = this;
         let requestType = "CheckDeployStatus";
 
@@ -215,7 +221,7 @@ export default class MetadataApi {
 
                     // Show progress status
                     ProgressNotification.notify(
-                        progress, result["status"],
+                        options.progress, result["status"],
                         result["done"] ? 100 : undefined
                     );
 

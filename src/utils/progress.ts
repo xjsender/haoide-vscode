@@ -21,7 +21,10 @@ export default class ProgressNotification {
             // Notify for init action
             progress.report({ message: methodName });
 
-            return self[methodName](options, progress);
+            // Bind options with progress
+            options.progress = progress;
+
+            return self[methodName](options);
         }) as Promise<any>;
     }
 
