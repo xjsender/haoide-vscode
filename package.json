@@ -104,6 +104,75 @@
 			}
 		],
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "extension.haoide.authorize.new"
+				},
+				{
+					"command": "extension.haoide.authorize.default",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.addDefaultProjectToWorkspace",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.loginToSFDC",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.locateThisInBrowser",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.copyLoginUrl",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.executeAnonymous",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.executeQuery",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.switchProject",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.toggleMetadataObjects",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.describeMetadata",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.createNewProject",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.retrieveThisFromServer",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.deployThisToServer",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.reloadSobjectCache",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.formatJson",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.convertXml2Json",
+					"when": "haoide.hasOpenProject"
+				}
+			],
 			"editor/context": [
 				{
 					"group": "z_commands",

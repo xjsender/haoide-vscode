@@ -6,12 +6,13 @@ const localize = nls.config({ messageFormat: nls.MessageFormat.file })();
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { 
-	ltnCompletionProvider, 
-	vfCompletionProvider, 
+import {
+	ltnCompletionProvider,
+	vfCompletionProvider,
 	apexCompletionProvider,
 	sobjectCompletionProvider
 } from "./salesforce/completions/provider";
+import * as contextUtil from "./utils/context";
 import { auth, utility, main } from "./commands";
 
 // this method is called when your extension is activated
@@ -41,28 +42,28 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.retrieveThisFromServer",
 		main.retrieveThisFromServer
-	));	
-	
+	));
+
 	// Register deployThisToServer command
 	context.subscriptions.push(vscode.commands.registerCommand(
-		"extension.haoide.deployThisToServer", 
+		"extension.haoide.deployThisToServer",
 		main.deployThisToServer
-	));	
-	
+	));
+
 	// Register switchProject command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.switchProject", utility.switchProject
 	));
-	
+
 	// Register toggleMetaObjects command
 	context.subscriptions.push(vscode.commands.registerCommand(
-		"extension.haoide.toggleMetadataObjects", 
+		"extension.haoide.toggleMetadataObjects",
 		utility.toggleMetadataObjects
 	));
 
 	// Register default project to workspace
 	context.subscriptions.push(vscode.commands.registerCommand(
-		"extension.haoide.addDefaultProjectToWorkspace", 
+		"extension.haoide.addDefaultProjectToWorkspace",
 		utility.addDefaultProjectToWorkspace
 	));
 
@@ -97,7 +98,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Register locateThisInBrowser command
 	context.subscriptions.push(vscode.commands.registerCommand(
-		"extension.haoide.locateThisInBrowser", 
+		"extension.haoide.locateThisInBrowser",
 		utility.locateThisInBrowser
 	));
 
@@ -106,31 +107,43 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.copyLoginUrl", utility.copyLoginUrl
 	));
-	
+
 	// Register loginToSFDC command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.convertXml2Json", utility.convertXml2Json
 	));
 
-	let ltnProvider = vscode.languages.registerCompletionItemProvider(
+	/**
+	 * Completion part
+	 */
+	context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
 		'html', ltnCompletionProvider, "<", ":", "-", " ", "="
-	);
+	));
 
-	let vfProvider = vscode.languages.registerCompletionItemProvider(
+	context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
 		'visualforce', vfCompletionProvider, "<", ":", "-", " ", "="
-	);
+	));
 
-	let apexProvider = vscode.languages.registerCompletionItemProvider(
+	context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
 		'apex', apexCompletionProvider, ".", "="
-	);
+	));
 
-	console.log(localize("activated.text", "Activated at {0}", Date.now()));
-	let sobjectProvider = vscode.languages.registerCompletionItemProvider(
+	context.subscriptions.push(vscode.languages.registerCompletionItemProvider(
 		'apex', sobjectCompletionProvider, ".", "="
-	);
+	));
+
+	/**
+	 * NLS i18n part
+	 */
+	console.log(localize("activated.text", "Activated at {0}", Date.now()));
+
+	/**
+	 * Context part
+	 */
+	contextUtil.setHasOpenProject();
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
 	console.log(localize("deactivated.text", "Deactivated at {0}", Date.now()));
- }
+}

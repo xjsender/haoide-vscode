@@ -11,6 +11,7 @@ import * as moment from "moment";
 import * as nls from 'vscode-nls';
 import * as config from "./config";
 import * as util from "../../../utils/util";
+import * as contextUtil from "../../../utils/context";
 import MetadataApi from "../../api/metadata";
 import OAuth from "./oauth";
 import { projectSession, metadata } from "../../../settings";
@@ -77,6 +78,9 @@ export function startServer(projectName: any, loginUrl: string) {
                 // Create new workspace and add this project into it
                 // and then, open this workspace
                 util.createNewWorkspace(projectName);
+
+                // Set context key
+                contextUtil.setHasOpenProject();
 
                 // Redirect to salesforce home page
                 res.redirect(`${session["instanceUrl"]}/home/home.jsp`);

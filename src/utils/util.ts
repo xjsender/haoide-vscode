@@ -293,6 +293,13 @@ export function getProjectPath(projectName?: string) {
     return projectPath;
 }
 
+/**
+ * Create new workspace, add new project to it, 
+ * and then open the new workspace
+ * 
+ * @param projectName project name to be added to new workspace
+ * @returns Promise<any>
+ */
 export function createNewWorkspace(projectName: string) {
     // Get workspace default folder
     let workspacePath = getExtensionWorkspace();
@@ -304,17 +311,14 @@ export function createNewWorkspace(projectName: string) {
     fs.writeFileSync(workspaceFilePath, JSON.stringify({
         "folders": [{
             path: getProjectPath(projectName)
-        }],
-        "settings": {
-            "typescript.tsc.autoDetect": "off"
-        }
+        }]
     }, null, 4));
 
     // Open workspace
     return vscode.commands.executeCommand(
         "vscode.openFolder", 
         vscode.Uri.file(workspaceFilePath),
-        false
+        true
     );
 }
 

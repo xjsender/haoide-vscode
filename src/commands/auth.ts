@@ -95,7 +95,8 @@ export function authorizeDefaultProject() {
     .catch( err => {
         if (err.message.indexOf("expired access/refresh token")) {
             vscode.window.showWarningMessage(
-                "Refresh token expired, will start authorization"
+                "Refresh token expired or not exist, " +
+                    "it will start new authorization"
             );
 
             // Refresh token expired, start new authorization
