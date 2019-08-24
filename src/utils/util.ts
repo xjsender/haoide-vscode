@@ -307,12 +307,30 @@ export function createNewWorkspace(projectName: string) {
         workspacePath, "haoide.code-workspace"
     );
 
-    // Create new workspace
-    fs.writeFileSync(workspaceFilePath, JSON.stringify({
-        "folders": [{
-            path: getProjectPath(projectName)
-        }]
-    }, null, 4));
+    // Update exist workspace data if exists
+    let workspaceData: any = {};
+    if (fs.existsSync(workspaceFilePath)) {
+        let data = fs.readFileSync(workspaceFilePath, "utf-8");
+        workspaceData = JSON.parse(data.toString());
+
+        // Add new project to workspace
+        let folders: any[] = workspaceData["folders"];
+        folders.push(getProjectPath(projectName));
+        workspaceData["folders"] = folders;
+    }
+    // Prepare new workspace file data
+    else {
+        workspaceData = {
+            "folders": [{
+                path: getProjectPath(projectName)
+            }]
+        };
+    }
+
+    // Create or update workspace file
+    fs.writeFileSync(workspaceFilePath, 
+        JSON.stringify(workspaceData, null, 4)
+    );
 
     // Open workspace
     return vscode.commands.executeCommand(
