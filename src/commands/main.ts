@@ -305,11 +305,11 @@ export function retrieveThisFromServer() {
  * Retrieve open files from server
  */
 export function retrieveOpenFilesFromServer() {
-    let editors: vscode.TextEditor[] = vscode.window.visibleTextEditors;
-    if (editors) {
+    let documents: vscode.TextDocument[] = vscode.workspace.textDocuments;
+    if (documents) {
         let fileNames: string[] = [];
-        for (const editor of editors) {
-            fileNames.push(editor.document.fileName);
+        for (const doc of documents) {
+            fileNames.push(doc.fileName);
         }
         retrieveFilesFromServer(fileNames);
     }
@@ -343,6 +343,13 @@ export function retrieveFilesFromServer(fileNames: string[]) {
 
             packages.extractZipFile(result);
         });
+}
+
+/**
+ * Update project according to subscribed meta objects
+ */
+export function updateProject() {
+    return createNewProject();
 }
 
 /**

@@ -33,7 +33,12 @@ export function activate(context: vscode.ExtensionContext) {
 		"extension.haoide.describeMetadata", main.describeMetadata
 	));
 
-	// Register createProject command
+	// Register updateProject command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.updateProject", main.updateProject
+	));
+
+	// Register createNewProject command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.createNewProject", main.createNewProject
 	));

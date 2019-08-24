@@ -318,7 +318,7 @@ export function createNewWorkspace(projectName: string) {
     return vscode.commands.executeCommand(
         "vscode.openFolder", 
         vscode.Uri.file(workspaceFilePath),
-        true
+        false
     );
 }
 

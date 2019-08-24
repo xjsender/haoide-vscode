@@ -11,6 +11,7 @@
     "extension.haoide.toggleMetadataObjects.title": "Toggle Metadata Objects",
     "extension.haoide.describeMetadata.title": "Describe Metadata",
     "extension.haoide.createNewProject.title": "Create New Project",
+    "extension.haoide.updateProject.title": "Update Project",
     "extension.haoide.retrieveThisFromServer.title": "Retrieve This File From Server",
     "extension.haoide.retrieveOpenFilesFromServer.title": "Retrieve Open File From Server",
     "extension.haoide.deployThisToServer.title": "Deploy This Files to Server",

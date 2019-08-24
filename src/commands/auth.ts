@@ -10,6 +10,7 @@ import { startLogin, startServer } from "../salesforce/lib/auth/server";
 import { projectSession } from "../settings";
 import * as nls from 'vscode-nls';
 import ProgressNotification from "../utils/progress";
+import { any } from "bluebird";
 
 const localize = nls.loadMessageBundle();
 
