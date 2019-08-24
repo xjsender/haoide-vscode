@@ -99,7 +99,6 @@ export async function reloadSobjectCache(sobjects?: string[]) {
         });
     }
     
-    sobjects = ["Account", "Opportunity"];
     let chunkedSobjectsList = _.chunk(sobjects, 30);
     Promise.all(_.map(chunkedSobjectsList, chunkedSobjects => {
         return new Promise<any>( (resolve, reject) => {
