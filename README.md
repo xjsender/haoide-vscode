@@ -3,7 +3,7 @@
 haoide-vscode is migrated from haoide, more and more features will be delivered in the next months.
 
 ## Installation
-You can install ``haoide-vscode`` extension by searing ``haoide-vscode`` in the vscode marketplace.
+You can install ``haoide-vscode`` extension by searching ``haoide-vscode`` in the vscode marketplace.
 
 ## Usage
 
@@ -42,19 +42,17 @@ If you have any requirements or dependencies, add a section describing those and
 
 ## What's included
 
-Within the download you'll find the following directories and files, you can find different modules which is focused on spcified purpose, like this, 
-
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+<!-- Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
 
 For example:
 
 This extension contributes the following settings:
 
 * `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+* `myExtension.thing`: set to `blah` to do something -->
 
 
 ## Release Notes
