@@ -2,6 +2,14 @@
 
 haoide-vscode is migrated from haoide, so far, it just supports lightning component completion and not released to vscode marketplace, more and more features will be delivered in the next months.
 
+## Installation
+You can install ``haoide-vscode`` extension by searing ``haoide-vscode`` in the vscode marketplace.
+
+## Usage
+
+### Basic Usage
+Only after succeed to execute ``haoide: Authorize New project`` in the command palette, other commands are available.
+
 ## Features
 
 As today, haoide-vscode supports many completion, such as below,
