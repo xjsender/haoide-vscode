@@ -243,6 +243,23 @@ export function deployThisToServer() {
 }
 
 /**
+ * Deploy open files to server
+ */
+export function deployOpenFilesToServer() {
+    let documents: vscode.TextDocument[] = vscode.workspace.textDocuments;
+    if (documents) {
+        let fileNames: string[] = [];
+        for (const doc of documents) {
+            fileNames.push(doc.fileName);
+        }
+        deployFilesToServer(fileNames);
+    }
+    else {
+        util.showCommandWarning();
+    }
+}
+
+/**
  * Deploy files to server
  * @param files files to be deployed
  */

@@ -61,6 +61,12 @@ export function activate(context: vscode.ExtensionContext) {
 		main.deployThisToServer
 	));
 
+	// Register deployOpenFilesToServer command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.deployOpenFilesToServer",
+		main.deployOpenFilesToServer
+	));
+
 	// Register switchProject command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.switchProject", utility.switchProject

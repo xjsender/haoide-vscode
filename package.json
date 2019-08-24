@@ -98,6 +98,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.deployOpenFilesToServer",
+				"title": "%extension.haoide.deployOpenFilesToServer.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.reloadSobjectCache",
 				"title": "%extension.haoide.reloadSobjectCache.title%",
 				"category": "Haoide"
@@ -175,6 +180,10 @@
 				},
 				{
 					"command": "extension.haoide.deployThisToServer",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.deployOpenFilesToServer",
 					"when": "haoide.hasOpenProject"
 				},
 				{
