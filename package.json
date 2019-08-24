@@ -113,6 +113,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.convert15IdTo18Id",
+				"title": "%extension.haoide.convert15IdTo18Id.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.convertXml2Json",
 				"title": "%extension.haoide.convertXml2Json.title%",
 				"category": "Haoide"
@@ -197,6 +202,9 @@
 				{
 					"command": "extension.haoide.convertXml2Json",
 					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.convert15IdTo18Id"
 				}
 			],
 			"editor/context": [

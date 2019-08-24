@@ -122,12 +122,20 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Register copyLoginUrl command
 	context.subscriptions.push(vscode.commands.registerCommand(
-		"extension.haoide.copyLoginUrl", utility.copyLoginUrl
+		"extension.haoide.copyLoginUrl", 
+		utility.copyLoginUrl
 	));
 
-	// Register loginToSFDC command
+	// Register convert15IdTo18Id command
 	context.subscriptions.push(vscode.commands.registerCommand(
-		"extension.haoide.convertXml2Json", utility.convertXml2Json
+		"extension.haoide.convert15IdTo18Id", 
+		utility.convert15IdTo18Id
+	));
+
+	// Register convertXml2Json command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.convertXml2Json", 
+		utility.convertXml2Json
 	));
 
 	/**

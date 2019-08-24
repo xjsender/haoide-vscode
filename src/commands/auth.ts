@@ -34,7 +34,7 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
 
     // If loginUrl is spcified, just start oauth login process
     if (loginUrl) {
-        return startServer(projectName, loginUrl).then(function (message: any) {
+        return startServer(projectName, loginUrl).then( message => {
             startLogin();
         });
     }
@@ -57,7 +57,7 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
     quickPick.onDidChangeSelection(chosenItems => {
         let loginUrl = chosenItems[0].label;
 
-        startServer(projectName, loginUrl).then(function(message: any) {
+        startServer(projectName, loginUrl).then( message => {
             startLogin();
         });
 

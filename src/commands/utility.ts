@@ -163,6 +163,33 @@ export function copyLoginUrl() {
     vscode.window.showInformationMessage("Login url has been copied to clipboard");
 }
 
+/**
+ * Convert your input 15Id to 18Id
+ */
+export function convert15IdTo18Id() {
+    vscode.window.showInputBox({
+        placeHolder: localize(
+            'input15Id.text', "Please input your 15Id..."
+        )
+    })
+    .then( the15Id => {
+        if (!the15Id) {
+            return util.showCommandWarning(localize(
+                'requiredInput.text', "Please input required info"
+            ));
+        }
+
+        let the18Id = util.convert15Id218Id(the15Id);
+        util.openNewUntitledFile(the18Id, "plaintext");
+    });
+}
+
+
+/**
+ * Convert xml to json format
+ * 
+ * @param xmlStr xml string to be converted
+ */
 export function convertXml2Json(xmlStr="") {
     // Get selection in the active editor if no jsonStr param
     let editor = vscode.window.activeTextEditor;

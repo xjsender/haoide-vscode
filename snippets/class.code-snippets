@@ -35,7 +35,7 @@
     },
     "Collection - list": {
         "scope": "java,apex",
-        "prefix": "listb",
+        "prefix": "list",
         "body": [
             "List<$1> $2 = new List<$1>();"
         ],

@@ -1,4 +1,6 @@
 {
+    "input15Id.text": "请输入15位的ID",
+    "requiredInput.text": "请输入必填信息",
     "chooseMetadataObject.text": "选择需要订阅的 Metadata 对象",
     "selectOneMetadata.text": "至少需要选择一个 Metadata 对象",
     "metadataObjectUpdated.text": "您订阅的 Metadata 对象已更新",

@@ -58,7 +58,7 @@ export function convert15Id218Id(the15Id: string) {
     for (const chars of _.chunk(the15Id, 5)) {
         let digitals: string[] = [];
         for (const char of _.reverse(chars)) {
-            if (char === char.toUpperCase()) {
+            if (/[A-Z]/.test(char)) {
                 digitals.push("1");
             }
             else {

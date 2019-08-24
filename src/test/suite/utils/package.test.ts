@@ -14,11 +14,13 @@ describe("Test all functions for ./utils/package", () => {
     describe("#getFileAttributes()", () => {
         it("xmlName should be ApexClass", () => {
             let attrs: pkg.FileAttributes = pkg.getFileAttributes(files[0]);
+            console.log(attrs);
             assert(attrs.xmlName, "ApexPage");
         });
 
         it("fullName should be AccountList.page", () => {
             let attrs: pkg.FileAttributes = pkg.getFileAttributes(files[0]);
+            console.log(attrs);
             assert(attrs.xmlName, "ApexPage");
             assert(attrs.fullName, "AccountList.page");
         });
@@ -29,6 +31,7 @@ describe("Test all functions for ./utils/package", () => {
             let retrieveTypes: { [key: string]: string[] } = 
                 pkg.getRetrieveTypes(files);
             let members = retrieveTypes["ApexPage"];
+            console.log(members);
             assert(members.length, '1');
         });
     });
@@ -40,6 +43,7 @@ describe("Test all functions for ./utils/package", () => {
             let containsAccountListMember: boolean = packageXmlContent.indexOf(
                 "<members>AccountList</members>"
             ) !== -1;
+            console.log(containsAccountListMember);
             assert(containsAccountListMember, 'true');
         });
     });
