@@ -296,6 +296,26 @@ export function retrieveThisFromServer() {
     if (editor) {
         retrieveFilesFromServer([editor.document.fileName]);
     }
+    else {
+        util.showCommandWarning();
+    }
+}
+
+/**
+ * Retrieve open files from server
+ */
+export function retrieveOpenFilesFromServer() {
+    let editors: vscode.TextEditor[] = vscode.window.visibleTextEditors;
+    if (editors) {
+        let fileNames: string[] = [];
+        for (const editor of editors) {
+            fileNames.push(editor.document.fileName);
+        }
+        retrieveFilesFromServer(fileNames);
+    }
+    else {
+        util.showCommandWarning();
+    }
 }
 
 /**

@@ -33,7 +33,7 @@ Also support basic project operation, such as,
     - Convert XML to JSON
     - Format JSON
 
-**Only after you have succeed to authorize new project, you can see other commands **
+***Only after you have succeed to authorize new project, you can see other commands ***
 
 
 ## Requirements

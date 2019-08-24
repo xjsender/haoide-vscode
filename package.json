@@ -83,6 +83,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.retrieveOpenFilesFromServer",
+				"title": "%extension.haoide.retrieveOpenFilesFromServer.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.deployThisToServer",
 				"title": "%extension.haoide.deployThisToServer.title%",
 				"category": "Haoide"
@@ -154,6 +159,10 @@
 				},
 				{
 					"command": "extension.haoide.retrieveThisFromServer",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.retrieveOpenFilesFromServer",
 					"when": "haoide.hasOpenProject"
 				},
 				{
@@ -355,7 +364,6 @@
 		"inherits": "^2.0.4",
 		"lodash": "^4.17.15",
 		"moment": "^2.24.0",
-		"npm-update": "^2.1.0",
 		"open": "^6.4.0",
 		"querystring": "v0.2.0",
 		"request": "*",

@@ -102,11 +102,20 @@ export function buildDeployPackage(files: string[]) {
  * }
  */
 export function buildPackageDict(files: string[], ignoreFolder=true) {
-    let packageDict: any = {};
+    let metaObjectNames: string[] = metadata.getMetaObjectNames();
 
+    let packageDict: any = {};
     for (let _file of files) {
         // Ignore folder
         if (ignoreFolder && !fs.statSync(_file).isFile()) {
+            continue;
+        }
+
+        // Get file attrs from file uri
+        let attrs: FileAttributes = getFileAttributes(_file);
+
+        // Exclud invalid SF metaObject
+        if (!metaObjectNames.includes(attrs.xmlName)) {
             continue;
         }
 
@@ -119,9 +128,6 @@ export function buildPackageDict(files: string[], ignoreFolder=true) {
                 continue;
             }
         }
-
-        // Get file attrs from file uri
-        let attrs: FileAttributes = getFileAttributes(_file);
 
         // Build package dict
         if (packageDict[attrs.xmlName]) {

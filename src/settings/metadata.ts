@@ -3,6 +3,7 @@
  * @author Mouse Liu <mouse.mliu@gmail.com>
  */
 
+import * as _ from "lodash";
 import * as settingsUtil from "./settingsUtil";
 
 export interface MetaObject {
@@ -47,6 +48,17 @@ export default class Metadata {
         )["metadataObjects"];
 
         return metadataObjects as MetaObject[];
+    }
+
+    /**
+     * Get metaObject name list
+     * 
+     * @returns string[], metaObject names
+     */
+    public getMetaObjectNames(): string[] {
+        return _.map(this.getMetaObjects(), metaObject => {
+            return metaObject.xmlName;
+        });
     }
 
     /**

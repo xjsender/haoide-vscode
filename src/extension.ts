@@ -44,6 +44,12 @@ export function activate(context: vscode.ExtensionContext) {
 		main.retrieveThisFromServer
 	));
 
+	// Register retrieveOpenFilesFromServer command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.retrieveOpenFilesFromServer",
+		main.retrieveOpenFilesFromServer
+	));
+
 	// Register deployThisToServer command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.deployThisToServer",
