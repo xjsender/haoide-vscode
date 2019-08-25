@@ -38,7 +38,8 @@ export async function updateUserLanguage() {
         "serverUrl": "/sobjects/User/" + _session.getUserId(),
         "data": {
             "LanguageLocaleKey": chosenItem.label
-        }
+        },
+        "progressMessage": "Updating user language"
     })
     .then( body => {
         vscode.window.showInformationMessage(
@@ -88,7 +89,8 @@ export function executeQuery() {
 
     let restApi = new RestApi();
     ProgressNotification.showProgress(restApi, "query", {
-        soql: soql
+        soql: soql,
+        progressMessage: "Executing query request"
     })
     .then( body => {
         util.openNewUntitledFile(
@@ -112,7 +114,9 @@ export async function reloadSobjectCache(sobjects?: string[]) {
     // If sobjects is not specified, describe global
     if (!sobjects || sobjects.length === 0) {
         return ProgressNotification.showProgress(
-            restApi, "describeGlobal", {}
+            restApi, "describeGlobal", {
+                progressMessage: "Executing describeGlobal request"
+            }
         )
         .then( body => {
             let sobjectsDesc: any[] = body["sobjects"];

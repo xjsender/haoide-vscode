@@ -86,7 +86,11 @@ export async function switchProject(projectName?: string) {
                 };
             })
         );
-        console.log(chosenItem);
+
+        // When user cancel request
+        if (!chosenItem) {
+            return;
+        }
         
         projectName = chosenItem.label;
     }

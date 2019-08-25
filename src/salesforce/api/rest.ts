@@ -81,7 +81,9 @@ export default class RestApi {
             
             // Send notification
             ProgressNotification.notify(
-                options.progress, `Start rest ${options.method} request...`
+                options.progress, 
+                options.progressMessage || 
+                    `Start rest ${options.method} request...`
             );
 
             request(requestOptions).then( body => {
@@ -90,7 +92,6 @@ export default class RestApi {
                     options.progress, `${options.method} is finished`, 100
                 );
 
-                console.log(body);
                 resolve(body);
             })
             .catch(err => {
@@ -325,11 +326,11 @@ export default class RestApi {
      * @returns Promise<any>
      */
     public describeGlobal(options: any) {
-        return this.get({
+        return this.get(_.extend(options, {
             serverUrl: `/sobjects`,
             progress: options.progress,
             timeout: options.timeout || 120
-        });
+        }));
     }
 
     /**
