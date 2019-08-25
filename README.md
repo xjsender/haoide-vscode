@@ -59,14 +59,9 @@ This extension contributes the following settings:
 
 Users appreciate release notes as you update your extension.
 
-### 0.1.0
-
-Please check the basic features list
+Check [Change Log](https://github.com/xjsender/haoide-vscode/blob/master/CHANGELOG.md) for detail
 
 -----------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
 
 ### For more information
 
