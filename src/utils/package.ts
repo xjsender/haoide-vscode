@@ -13,8 +13,7 @@ import * as shelljs from "shelljs";
 import * as util from "../utils/util";
 import { metadata } from "../settings";
 import { Buffer } from "buffer";
-import { MetaObject } from "../settings/metadata";
-import { utility } from "../commands";
+import { MetaObject } from "../models/meta";
 
 /**
  * Build deploy package by files

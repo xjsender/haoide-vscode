@@ -1,0 +1,20 @@
+{
+    "Git Soft": {
+        "scope": "plaintext",
+        "prefix": "gits",
+        "body": [
+            "git log",
+            "git reset --soft ${<commit_id>}"
+        ],
+        "description": "Git rest --soft"
+    },
+    "Git Hard": {
+        "scope": "plaintext",
+        "prefix": "gith",
+        "body": [
+            "git log",
+            "git reset --soft ${<commit_id>}"
+        ],
+        "description": "Git rest --hard"
+    }
+}

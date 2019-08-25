@@ -5,14 +5,8 @@
 
 import * as _ from "lodash";
 import * as settingsUtil from "./settingsUtil";
+import { MetadataModel, MetaObject } from "../models/meta";
 
-export interface MetaObject {
-    directoryName: string;
-    inFolder: boolean;
-    metaFile: string;
-    suffix: string;
-    xmlName: string;
-}
 
 export default class Metadata {
     private static instance: Metadata;
@@ -43,11 +37,11 @@ export default class Metadata {
      * @returns MetaObject array of active project
      */
     public getMetaObjects(): MetaObject[] {
-        let metadataObjects = settingsUtil.getConfig(
+        let metadataModel: MetadataModel = settingsUtil.getConfig(
             this.metaFileName
-        )["metadataObjects"];
+        );
 
-        return metadataObjects as MetaObject[];
+        return metadataModel.metadataObjects;
     }
 
     /**

@@ -5,10 +5,27 @@
 
 import * as assert from "assert";
 import * as pkg from "../../../utils/package";
+import { MetadataModel, MetaObject } from "../../../models/meta";
 
 describe("Test all functions for ./utils/package", () => {
+    // Prepare test data
+    let metadataModel: MetadataModel = {
+        "metadataObjects": [
+            {
+                "directoryName": "classes",
+                "inFolder": false,
+                "metaFile": true,
+                "suffix": "cls",
+                "xmlName": "ApexClass"
+            }
+        ],
+        "organizationNamespace": "",
+        "partialSaveAllowed": true,
+        "testRequired": false
+    };
+
     let files: string[] = [
-        "/Users/mouse/Dropbox/SFDC/workspace/pro-trailhead/src/pages/AccountList.page"
+        "/Users/mouse/Dropbox/SFDC/workspace/trailhead/src/pages/AccountList.page"
     ];
 
     describe("#getFileAttributes()", () => {
