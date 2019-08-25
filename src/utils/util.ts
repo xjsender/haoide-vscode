@@ -28,6 +28,24 @@ export function openWithBrowser(url: string) {
 }
 
 /**
+ * Check whether input is upper format
+ * 
+ * @param input string to be checked
+ */
+export function isUpper(input: string) {
+    return /[A-Z]/.test(input);
+}
+
+/**
+ * Check whether input is lower format
+ * 
+ * @param input string to be checked
+ */
+export function isLower(input: string) {
+    return /[a-z]/.test(input);
+}
+
+/**
  * Convert salesforce 15Id to 18Id
  * 
  * @param the15Id the 15Id to be converted
@@ -58,7 +76,7 @@ export function convert15Id218Id(the15Id: string) {
     for (const chars of _.chunk(the15Id, 5)) {
         let digitals: string[] = [];
         for (const char of _.reverse(chars)) {
-            if (/[A-Z]/.test(char)) {
+            if (isUpper(char)) {
                 digitals.push("1");
             }
             else {
@@ -315,7 +333,9 @@ export function createNewWorkspace(projectName: string) {
 
         // Add new project to workspace
         let folders: any[] = workspaceData["folders"];
-        folders.push(getProjectPath(projectName));
+        folders.push({
+            path: getProjectPath(projectName)
+        });
         workspaceData["folders"] = folders;
     }
     // Prepare new workspace file data
