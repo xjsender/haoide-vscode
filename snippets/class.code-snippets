@@ -227,4 +227,42 @@
         ],
         "description": "REST Class"
     },
+
+    "Controller - add page message in vf": {
+        "scope": "java,apex",
+        "prefix": "pm",
+        "body": [
+            "ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.$1, $2));"
+        ],
+        "description": "Add PageMessages"
+    },
+    "Controller - get parameter in vf": {
+        "scope": "java,apex",
+        "prefix": "gp",
+        "body": [
+            "ApexPages.currentPage().getParameters().get('$1');"
+        ],
+        "description": "Get Visualforce Parameter"
+    },
+    "Controller - get and set in multiply line": {
+        "scope": "java,apex",
+        "prefix": "gsm",
+        "body": [
+            "public $1 {",
+                "get {",
+                    "$2",
+                "}",
+                "private set;",
+            "}"
+        ],
+        "description": "public variable {get {} private set;}"
+    },
+    "Controller - get and set in one line": {
+        "scope": "java,apex",
+        "prefix": "gs",
+        "body": [
+            "public $1 {get; set;}"
+        ],
+        "description": "public variable { get; set; }"
+    }
 }
