@@ -57,8 +57,6 @@ This extension contributes the following settings:
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
-
 Check [Change Log](https://github.com/xjsender/haoide-vscode/blob/master/CHANGELOG.md) for detail
 
 -----------------------------------------------------------------------------------------------------------
