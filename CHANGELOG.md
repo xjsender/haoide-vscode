@@ -2,8 +2,19 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [0.1.2]
 
-## [Unreleased]
++ Add new command, ``convert15IdTo18Id``
++ Add new authorized project to exist workspace if exist
+
+## [0.1.1]
+
+Add new command, ``retrieveOpenFilesFromSesrver``, ``deployOpenFilesFronServer``
+
+## [0.1.0]
+
+- Add basic project operation, such as, ``retrieve from server``, ``deploy to server``, ``create new project`` and so on.
+
+## [0.1.0]
 
 - Initial release
