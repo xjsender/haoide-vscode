@@ -70,44 +70,39 @@ export function toggleMetadataObjects() {
     });
 }
 
-export function switchProject(projectName?: string) {
-    let projects = util.getProjects();
-    let pickItems: any = [];
-    for (const projectName in projects) {
-        if (projects.hasOwnProperty(projectName)) {
-            const isDefault = projects[projectName];
-            pickItems.push({
-                label: `${projectName}`,
-                description: isDefault ? 'Default' : ''
-            });
-        }
+/**
+ * Switch default project
+ * 
+ * @param projectName project name to be default
+ */
+export async function switchProject(projectName?: string) {
+    if (!projectName) {
+        let chosenItem: any = await vscode.window.showQuickPick(
+            _.map(util.getProjects(), (v, k) => {
+                return {
+                    label: k, 
+                    description: v ? 'Default' : ''
+                };
+            })
+        );
+        console.log(chosenItem);
+        
+        projectName = chosenItem.label;
     }
 
-    const quickPick = vscode.window.createQuickPick();
-    quickPick.placeholder = localize("chooseDefaultProject.text", "Please choose the project to be default");
-    quickPick.title = localize("defaultProjectPanel.text", "Default Project Choose Panel");
-    quickPick.items = pickItems;
+    // Show default project at the status bar
+    util.setStatusBarItem(
+        `Haoide: ${projectName}`,
+        `This is haoide default project`
+    );
 
-    // Add event listener
-    quickPick.onDidChangeSelection(chosenItems => {
-        // Add chosen project
-        const chosenItem = chosenItems[0];
-        util.setDefaultProject(chosenItem.label);
-        quickPick.hide();
-
-        // Show default project at the status bar
-        util.setStatusBarItem(
-            `Haoide: ${chosenItem.label}`,
-            `This is haoide default project`
-        );
-        
-        // Show success message
-        vscode.window.showInformationMessage(
-            localize("defaultProjectChanged.text", "Your current default project is changed to {0}", chosenItem.label)
-        );
-    });
-
-    quickPick.show();
+    // Show success message
+    vscode.window.showInformationMessage(
+        localize(
+            "defaultProjectChanged.text",
+            `Default project is changed to ${projectName}`
+        )
+    );
 }
 
 /**
