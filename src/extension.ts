@@ -38,6 +38,12 @@ export function activate(context: vscode.ExtensionContext) {
 		"extension.haoide.updateProject", main.updateProject
 	));
 
+	// Register updateUserLanguage command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.updateUserLanguage", 
+		main.updateUserLanguage
+	));
+
 	// Register createNewProject command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.createNewProject", main.createNewProject

@@ -4,7 +4,7 @@
 	"publisher": "mouseliu",
 	"repository": "https://github.com/xjsender/haoide-vscode",
 	"description": "haoide-vscode is a vscode extension for force.com development",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"engines": {
 		"vscode": "^1.35.0"
 	},
@@ -82,6 +82,11 @@
 			{
 				"command": "extension.haoide.updateProject",
 				"title": "%extension.haoide.updateProject.title%",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.updateUserLanguage",
+				"title": "%extension.haoide.updateUserLanguage.title%",
 				"category": "Haoide"
 			},
 			{
@@ -173,8 +178,13 @@
 				{
 					"command": "extension.haoide.createNewProject",
 					"when": "haoide.hasOpenProject"
-				},{
+				},
+				{
 					"command": "extension.haoide.updateProject",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.updateUserLanguage",
 					"when": "haoide.hasOpenProject"
 				},
 				{
@@ -238,6 +248,13 @@
 				"mac": "cmd+shift+e",
 				"win": "ctrl+alt+e",
 				"linux": "ctrl+alt+e"
+			},
+			{
+				"command": "extension.haoide.updateUserLanguage",
+				"key": "alt+u",
+				"mac": "alt+u",
+				"win": "alt+u",
+				"linux": "alt+u"
 			},
 			{
 				"command": "extension.haoide.retrieveThisFromServer",

@@ -7,7 +7,7 @@ import * as vscode from "vscode";
 import * as util from "../utils/util";
 import OAuth from "../salesforce/lib/auth/oauth";
 import { startLogin, startServer } from "../salesforce/lib/auth/server";
-import { projectSession } from "../settings";
+import { _session } from "../settings";
 import * as nls from 'vscode-nls';
 import ProgressNotification from "../utils/progress";
 import { any } from "bluebird";
@@ -73,16 +73,16 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
  * @returns Promise<any>
  */
 export function authorizeDefaultProject() {
-    let session = projectSession.getSession();
-    let oauth = new OAuth(session["loginUrl"]);
+    let session = _session.getSession();
+    let oauth = new OAuth(session.instanceUrl);
 
     return ProgressNotification.showProgress(
         oauth, "refreshToken", {
-            refresh_token: session["refreshToken"]
+            refresh_token: session.refreshToken
         }
     )
     .then( body => {
-        projectSession.setSessionId(body["access_token"]);
+        _session.setSessionId(body["access_token"]);
 
         // Add project to workspace
         let projectName = util.getDefaultProject();
@@ -102,8 +102,7 @@ export function authorizeDefaultProject() {
 
             // Refresh token expired, start new authorization
             authorizeNewProject(
-                session["projectName"], 
-                session["loginUrl"]
+                session.projectName, session.loginUrl
             );
         }
     });

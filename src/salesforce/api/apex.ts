@@ -8,7 +8,7 @@ import * as xmlParser from "fast-xml-parser";
 import * as auth from "../../commands/auth";
 import SOAP from "../lib/soap";
 import ProgressNotification from "../../utils/progress";
-import { projectSession } from "../../settings";
+import { _session } from "../../settings";
 
 export default class ApexApi {
     private soap!: SOAP;
@@ -24,7 +24,7 @@ export default class ApexApi {
     }
 
     private initiate(sessionInfo?: any) {
-        this.session = sessionInfo || projectSession.getSession();
+        this.session = sessionInfo || _session.getSession();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;

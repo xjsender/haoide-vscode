@@ -8,7 +8,7 @@ import * as request from "request-promise";
 import * as auth from "../../commands/auth";
 import * as querystring from "querystring";
 import ProgressNotification from "../../utils/progress";
-import { projectSession } from "../../settings";
+import { _session } from "../../settings";
 
 export default class RestApi {
     private session: any;
@@ -27,7 +27,7 @@ export default class RestApi {
     }
 
     private initiate(session?: any) {
-        this.session = session || projectSession.getSession();
+        this.session = session || _session.getSession();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;
@@ -76,7 +76,7 @@ export default class RestApi {
                 headers: self.headers,
                 uri: self.buildFullUrl(options.serverUrl),
                 body: options.data,
-                json: true
+                json: options.json || true
             };
             
             // Send notification
@@ -90,6 +90,7 @@ export default class RestApi {
                     options.progress, `${options.method} is finished`, 100
                 );
 
+                console.log(body);
                 resolve(body);
             })
             .catch(err => {

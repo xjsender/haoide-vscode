@@ -40,7 +40,7 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
         if (enableDebugMode) {
             console.log(pos);
         }
-
+        
         // Initiate completion list
         let completionItems: CompletionItem[] = [];
 

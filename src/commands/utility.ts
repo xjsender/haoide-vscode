@@ -7,9 +7,10 @@ import * as vscode from "vscode";
 import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
 import * as util from "../utils/util";
-import * as settingsUtil from "../settings/settingsUtil";
-import { projectSettings, projectSession, metadata } from "../settings";
 import * as nls from 'vscode-nls';
+import * as settingsUtil from "../settings/settingsUtil";
+import SessionModel from "../models/session";
+import { settings, _session, metadata } from "../settings";
 
 const localize = nls.loadMessageBundle();
 
@@ -25,7 +26,7 @@ export function toggleMetadataObjects() {
     let metaObjects = _.sortBy(metadataObjects, mo => mo.xmlName);
 
     // Get already subscribed meta objects
-    let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
+    let subscribedMetaObjects = settings.getSubscribedMetaObjects();
     
     return vscode.window.showQuickPick(
         _.map(metaObjects, mo => {
@@ -130,10 +131,10 @@ export function locateThisInBrowser() {
  * @param startUrl? Redirect url after login 
  */
 export function loginToSFDC(startUrl?: string) {
-    let session = projectSession.getSession();
+    let sess: SessionModel = _session.getSession();
 
-    let open_url = `${session["instanceUrl"]}/secur/frontdoor.jsp` + 
-        `?sid=${session["sessionId"]}`;
+    let open_url = `${sess.instanceUrl}/secur/frontdoor.jsp` + 
+        `?sid=${sess.sessionId}`;
 
     if (startUrl) {
         open_url += "&retURL=" + startUrl;
@@ -146,10 +147,10 @@ export function loginToSFDC(startUrl?: string) {
  * Command for copying loginUrl to clipboard
  */
 export function copyLoginUrl() {
-    let session = projectSession.getSession();
+    let sess: SessionModel = _session.getSession();
 
-    let loginUrl = `${session["instanceUrl"]}/secur/frontdoor.jsp` +
-        `?sid=${session["sessionId"]}`;
+    let loginUrl = `${sess.instanceUrl}/secur/frontdoor.jsp` +
+        `?sid=${sess.sessionId}`;
 
     // Write loginUrl to clipboard
     vscode.env.clipboard.writeText(loginUrl);

@@ -5,6 +5,7 @@
 
 import * as vscode from "vscode";
 import * as _ from "lodash";
+import * as nls from 'vscode-nls';
 import * as util from "../utils/util";
 import * as utility from "./utility";
 import * as packages from "../utils/package";
@@ -14,10 +15,37 @@ import MetadataApi from "../salesforce/api/metadata";
 import ApexApi from "../salesforce/api/apex";
 import RestApi from "../salesforce/api/rest";
 import ProgressNotification from "../utils/progress";
-import { projectSettings, metadata } from "../settings";
-import * as nls from 'vscode-nls';
+import { _session, settings, metadata } from "../settings";
 
 const localize = nls.loadMessageBundle();
+
+/**
+ * Update user language as your chosen
+ */
+export async function updateUserLanguage() {
+    // Let user to choose language
+    let chosenItem: any = await vscode.window.showQuickPick(
+        _.map(settings.getUserLanguages(), (v, k) => {
+            return {
+                label: v,
+                description: k
+            };
+        })
+    );
+
+    let restApi = new RestApi();
+    ProgressNotification.showProgress(restApi, "patch", {
+        "serverUrl": "/sobjects/User/" + _session.getUserId(),
+        "data": {
+            "LanguageLocaleKey": chosenItem.label
+        }
+    })
+    .then( body => {
+        vscode.window.showInformationMessage(
+            `Your lanaguage is updated to ${chosenItem.description}`
+        );
+    });
+}
 
 export function executeRestTest() {
     // Get selection in the active editor
@@ -25,7 +53,7 @@ export function executeRestTest() {
     if (!editor) {
         return util.showCommandWarning();
     }
-
+    
     let serverUrl = "";
     if (editor.selection) {
         serverUrl = editor.document.getText(editor.selection);
@@ -59,7 +87,7 @@ export function executeQuery() {
     }
 
     let restApi = new RestApi();
-    ProgressNotification.showRESTProgress(restApi, "query", {
+    ProgressNotification.showProgress(restApi, "query", {
         soql: soql
     })
     .then( body => {
@@ -83,7 +111,7 @@ export async function reloadSobjectCache(sobjects?: string[]) {
 
     // If sobjects is not specified, describe global
     if (!sobjects || sobjects.length === 0) {
-        return ProgressNotification.showRESTProgress(
+        return ProgressNotification.showProgress(
             restApi, "describeGlobal", {}
         )
         .then( body => {
@@ -293,7 +321,7 @@ export function refreshThisFromServer() {
 
         // Send get request
         let restApi = new RestApi();
-        ProgressNotification.showRESTProgress(restApi, "query", {
+        ProgressNotification.showProgress(restApi, "query", {
             serverUrl: `/${filep["id"]}`
         })
         .then( body => {
@@ -373,7 +401,7 @@ export function updateProject() {
  * Create new project based on subscribed metadata objects
  */
 export function createNewProject() {
-    let subscribedMetaObjects = projectSettings.getSubscribedMetaObjects();
+    let subscribedMetaObjects = settings.getSubscribedMetaObjects();
 
     // If there is no subscribed metaObjects, so subscribe first
     if (!subscribedMetaObjects || subscribedMetaObjects.length === 0) {

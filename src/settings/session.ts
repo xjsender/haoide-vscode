@@ -5,19 +5,20 @@
 
 import * as moment from "moment";
 import * as settingsUtil from "./settingsUtil";
+import SessionModel from "../models/session";
 
-export default class ProjectSession {
-    private static instance: ProjectSession;
+export default class Session {
+    private static instance: Session;
     private sessionFileName = "session.json";
 
     public static getInstance() {
-        if (!ProjectSession.instance) {
-            ProjectSession.instance = new ProjectSession();
+        if (!Session.instance) {
+            Session.instance = new Session();
         }
-        return ProjectSession.instance;
+        return Session.instance;
     }
 
-    public getSession(): any {
+    public getSession(): SessionModel {
         return settingsUtil.getConfig(this.sessionFileName);
     }
 
@@ -43,5 +44,14 @@ export default class ProjectSession {
             "sessionId": sessionId,
             "lastUpdatedTime": moment().format()
         });
+    }
+    
+    /**
+     * Get userId in the session cache
+     * 
+     * @returns userId in the session cache
+     */
+    public getUserId() {
+        return this.getSession().userId;
     }
 }

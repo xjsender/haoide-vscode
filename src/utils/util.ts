@@ -216,7 +216,7 @@ export function getExtensionWorkspace() {
 /**
  * Get all authorized projects at homedir/.haoide/config.json
  * 
- * @returns {projectName: default<boolean>}
+ * @returns projects, k-v json as projectName: default<boolean>
  */
 export function getProjects() {
     try {

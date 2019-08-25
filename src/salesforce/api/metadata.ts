@@ -9,7 +9,7 @@ import * as auth from "../../commands/auth";
 import * as util from "../../utils/util";
 import SOAP from "../lib/soap";
 import ProgressNotification from "../../utils/progress";
-import { projectSession, projectSettings } from "../../settings";
+import { _session, settings } from "../../settings";
 
 export default class MetadataApi {
     private soap!: SOAP;
@@ -25,7 +25,7 @@ export default class MetadataApi {
     }
 
     private initiate(session?: any) {
-        this.session = session || projectSession.getSession();
+        this.session = session || _session.getSession();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;
@@ -255,7 +255,7 @@ export default class MetadataApi {
                 "requestType": "Deploy",
                 "zipfile": zipfile,
                 "testClasses": testClasses,
-                "deployOptions": projectSettings.getDeployOptions()
+                "deployOptions": settings.getDeployOptions()
             };
 
             ProgressNotification.showProgress(self, "_invoke_method", options)

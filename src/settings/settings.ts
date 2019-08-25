@@ -5,15 +5,15 @@
 
 import * as settingsUtil from "./settingsUtil";
 
-export default class ProjectSettings {
-    private static instance: ProjectSettings;
+export default class Settings {
+    private static instance: Settings;
     private settingsFileName = "settings.json";
 
     public static getInstance() {
-        if (!ProjectSettings.instance) {
-            ProjectSettings.instance = new ProjectSettings();
+        if (!Settings.instance) {
+            Settings.instance = new Settings();
         }
-        return ProjectSettings.instance;
+        return Settings.instance;
     }
 
     /**
@@ -67,8 +67,7 @@ export default class ProjectSettings {
      */
     public getDeployOptions() {
         let deployOptions = settingsUtil.getConfigValue(
-            this.settingsFileName,
-            "deployOptions"
+            this.settingsFileName, "deployOptions"
         );
 
         if (!deployOptions) {
@@ -87,5 +86,35 @@ export default class ProjectSettings {
         }
 
         return deployOptions;
+    }
+
+    public getUserLanguages() {
+        let userLanguages = settingsUtil.getConfigValue(
+            this.settingsFileName, "userLanguages"
+        );
+
+        if (!userLanguages) {
+            userLanguages = {
+                "Chinese (Simplified)": "zh_CN",
+                "Chinese (Traditional)": "zh_TW",
+                "Danish": "da",
+                "Dutch": "nl_NL",
+                "English": "en_US",
+                "Finnish": "fi",
+                "French": "fr",
+                "German": "de",
+                "Italian": "it",
+                "Japanese": "ja",
+                "Korean": "ko",
+                "Portuguese (Brazil)": "pt_BR",
+                "Russian": "ru",
+                "Spanish": "es",
+                "Spanish (Mexico)": "es_MX",
+                "Swedish": "sv",
+                "Thai": "th"
+            };
+        }
+
+        return userLanguages;
     }
 }

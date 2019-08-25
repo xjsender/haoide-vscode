@@ -14,7 +14,7 @@ import * as util from "../../../utils/util";
 import * as contextUtil from "../../../utils/context";
 import MetadataApi from "../../api/metadata";
 import OAuth from "./oauth";
-import { projectSession, metadata } from "../../../settings";
+import { _session, metadata } from "../../../settings";
 
 const localize = nls.loadMessageBundle();
 
@@ -59,7 +59,7 @@ export function startServer(projectName: any, loginUrl: string) {
                     "projectName": projectName,
                     "lastUpdatedTime": moment().format()
                 };
-                projectSession.setSession(session);
+                _session.setSession(session);
 
                 // Describe metadata
                 new MetadataApi(session).describeMetadata({})
