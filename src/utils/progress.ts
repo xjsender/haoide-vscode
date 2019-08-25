@@ -18,34 +18,6 @@ export default class ProgressNotification {
                 console.log("You canceled the long polling operation");
             });
 
-            // Notify for init action
-            progress.report({ message: methodName });
-
-            // Bind options with progress
-            options.progress = progress;
-
-            return self[methodName](options);
-        }) as Promise<any>;
-    }
-
-    /**
-     * Start vscode progress notfication
-     * 
-     * @param self the context of invoker
-     * @param methodName the method name in the metadata Api
-     * @param options any
-     */
-    public static showRESTProgress(self: any, methodName: string, options: any) {
-        return vscode.window.withProgress({
-            location: vscode.ProgressLocation.Notification,
-            title: "Running Task: ",
-            cancellable: true
-        }, (progress, token) => {
-            token.onCancellationRequested(() => {
-                console.log("You canceled the long polling operation");
-            });
-
-            // Notify for init action
             progress.report({ message: methodName });
 
             // Bind options with progress
