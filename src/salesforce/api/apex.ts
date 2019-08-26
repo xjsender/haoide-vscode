@@ -40,7 +40,7 @@ export default class ApexApi {
         return this;
     }
 
-    private _invoke_method(options: any, progress?: any) {
+    private _invoke_method(options: any) {
         let self = this;
 
         return new Promise<any>(function (resolve, reject) {
@@ -56,13 +56,18 @@ export default class ApexApi {
 
             // Send notification
             ProgressNotification.notify(
-                progress, `Start ${requestType}...`
+                options.progress, 
+                options.progressMessage || 
+                    `Start ${requestType}...`
             );
 
             request(requestOptions).then( body => {
                 // If request is finished, notify user and stop future notification
                 ProgressNotification.notify(
-                    progress, `${requestType} succeed`, 100
+                    options.progress, 
+                    options.progressMessage || 
+                        `${requestType} succeed`, 
+                    100
                 );
 
                 resolve(body);
@@ -71,7 +76,7 @@ export default class ApexApi {
                 // If session is expired, just login again
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
                     return auth.authorizeDefaultProject().then( () => {
-                        self.initiate()._invoke_method(options, progress)
+                        self.initiate()._invoke_method(options)
                             .then( body => {
                                 resolve(body);
                             });

@@ -57,7 +57,9 @@ export default class MetadataApi {
 
             // Send notification
             ProgressNotification.notify(
-                options.progress, `Start ${requestType}...`
+                options.progress, 
+                options.progressMessage || 
+                    `Start ${requestType}...`
             );
 
             request(requestOptions).then(body => {
@@ -66,7 +68,10 @@ export default class MetadataApi {
 
                 // If request is finished, notify user and stop future notification
                 ProgressNotification.notify(
-                    options.progress, `${requestType} submitted successfully`, 100
+                    options.progress, 
+                    options.progressMessage ||
+                        `${requestType} submitted successfully`, 
+                    100
                 );
 
                 resolve(result);
