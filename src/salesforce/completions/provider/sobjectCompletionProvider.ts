@@ -21,7 +21,7 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
         context: vscode.CompletionContext) {
 
         let enableDebugMode = extensionSettings.getConfigValue(
-            "enable-debug-mode", false
+            "enable-debug-mode", true
         );
 
         // We can't get correct word if remove -1
@@ -101,7 +101,6 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
         }
         // Add keyword completion
         else if (/a-zA-Z-/i.test(pos.char)) {
-            console.log("keyword completion");
             for (const sobjectName of _.values(sobjects)) {
                 completionItems.push(createCompletionItem(
                     sobjectName, CompletionItemKind.Keyword

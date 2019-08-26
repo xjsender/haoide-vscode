@@ -78,6 +78,7 @@ export default class RestApi {
                 body: options.data,
                 json: options.json || true
             };
+            console.log(requestOptions);
             
             // Send notification
             ProgressNotification.notify(
@@ -129,8 +130,9 @@ export default class RestApi {
      * @returns Promise<any>
      */
     public get(options: any) {
-        options["method"] = "GET";
-        return this._invoke_method(options);
+        return this._invoke_method(_.extend(options, {
+            method: "GET"
+        }));
     }
 
     /**
@@ -142,8 +144,9 @@ export default class RestApi {
      * @returns Promise<any>
      */
     public post(options: any) {
-        options["method"] = "POST";
-        return this._invoke_method(options);
+        return this._invoke_method(_.extend(options, {
+            method: "POST"
+        }));
     }
 
     /**
@@ -153,8 +156,9 @@ export default class RestApi {
      * @returns Promise<any>
      */
     public patch(options: any) {
-        options["method"] = "PATCH";
-        return this._invoke_method(options);
+        return this._invoke_method(_.extend(options, {
+            method: "PATCH"
+        }));
     }
 
     /**
@@ -164,8 +168,9 @@ export default class RestApi {
      * @returns Promise<any>
      */
     public put(options: any) {
-        options["method"] = "PUT";
-        return this._invoke_method(options);
+        return this._invoke_method(_.extend(options, {
+            method: "PUT"
+        }));
     }
 
     /**
@@ -175,8 +180,9 @@ export default class RestApi {
      * @returns Promise<any>
      */
     public delete(options: any) {
-        options["method"] = "DELETE";
-        return this._invoke_method(options);
+        return this._invoke_method(_.extend(options, {
+            method: "DELETE"
+        }));
     }
 
     /**
@@ -202,7 +208,6 @@ export default class RestApi {
 
             return this.describeSobject({
                 sobject: sObject,
-                progress: options.progress,
                 timout: options.timeout
             })
             .then( result => {
