@@ -88,12 +88,16 @@ export async function switchProject(projectName?: string) {
         );
 
         // When user cancel request
-        if (!chosenItem) {
-            return;
+        if (chosenItem) {
+            projectName = chosenItem.label;
         }
-        
-        projectName = chosenItem.label;
     }
+    
+    if (!projectName) {
+        return;
+    }
+
+    util.setDefaultProject(projectName);
 
     // Show default project at the status bar
     util.setStatusBarItem(
