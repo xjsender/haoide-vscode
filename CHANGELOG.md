@@ -2,6 +2,12 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.1.3]
+
++ Add new command for ``updating user language``
++ Fix bug for command ``switch project``
++ Refactor settings and API structure
+
 ## [0.1.2]
 
 + Add new command, ``convert15IdTo18Id``
