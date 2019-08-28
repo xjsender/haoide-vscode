@@ -416,7 +416,7 @@ export function parseFileName(fileName: string) {
  * @param fileProperties fileProperties from retrieve/deploy response
  */
 export function setFileProperties(fileProperties: any[]) {
-    let componentMetadata: any = {};
+    let componentMetadata: any = settingsUtil.getConfig("componentMetadata.json");
     for (let fileProperty of fileProperties) {
         let attributes: any = parseFileName(fileProperty["fileName"]);
         let fullName = attributes["fullName"];
@@ -430,10 +430,10 @@ export function setFileProperties(fileProperties: any[]) {
         }
 
         componentMetadata[metaFolder][fullName] = fileProperty;
-
-        // Keep component metadata to local disk
-        settingsUtil.setConfigValue("componentMetadata.json", componentMetadata);
     }
+
+    // Keep component metadata to local disk
+    settingsUtil.setConfigValue("componentMetadata.json", componentMetadata);
 }
 
 /**
