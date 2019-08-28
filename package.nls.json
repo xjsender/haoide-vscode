@@ -15,6 +15,8 @@
     "extension.haoide.updateUserLanguage.title": "Update User Language",
     "extension.haoide.retrieveThisFromServer.title": "Retrieve This File From Server",
     "extension.haoide.retrieveOpenFilesFromServer.title": "Retrieve Open File From Server",
+    "extension.haoide.destructThisFromServer.title": "Destruct This File From Server",
+    "extension.haoide.destructOpenFilesFromServer.title": "Destruct Open File From Server",
     "extension.haoide.deployThisToServer.title": "Deploy This Files to Server",
     "extension.haoide.deployOpenFilesToServer.title": "Deploy Open Files to Server",
     "extension.haoide.reloadSobjectCache.title": "Reload sObject Cache",

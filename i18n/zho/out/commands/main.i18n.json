@@ -1,5 +1,6 @@
 {
     "noCodeExecute.text": "没有可执行的代码",
     "fileDeployed.text": "代码已经部署成功",
+    "fileDestructed.text": "代码已经删除成功",
     "noSubscribedMetadata.text": "没有订阅的MetadataObjects"
 }

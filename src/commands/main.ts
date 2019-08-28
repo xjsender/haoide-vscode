@@ -261,6 +261,65 @@ export function describeMetadata() {
 }
 
 /**
+ * Destruct files from server
+ * 
+ * @param files files to be destructed
+ */
+export function destructFilesFromServer(files: string[]) {
+    packages.buildDestructPackage(files).then( base64Str => {
+        new MetadataApi().deploy(base64Str).then( result => {
+            // If deploy failed, show error message
+            if (!result["success"]) {
+                let componentFailures = result.details["componentFailures"];
+                vscode.window.showErrorMessage(componentFailures["problem"]);
+            }
+            else {
+                // Remove files from local disk
+                util.unlinkFiles(files);
+
+                // Show succeed message
+                vscode.window.showInformationMessage(
+                    localize("fileDestruted.text",
+                        "This file has destructed to server succesfully"
+                    )
+                );
+            }
+        });
+    });
+}
+
+/**
+ * Destruct active file from server
+ */
+export function destructThisFromServer() {
+    let editor = vscode.window.activeTextEditor;
+    if (editor) {
+        let fileName = editor.document.fileName;
+        destructFilesFromServer([fileName]);
+    }
+    else {
+        util.showCommandWarning();
+    }
+}
+
+/**
+ * Destruct open files from server
+ */
+export function destructOpenFilesFromServer() {
+    let documents: vscode.TextDocument[] = vscode.workspace.textDocuments;
+    if (documents) {
+        let fileNames: string[] = [];
+        for (const doc of documents) {
+            fileNames.push(doc.fileName);
+        }
+        destructFilesFromServer(fileNames);
+    }
+    else {
+        util.showCommandWarning();
+    }
+}
+
+/**
  * Deploy active file to server
  */
 export function deployThisToServer() {
@@ -418,7 +477,9 @@ export function createNewProject() {
         return utility.toggleMetadataObjects().then( metaObjects => {
             if (!metaObjects || metaObjects.length === 0) {
                 return vscode.window.showWarningMessage(
-                    localize("noSubscribedMetadata.text", "No subscribed metaObjects for this project")
+                    localize("noSubscribedMetadata.text", 
+                        "No subscribed metaObjects for this project"
+                    )
                 );
             }
 

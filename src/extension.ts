@@ -61,6 +61,18 @@ export function activate(context: vscode.ExtensionContext) {
 		main.retrieveOpenFilesFromServer
 	));
 
+	// Register destructThisFromServer command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.destructThisFromServer",
+		main.destructThisFromServer
+	));
+
+	// Register destructOpenFilesFromServer command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.destructOpenFilesFromServer",
+		main.destructOpenFilesFromServer
+	));
+
 	// Register deployThisToServer command
 	context.subscriptions.push(vscode.commands.registerCommand(
 		"extension.haoide.deployThisToServer",

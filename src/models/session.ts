@@ -1,4 +1,10 @@
-export default interface Session {
+/**
+ * @file Session model
+ * 
+ * @author Mouse Liu <mouse.mliu@gmail.com>
+ */
+
+ export default interface Session {
     orgnizationId: string;
     userId: string;
     sessionId: string;

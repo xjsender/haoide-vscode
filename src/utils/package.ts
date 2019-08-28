@@ -16,6 +16,56 @@ import { Buffer } from "buffer";
 import { MetaObject } from "../models/meta";
 
 /**
+ * Build destruct package by files
+ *
+ * @param files files to be destructed
+ * @returns Promise<string>, base64 encoded zipFile
+ */
+export function buildDestructPackage(files: string[]) {
+    // Create new instance for zip writer
+    let zip = new yazl.ZipFile();
+
+    // Get package dict
+    let packageDict = buildPackageDict(files);
+
+    // Build destructive package xml
+    let destructXmlContent = buildPackageXml(packageDict);
+    zip.addBuffer(
+        Buffer.alloc(destructXmlContent.length, destructXmlContent),
+        "destructiveChanges.xml"
+    );
+
+    // Build package.xml
+    let packageXmlContent = buildPackageXml({});
+    zip.addBuffer(
+        Buffer.alloc(packageXmlContent.length, packageXmlContent),
+        "package.xml"
+    );
+
+    // Write zip file to local disk
+    return new Promise<string>((resolve, reject) => {
+        try {
+            let zipFilePath = path.join(os.homedir(), "destruct.zip");
+            zip.outputStream
+                .pipe(fs.createWriteStream(zipFilePath))
+                .on("close", () => {
+                    // Read binary data from zipFile
+                    let base64Str = fs.readFileSync(zipFilePath, {
+                        encoding: "base64"
+                    });
+
+                    resolve(base64Str);
+                });
+            zip.end();
+        }
+        catch (err) {
+            reject(err);
+        }
+    });
+}
+
+
+/**
  * Build deploy package by files
  * 
  * @param files files to be deployed

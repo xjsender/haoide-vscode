@@ -100,6 +100,16 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.destructThisFromServer",
+				"title": "%extension.haoide.destructThisFromServer.title%",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.destructOpenFilesFromServer",
+				"title": "%extension.haoide.destructOpenFilesFromServer.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.deployThisToServer",
 				"title": "%extension.haoide.deployThisToServer.title%",
 				"category": "Haoide"
@@ -227,6 +237,10 @@
 				{
 					"group": "z_commands",
 					"command": "extension.haoide.deployThisToServer"
+				},
+				{
+					"group": "z_commands",
+					"command": "extension.haoide.destructThisFromServer"
 				},
 				{
 					"group": "z_commands",

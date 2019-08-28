@@ -458,10 +458,9 @@ export function updateFilePropertyAfterDeploy(deployResult: any) {
             continue;
         }
 
-        let fileName: string = cmp.fileName;
-        let [metaFolder, cmpName] = fileName.split("/");
+        let [metaFolder, cmpName] = cmp.fileName.split("/");
 
-        if (componentMetadata[metaFolder]) {
+        if (!componentMetadata[metaFolder]) {
             componentMetadata[metaFolder] = {};
         }
 
@@ -498,5 +497,23 @@ export function getFilePropertyByFileName(fileName: string) {
     catch (err) {
         console.error(err);
         return {};
+    }
+}
+
+/**
+ * Remove files and its related meta file from local disk
+ * 
+ * @param files files to be removed
+ */
+export function unlinkFiles(files: string[]) {
+    for (const _file of files) {
+        if (fs.existsSync(_file)) {
+            fs.unlinkSync(_file);
+        }
+
+        let metaFile = _file + "-meta.xml";
+        if (fs.existsSync(metaFile)) {
+            fs.unlinkSync(metaFile);
+        }
     }
 }
