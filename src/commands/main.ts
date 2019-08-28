@@ -304,8 +304,14 @@ export function deployFilesToServer(files: string[]) {
                 vscode.window.showErrorMessage(componentFailures["problem"]);
             }
             else {
+                // Update the lastModifiedDate of local file property
+                util.updateFilePropertyAfterDeploy(result);
+
+                // Show succeed message
                 vscode.window.showInformationMessage(
-                    localize("fileDeployed.text", "This file has deployed to server succesfully")
+                    localize("fileDeployed.text", 
+                        "This file has deployed to server succesfully"
+                    )
                 );
             }
         });

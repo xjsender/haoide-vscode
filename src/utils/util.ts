@@ -437,6 +437,49 @@ export function setFileProperties(fileProperties: any[]) {
 }
 
 /**
+ * Update the lastModifiedDate of local file property
+ * 
+ * @param deployResult deploy response body
+ */
+export function updateFilePropertyAfterDeploy(deployResult: any) {
+    // If no succeed record, just return
+    if (!deployResult.details["componentSuccesses"]) {
+        return;
+    }
+
+    // Update fileProperties cache
+    let componentMetadata: any = settingsUtil.getConfig(
+        "componentMetadata.json"
+    );
+
+    for (const cmp of deployResult.details["componentSuccesses"]) {
+        // Ignore package.xml
+        if (cmp.fileName === "package.xml") {
+            continue;
+        }
+
+        let fileName: string = cmp.fileName;
+        let [metaFolder, cmpName] = fileName.split("/");
+
+        if (componentMetadata[metaFolder]) {
+            componentMetadata[metaFolder] = {};
+        }
+
+        try {
+            componentMetadata[metaFolder][cmpName].lastModifiedDate = 
+                deployResult.lastModifiedDate;
+        }
+        catch (err) {
+            console.log('Ignore exception in updateFilePropertyAfterDeploy');
+        }
+    }
+
+    settingsUtil.setConfigValue("componentMetadata.json", 
+        componentMetadata
+    );
+}
+
+/**
  * Get file property by file uri
  * 
  * @param fileName file Uri
