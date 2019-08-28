@@ -2,6 +2,13 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.1.4]
+
++ Add new command for ``Destruct This File From Server``
++ Add new command for ``Destruct Open Files From Server``
++ Update local file properties after files are retrieved from server
++ Update lastModifiedDate of file property after files are deploy succeed
+
 ## [0.1.3]
 
 + Add new command for ``updating user language``

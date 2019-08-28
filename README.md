@@ -25,13 +25,21 @@ Also support basic project operation, such as,
 + Authorized Default Project
 + Switch Project
 + Create New Project
++ Update Project
++ Describe Metadata
++ Update User Language
 + Retrieve This File from Server
++ Retrieve Open Files from Server
++ Destruct This File from Server
++ Destruct Open Files from Server
 + Deploy This File to Server
++ Deploy Open Files to Server
 + Locate File in Server
 + Utilities
     - Open Default Org
     - Convert XML to JSON
     - Format JSON
+    - Convert 15Id to 18Id
 
 ***Only after you have succeed to authorize new project, you can see other commands ***
 
