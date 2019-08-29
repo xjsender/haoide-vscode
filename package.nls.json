@@ -22,6 +22,7 @@
     "extension.haoide.reloadSobjectCache.title": "Reload sObject Cache",
     "extension.haoide.formatJson.title": "Format JSON",
     "extension.haoide.convertXml2Json.title": "Convert XML to JSON",
+    "extension.haoide.convertJson2Apex.title": "Convert JSON to Apex",
     "extension.haoide.convert15IdTo18Id.title": "Convert 15Id to 18Id",
     "extension.haoide.testCmd.title": "Test Haoide"
 }

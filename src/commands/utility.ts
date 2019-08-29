@@ -9,6 +9,7 @@ import * as _ from "lodash";
 import * as util from "../utils/util";
 import * as nls from 'vscode-nls';
 import * as settingsUtil from "../settings/settingsUtil";
+import JSONConverter from "../utils/json2Apex";
 import SessionModel from "../models/session";
 import { settings, _session, metadata } from "../settings";
 
@@ -165,6 +166,37 @@ export function copyLoginUrl() {
 
     // Show information
     vscode.window.showInformationMessage("Login url has been copied to clipboard");
+}
+
+/**
+ * Convert json to apex
+ */
+export function convertJson2Apex() {
+    // Get selection in the active editor if no jsonStr param
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return util.showCommandWarning();
+    }
+
+    let jsonStr = editor.document.getText(editor.selection) || "{}";
+
+    vscode.window.showInputBox({
+        placeHolder: localize(
+            "inputClassName.text", "Please input your class name..."
+        )
+    })
+    .then( className => {
+        if (!className) {
+            return util.showCommandWarning(localize(
+                'requiredInput.text', "Please input required info"
+            ));
+        }
+
+        let jsonObj = JSON.parse(jsonStr);
+        let jsonConverter = new JSONConverter();
+        let snippet = jsonConverter.convertToApex(className, jsonObj).snippet;
+        util.openNewUntitledFile(snippet, "apex");
+    });
 }
 
 /**

@@ -135,6 +135,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.convertJson2Apex",
+				"title": "%extension.haoide.convertJson2Apex.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.convertXml2Json",
 				"title": "%extension.haoide.convertXml2Json.title%",
 				"category": "Haoide"
@@ -206,6 +211,14 @@
 					"when": "haoide.hasOpenProject"
 				},
 				{
+					"command": "extension.haoide.destructThisFromServer",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.destructOpenFilesFromServer",
+					"when": "haoide.hasOpenProject"
+				},
+				{
 					"command": "extension.haoide.deployThisToServer",
 					"when": "haoide.hasOpenProject"
 				},
@@ -219,11 +232,15 @@
 				},
 				{
 					"command": "extension.haoide.formatJson",
-					"when": "haoide.hasOpenProject"
+					"when": "editorHasSelection"
 				},
 				{
 					"command": "extension.haoide.convertXml2Json",
-					"when": "haoide.hasOpenProject"
+					"when": "editorHasSelection"
+				},
+				{
+					"command": "extension.haoide.convertJson2Apex",
+					"when": "editorHasSelection"
 				},
 				{
 					"command": "extension.haoide.convert15IdTo18Id"

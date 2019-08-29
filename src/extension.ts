@@ -156,6 +156,13 @@ export function activate(context: vscode.ExtensionContext) {
 		utility.convertXml2Json
 	));
 
+	// Register convertJson2Apex command
+	context.subscriptions.push(vscode.commands.registerCommand(
+		"extension.haoide.convertJson2Apex",
+		utility.convertJson2Apex
+	));
+
+
 	/**
 	 * Completion part
 	 */
