@@ -81,8 +81,8 @@ export default class MetadataApi {
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
                     return auth.authorizeDefaultProject().then(() => {
                         self.initiate()._invoke_method(options)
-                            .then( body => {
-                                resolve(util.parseResult(body, requestType));
+                            .then( result => {
+                                resolve(result);
                             });
                     });
                 }
