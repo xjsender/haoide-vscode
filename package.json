@@ -433,6 +433,7 @@
 		"@types/request-promise": "^4.1.44",
 		"@types/shelljs": "^0.8.5",
 		"@types/yazl": "^2.4.1",
+		"cometd": "^3.1.10",
 		"adm-zip": "^0.4.13",
 		"express": "^4.16.4",
 		"fast-xml-parser": "^3.12.19",

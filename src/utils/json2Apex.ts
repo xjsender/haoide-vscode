@@ -1,5 +1,5 @@
 /**
- * @file JSON to Apex
+ * @file convert json to Apex
  * @author Mouse Liu <mouse.mliu@gmail.com>
  */
 
@@ -10,6 +10,11 @@ export default class JSONConverter {
     public snippet!: string;
     private scope = "public";
 
+    /**
+     * Get instance of converter
+     * 
+     * @param options options, {scope: public | global}
+     */
     constructor(options?: any) {
         this.classes = [];
 
@@ -18,6 +23,7 @@ export default class JSONConverter {
         }
     }
 
+    // Add Json parser
     private addParser(name: string) {
         let parser = `${this.scope} static ${name} parse(String jsonStr) {` +
             `\n\treturn (${name})JSON.deserialize(jsonStr, ${name}.class);` +
@@ -26,6 +32,11 @@ export default class JSONConverter {
         this.classes.push(parser);
     }
 
+    /**
+     * Add testMethod for class
+     * 
+     * @param jsonStr json string to be converted
+     */
     public addTestMethod(jsonStr: string) {
         let testMethod = `static testMethod void testParser() {
             String json = ${jsonStr};
@@ -36,6 +47,13 @@ export default class JSONConverter {
         this.classes.push(testMethod);
     }
 
+    /**
+     * Set converted snippet
+     * 
+     * @param name class name
+     * @param jsonObj json object, it can be object or array of object
+     * @param level convertion level
+     */
     public convertToApex(name: string, jsonObj: any, level=0) {
         if (_.isArray(jsonObj)) {
             if (jsonObj.length === 0) {
@@ -72,7 +90,6 @@ export default class JSONConverter {
                 else if (_.isUndefined(value) || _.isNull(value)) {
                     dataType = "Object";
                 }
-                
                 
                 if (_.isArray(value)) {
                     statements.push(`\t${this.scope} List<${_.upperFirst(key)}> ${key};`);
