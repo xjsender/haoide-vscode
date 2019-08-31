@@ -204,26 +204,25 @@ export default class RestApi {
         // If it is a select * query, describe sobject firstly
         if (matchedText) {
             let splitTexts: string[] = matchedText.split(" ");
-            let sObject = splitTexts[splitTexts.length-1].trim();
+            let sObject = splitTexts[splitTexts.length - 1].trim();
 
             return this.describeSobject({
-                sobject: sObject,
-                timout: options.timeout
+                sobject: sObject
             })
-            .then( result => {
-                let fieldNames = _.map(result["fields"], field => {
-                    return field["name"];
-                });
+                .then(result => {
+                    let fieldNames = _.map(result["fields"], field => {
+                        return field["name"];
+                    });
 
-                // Replace * with all fields of this sobject
-                options.serverUrl = "/query?" + querystring.stringify({
-                    "q": options.soql.replace(
-                        "*", fieldNames.join(",")
-                    )
-                });
+                    // Replace * with all fields of this sobject
+                    options.serverUrl = "/query?" + querystring.stringify({
+                        "q": options.soql.replace(
+                            "*", fieldNames.join(",")
+                        )
+                    });
 
-                return this.get(options);
-            });
+                    return this.get(options);
+                });
         }
 
         options.serverUrl = "/query?" + querystring.stringify({
@@ -239,11 +238,29 @@ export default class RestApi {
     * @returns Promise<any>
     */
     public queryMore(options: any) {
-        return this.get({
-            serverUrl: options.nextRecordUrl,
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+        return this.get(_.extend(options, {
+            serverUrl: options.nextRecordUrl
+        }));
+    }
+
+    /**
+     * REST search request
+     * 
+     * @param options options, {sosl: ""}
+     * @returns Promise<any>
+     */
+    public search(options: any) {
+        return this.get(_.extend(options, {
+            serverUrl: "/search" + querystring.stringify({
+                "q": options.sosl
+            })
+        }));
+    }
+
+    public retrieveApexLog(options: any) {
+        return this.get(_.extend(options, {
+            serverUrl: `/ApexLog/${options.logId}/Body`,
+        }));
     }
 
     /**
@@ -253,13 +270,11 @@ export default class RestApi {
     * @returns Promise<any>
     */
     public queryAll(options: any) {
-        return this.get({
+        return this.get(_.extend(options, {
             serverUrl: "/queryAll" + querystring.stringify({
                 "q": options.soql
-            }),
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+            })
+        }));
     }
 
     /**
@@ -269,11 +284,9 @@ export default class RestApi {
      * @returns Promise<any>
      */
     public getLimits(options: any) {
-        return this.get({
-            serverUrl: `/limits`,
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+        return this.get(_.extend(options, {
+            serverUrl: `/limits`
+        }));
     }
 
     /**
@@ -283,21 +296,20 @@ export default class RestApi {
      *      sobject: "",
      *      start: "",
      *      end: "",
+     *      progressMessage?,
      *      progress?,
      *      timeout?
      * }
      * @returns Promise<any>
      */
     public getDeletedRecords(options: any) {
-        return this.get({
+        return this.get(_.extend(options, {
             serverUrl: `/sobjects/${options.sobject}/deleted` +
                 querystring.stringify({
                     start: options.start,
                     end: options.end
-                }),
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+                })
+        }));
     }
 
     /**
@@ -307,21 +319,20 @@ export default class RestApi {
      *      sobject: "", 
      *      start: "", 
      *      end: "", 
+     *      progressMessage?,
      *      progress?, 
      *      timeout?
      * }
      * @returns Promise<any>
      */
     public getUpdatedRecords(options: any) {
-        return this.get({
+        return this.get(_.extend(options, {
             serverUrl: `/sobjects/${options.sobject}/updated` +
                 querystring.stringify({
-                    start: options.start, 
+                    start: options.start,
                     end: options.end
-                }),
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+                })
+        }));
     }
 
     /**
@@ -332,24 +343,26 @@ export default class RestApi {
      */
     public describeGlobal(options: any) {
         return this.get(_.extend(options, {
-            serverUrl: `/sobjects`,
-            progress: options.progress,
-            timeout: options.timeout || 120
+            serverUrl: `/sobjects`
         }));
     }
 
     /**
      * REST describeSobject request
      * 
-     * @param options options, {sobject: "", progress?, timout?}
+     * @param options options, 
+     *  {
+     *      sobject: "", 
+     *      progressMessage: "", 
+     *      progress?, 
+     *      timout?
+     * }
      * @returns Promise<any>
      */
     public describeSobject(options: any) {
-        return this.get({
-            serverUrl: `/sobjects/${options.sobject}/describe`,
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+        return this.get(_.extend(options, {
+            serverUrl: `/sobjects/${options.sobject}/describe`
+        }));
     }
 
     /**

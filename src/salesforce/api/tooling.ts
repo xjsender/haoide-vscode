@@ -62,7 +62,7 @@ export default class ToolingApi {
         else if (serverUrl.indexOf("/services") !== -1) {
             fullUrl = this.instanceUrl + serverUrl;
         }
-        
+
         return fullUrl;
     }
 
@@ -74,9 +74,9 @@ export default class ToolingApi {
                 headers: self.headers,
                 uri: self.buildFullUrl(options.serverUrl),
                 body: options.data,
+                timeout: options.timeout || 120,
                 json: options.json || true
             };
-            console.log(requestOptions);
 
             // Send notification
             ProgressNotification.notify(
@@ -102,7 +102,7 @@ export default class ToolingApi {
                                     resolve(body);
                                 });
                         })
-                            .catch(err => { });
+                        .catch(err => { });
                     }
 
                     // If this is invoked from promise.all, wrap err with success
@@ -110,11 +110,6 @@ export default class ToolingApi {
                         console.log(`${err.message} is ignored`);
                         return resolve({});
                     }
-
-                    // If network is timeout, just throw exception
-                    // if (err.message.indexOf("getaddrinfo ENOTFOUND")) {
-                    //     err.message = "Connection timeout, please check your network.";
-                    // }
 
                     reject(err);
                 });
@@ -205,23 +200,22 @@ export default class ToolingApi {
             let sObject = splitTexts[splitTexts.length - 1].trim();
 
             return this.describeSobject({
-                sobject: sObject,
-                timout: options.timeout
+                sobject: sObject
             })
-                .then(result => {
-                    let fieldNames = _.map(result["fields"], field => {
-                        return field["name"];
-                    });
-
-                    // Replace * with all fields of this sobject
-                    options.serverUrl = "/query?" + querystring.stringify({
-                        "q": options.soql.replace(
-                            "*", fieldNames.join(",")
-                        )
-                    });
-
-                    return this.get(options);
+            .then(result => {
+                let fieldNames = _.map(result["fields"], field => {
+                    return field["name"];
                 });
+
+                // Replace * with all fields of this sobject
+                options.serverUrl = "/query?" + querystring.stringify({
+                    "q": options.soql.replace(
+                        "*", fieldNames.join(",")
+                    )
+                });
+
+                return this.get(options);
+            });
         }
 
         options.serverUrl = "/query?" + querystring.stringify({
@@ -237,11 +231,29 @@ export default class ToolingApi {
     * @returns Promise<any>
     */
     public queryMore(options: any) {
-        return this.get({
-            serverUrl: options.nextRecordUrl,
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+        return this.get(_.extend(options, {
+            serverUrl: options.nextRecordUrl
+        }));
+    }
+
+    /**
+     * REST search request
+     * 
+     * @param options options, {sosl: ""}
+     * @returns Promise<any>
+     */
+    public search(options: any) {
+        return this.get(_.extend(options, {
+            serverUrl: "/search" + querystring.stringify({
+                "q": options.sosl
+            })
+        }));
+    }
+
+    public retrieveApexLog(options: any) {
+        return this.get(_.extend(options, {
+            serverUrl: `/ApexLog/${options.logId}/Body`,
+        }));
     }
 
     /**
@@ -251,13 +263,11 @@ export default class ToolingApi {
     * @returns Promise<any>
     */
     public queryAll(options: any) {
-        return this.get({
+        return this.get(_.extend(options, {
             serverUrl: "/queryAll" + querystring.stringify({
                 "q": options.soql
-            }),
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+            })
+        }));
     }
 
     /**
@@ -267,11 +277,9 @@ export default class ToolingApi {
      * @returns Promise<any>
      */
     public getLimits(options: any) {
-        return this.get({
-            serverUrl: `/limits`,
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+        return this.get(_.extend(options, {
+            serverUrl: `/limits`
+        }));
     }
 
     /**
@@ -281,21 +289,20 @@ export default class ToolingApi {
      *      sobject: "",
      *      start: "",
      *      end: "",
+     *      progressMessage?,
      *      progress?,
      *      timeout?
      * }
      * @returns Promise<any>
      */
     public getDeletedRecords(options: any) {
-        return this.get({
+        return this.get(_.extend(options, {
             serverUrl: `/sobjects/${options.sobject}/deleted` +
                 querystring.stringify({
                     start: options.start,
                     end: options.end
-                }),
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+                })
+        }));
     }
 
     /**
@@ -305,21 +312,20 @@ export default class ToolingApi {
      *      sobject: "", 
      *      start: "", 
      *      end: "", 
+     *      progressMessage?,
      *      progress?, 
      *      timeout?
      * }
      * @returns Promise<any>
      */
     public getUpdatedRecords(options: any) {
-        return this.get({
+        return this.get(_.extend(options, {
             serverUrl: `/sobjects/${options.sobject}/updated` +
                 querystring.stringify({
                     start: options.start,
                     end: options.end
-                }),
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+                })
+        }));
     }
 
     /**
@@ -330,24 +336,26 @@ export default class ToolingApi {
      */
     public describeGlobal(options: any) {
         return this.get(_.extend(options, {
-            serverUrl: `/sobjects`,
-            progress: options.progress,
-            timeout: options.timeout || 120
+            serverUrl: `/sobjects`
         }));
     }
 
     /**
      * REST describeSobject request
      * 
-     * @param options options, {sobject: "", progress?, timout?}
+     * @param options options, 
+     *  {
+     *      sobject: "", 
+     *      progressMessage: "", 
+     *      progress?, 
+     *      timout?
+     * }
      * @returns Promise<any>
      */
     public describeSobject(options: any) {
-        return this.get({
-            serverUrl: `/sobjects/${options.sobject}/describe`,
-            progress: options.progress,
-            timeout: options.timeout || 120
-        });
+        return this.get(_.extend(options, {
+            serverUrl: `/sobjects/${options.sobject}/describe`
+        }));
     }
 
     /**
@@ -374,7 +382,7 @@ export default class ToolingApi {
      * @param options options, {testObject: TestSuite[]}
      * @returns Promise<TestResponse>
      */
-    public runTestsSynchronous(options: any) {
+    public runSyncTest(options: any) {
         return this.post(_.extend(options, {
             serverUrl: "/runTestsSynchronous",
             data: options.testObject as TestObject
