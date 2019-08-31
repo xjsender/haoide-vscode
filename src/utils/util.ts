@@ -8,7 +8,7 @@ import * as xmlParser from "fast-xml-parser";
 import * as packageUtil from "../utils/package";
 import * as settingsUtil from "../settings/settingsUtil";
 import { extensionSettings } from "../settings";
-import { FileAttributes } from "../utils/package";
+import { FileProperty, FileAttributes } from "../models/attr";
 
 export function showCommandWarning(warningMessage?: string) {
     return vscode.window.showQuickPick([{
@@ -484,7 +484,7 @@ export function updateFilePropertyAfterDeploy(deployResult: any) {
  * @param fileName file Uri
  * @returns fileProperty, including, id, metaFolder, xmlName...
  */
-export function getFilePropertyByFileName(fileName: string) {
+export function getFilePropertyByFileName(fileName: string): FileProperty {
     let attrs: FileAttributes = packageUtil.getFileAttributes(fileName);
     
     let fileProperties = settingsUtil.getConfig(
@@ -496,7 +496,7 @@ export function getFilePropertyByFileName(fileName: string) {
     }
     catch (err) {
         console.error(err);
-        return {};
+        return {} as FileProperty;
     }
 }
 

@@ -16,6 +16,8 @@ import ApexApi from "../salesforce/api/apex";
 import RestApi from "../salesforce/api/rest";
 import ProgressNotification from "../utils/progress";
 import { _session, settings, metadata } from "../settings";
+import ToolingApi from "../salesforce/api/tooling";
+import { TestSuite, TestObject } from "../models/test";
 
 const localize = nls.loadMessageBundle();
 
@@ -68,6 +70,48 @@ export function executeRestTest() {
     })
     .catch(err => {
         console.log(err);
+        vscode.window.showErrorMessage(err.message);
+    });
+}
+
+export function runSyncTest() {
+    let editor = vscode.window.activeTextEditor;
+    if (editor) {
+        let property = util.getFilePropertyByFileName(
+            editor.document.fileName
+        );
+        retrieveFilesFromServer([property.id]);
+    }
+    else {
+        util.showCommandWarning();
+    }
+}
+
+/**
+ * Running sync test class
+ * 
+ * @param classIds ids of test class to be ran
+ */
+export function runSyncTests(classIds: string[]) {
+    let testObject: TestObject = {
+        "tests": _.map(classIds, classId => {
+            return {
+                "classId": classId
+            };
+        }) as TestSuite[]
+    };
+
+    let toolingApi = new ToolingApi();
+    ProgressNotification.showProgress(
+        toolingApi, "runSyncTest", {
+            testObject: testObject,
+            progressMessage: "Running test class, please hold on"
+        }
+    )
+    .then( result => {
+        console.log(result);
+    })
+    .catch (err => {
         vscode.window.showErrorMessage(err.message);
     });
 }

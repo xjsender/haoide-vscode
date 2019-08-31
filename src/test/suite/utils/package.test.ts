@@ -5,7 +5,13 @@
 
 import * as assert from "assert";
 import * as pkg from "../../../utils/package";
-import { MetadataModel, MetaObject } from "../../../models/meta";
+import { 
+    MetadataModel, MetaObject
+} from "../../../models/meta";
+
+import {
+    FileAttributes, FileProperty
+} from "../../../models/attr";
 
 describe("Test all functions for ./utils/package", () => {
     // Prepare test data
@@ -30,13 +36,13 @@ describe("Test all functions for ./utils/package", () => {
 
     describe("#getFileAttributes()", () => {
         it("xmlName should be ApexClass", () => {
-            let attrs: pkg.FileAttributes = pkg.getFileAttributes(files[0]);
+            let attrs: FileAttributes = pkg.getFileAttributes(files[0]);
             console.log(attrs);
             assert(attrs.xmlName, "ApexPage");
         });
 
         it("fullName should be AccountList.page", () => {
-            let attrs: pkg.FileAttributes = pkg.getFileAttributes(files[0]);
+            let attrs: FileAttributes = pkg.getFileAttributes(files[0]);
             console.log(attrs);
             assert(attrs.xmlName, "ApexPage");
             assert(attrs.fullName, "AccountList.page");

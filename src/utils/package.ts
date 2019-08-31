@@ -14,6 +14,7 @@ import * as util from "../utils/util";
 import { metadata } from "../settings";
 import { Buffer } from "buffer";
 import { MetaObject } from "../models/meta";
+import { FileAttributes } from "../models/attr";
 
 /**
  * Build destruct package by files
@@ -220,16 +221,6 @@ export function buildPackageXml(packageDict: any, apiVersion=46) {
     `;
 
     return packageXmlContent;
-}
-
-export interface FileAttributes {
-    dir: string;            // file Uri
-    name: string;           // component Name
-    fullName: string;       // component Name + component Extension
-    directoryName: string;  // folder from metadata describe
-    folder: string;         // If folder is not null, means in folder
-    xmlName: string;        // xmlName from metadata describe
-    memberName: string;      // Used in package.xml
 }
 
 /**

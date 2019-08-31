@@ -17,7 +17,7 @@ export interface TestObject {
  */
 export interface TestSuite {
     classId: string;
-    testMethods: string[];
+    testMethods?: string[];
 }
 
 /**
