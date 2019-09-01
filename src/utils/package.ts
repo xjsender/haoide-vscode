@@ -10,11 +10,11 @@ import * as yazl from "yazl";
 import * as _ from "lodash";
 import * as AdmZip from "adm-zip";
 import * as shelljs from "shelljs";
+import { Buffer } from "buffer";
+
 import * as util from "../utils/util";
 import { metadata } from "../settings";
-import { Buffer } from "buffer";
-import { MetaObject } from "../models/meta";
-import { FileAttributes } from "../models/attr";
+import { MetaObject, FileAttributes } from "../models";
 
 /**
  * Build destruct package by files
@@ -298,16 +298,14 @@ export function getRetrieveTypes(files: string[]) {
 
 /**
  * Extract base64 encoded zipfile to local disk
- * and keep fileProperties to local cache
  * 
- * @param result retrieve result, 
- *      which contains base64 encoded zipFile and fileProperties
+ * @param zipFile base64 encoded zipFile to be extracted
  * @param addProjectToWorkspace true means add default project to workspace
  */
-export function extractZipFile(result: any) {
+export function extractZipFile(zipFile: string) {
     let zipFilePath = path.join(os.homedir(), "haoide.zip");
     fs.writeFileSync(
-        zipFilePath, result["zipFile"], "base64"
+        zipFilePath, zipFile, "base64"
     );
 
     let zip = new AdmZip(zipFilePath);
@@ -333,7 +331,4 @@ export function extractZipFile(result: any) {
             zipEntry.getData()
         );
     }
-
-    // Keep fileProperties to local disk
-    util.setFileProperties(result["fileProperties"]);
 }

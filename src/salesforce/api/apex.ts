@@ -4,7 +4,7 @@
  */
 
 import * as request from "request-promise";
-import * as xmlParser from "fast-xml-parser";
+
 import * as auth from "../../commands/auth";
 import SOAP from "../lib/soap";
 import ProgressNotification from "../../utils/progress";

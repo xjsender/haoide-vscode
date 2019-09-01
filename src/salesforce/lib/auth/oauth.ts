@@ -6,8 +6,8 @@
 import * as querystring from "querystring";
 import * as request from "request-promise";
 import * as _ from "lodash";
-import { appConfig } from "./config";
 import ProgressNotification from "../../../utils/progress";
+import { appConfig } from "./config";
 
 export default class OAuth {
     private authorizeUrl: string;
@@ -42,7 +42,7 @@ export default class OAuth {
      * @param options utility for invoke request
      * @returns request response
      */
-    private _invokeTokenRequest(options: any, progress?: any) {
+    private _invokeTokenRequest(options: any) {
         let self = this;
 
         return new Promise<any>(function(resolve, reject) {
@@ -58,13 +58,13 @@ export default class OAuth {
 
             // Send notification
             ProgressNotification.notify(
-                progress, `Start authorization request...`
+                options.progress, `Start authorization request...`
             );
             
             request(requestOptions).then( body => {
                 // Send finish notification
                 ProgressNotification.notify(
-                    progress, 'OAuth request is finished', 100
+                    options.progress, 'OAuth request is finished', 100
                 );
 
                 resolve(body);
@@ -81,15 +81,13 @@ export default class OAuth {
      * @param options {code: ""}
      * @returns Promise<response>
      */
-    public requestToken(options: any, progress?: any) {
-        options = _.extend(options, {
+    public requestToken(options: any) {
+        return this._invokeTokenRequest(_.extend(options, {
             grant_type: "authorization_code",
             client_id: appConfig["clientId"],
             client_secret: appConfig["clientSecret"],
             redirect_uri: appConfig["redirectUri"]
-        });
-
-        return this._invokeTokenRequest(options, progress);
+        }));
     }
 
     /**
@@ -98,13 +96,11 @@ export default class OAuth {
      * @param options {refreshToken: ""}
      * @returns Promise<response>
      */
-    public refreshToken(options: any, progress?: any) {
-        options = _.extend(options, {
+    public refreshToken(options: any) {
+        return this._invokeTokenRequest(_.extend(options, {
             grant_type: "refresh_token",
             client_id: appConfig["clientId"]
-        });
-
-        return this._invokeTokenRequest(options, progress);
+        }));
     }
 
     public revokeToken(token: string) {}

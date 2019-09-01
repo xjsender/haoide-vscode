@@ -5,7 +5,7 @@
 
 import * as moment from "moment";
 import * as settingsUtil from "./settingsUtil";
-import SessionModel from "../models/session";
+import { Session as SessionModel } from "../models";
 
 export default class Session {
     private static instance: Session;
@@ -18,6 +18,11 @@ export default class Session {
         return Session.instance;
     }
 
+    /**
+     * Get session of default project
+     * 
+     * @returns SessionModel
+     */
     public getSession(): SessionModel {
         return settingsUtil.getConfig(this.sessionFileName);
     }
@@ -45,7 +50,7 @@ export default class Session {
             "lastUpdatedTime": moment().format()
         });
     }
-    
+
     /**
      * Get userId in the session cache
      * 

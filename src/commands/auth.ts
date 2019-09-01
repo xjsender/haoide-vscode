@@ -4,13 +4,13 @@
  */
 
 import * as vscode from "vscode";
+import * as nls from 'vscode-nls';
+
 import * as util from "../utils/util";
 import OAuth from "../salesforce/lib/auth/oauth";
+import ProgressNotification from "../utils/progress";
 import { startLogin, startServer } from "../salesforce/lib/auth/server";
 import { _session } from "../settings";
-import * as nls from 'vscode-nls';
-import ProgressNotification from "../utils/progress";
-import { any } from "bluebird";
 
 const localize = nls.loadMessageBundle();
 

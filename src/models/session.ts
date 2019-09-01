@@ -4,7 +4,7 @@
  * @author Mouse Liu <mouse.mliu@gmail.com>
  */
 
- export default interface Session {
+ export interface Session {
     orgnizationId: string;
     userId: string;
     sessionId: string;

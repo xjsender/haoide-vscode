@@ -6,18 +6,24 @@
 import * as vscode from "vscode";
 import * as _ from "lodash";
 import * as nls from 'vscode-nls';
+
 import * as util from "../utils/util";
 import * as utility from "./utility";
 import * as packages from "../utils/package";
 import * as settingsUtil from "../settings/settingsUtil";
-import * as sobject from "../models/sobject";
 import MetadataApi from "../salesforce/api/metadata";
 import ApexApi from "../salesforce/api/apex";
 import RestApi from "../salesforce/api/rest";
+import ToolingApi from "../salesforce/api/tooling";
 import ProgressNotification from "../utils/progress";
 import { _session, settings, metadata } from "../settings";
-import ToolingApi from "../salesforce/api/tooling";
-import { TestSuite, TestObject } from "../models/test";
+import { 
+    SObjectDesc, 
+    MetadataModel, 
+    TestSuite, TestObject,
+    RetrieveResult, Message, 
+    DeployResult
+} from "../models";
 
 const localize = nls.loadMessageBundle();
 
@@ -29,8 +35,7 @@ export async function updateUserLanguage() {
     let chosenItem: any = await vscode.window.showQuickPick(
         _.map(settings.getUserLanguages(), (v, k) => {
             return {
-                label: v,
-                description: k
+                label: v, description: k
             };
         })
     );
@@ -63,9 +68,9 @@ export function executeRestTest() {
     }
 
     let restApi = new RestApi();
-    restApi.get(serverUrl).then( body => {
+    restApi.get(serverUrl).then( result => {
         util.openNewUntitledFile(
-            JSON.stringify(JSON.parse(body), null, 4)
+            JSON.stringify(JSON.parse(result), null, 4)
         );
     })
     .catch(err => {
@@ -199,7 +204,7 @@ export async function reloadSobjectCache(sobjects?: string[]) {
 
         for (const key in result) {
             if (result.hasOwnProperty(key)) {
-                const sobjectsDesc: sobject.SObject[] = result[key];
+                const sobjectsDesc: SObjectDesc[] = result[key];
 
                 // Collect parentRelationships
                 for (const sobjectDesc of sobjectsDesc) {
@@ -260,7 +265,6 @@ export function executeAnonymous(apexCode?: string) {
 
     if (!apexCode) {
         let errorMsg = localize("noCodeExecute.text", "There is no code to execute");
-        console.log(errorMsg);
         return vscode.window.showErrorMessage(errorMsg);
     }
 
@@ -298,12 +302,15 @@ export function executeAnonymous(apexCode?: string) {
  * Describe metadata and kept it to local cache
  */
 export function describeMetadata() {
-    let metadataApi = new MetadataApi();
     ProgressNotification.showProgress(
-        metadataApi, "describeMetadata", {}
+        new MetadataApi(), "describeMetadata", {}
     )
-    .then( result => {
+    .then( (result: MetadataModel) => {
         metadata.setMetaObjects(result);
+
+        vscode.window.showInformationMessage(
+            "Metadata describe result has been kept to .config/metadata.json"
+        );
     });
 }
 
@@ -403,24 +410,40 @@ export function deployOpenFilesToServer() {
  */
 export function deployFilesToServer(files: string[]) {
     packages.buildDeployPackage(files).then(base64Str => {
-        new MetadataApi().deploy(base64Str).then(result => {
-            // If deploy failed, show error message
-            if (!result["success"]) {
-                let componentFailures = result.details["componentFailures"];
-                vscode.window.showErrorMessage(componentFailures["problem"]);
-            }
-            else {
-                // Update the lastModifiedDate of local file property
-                util.updateFilePropertyAfterDeploy(result);
+        new MetadataApi().deploy(base64Str)
+            .then( (result: DeployResult) => {
+                // If deploy failed, show error message
+                if (!result.success) {
+                    // Get failure in deploy result
+                    let componentFailures: any = result.details.componentFailures;
 
-                // Show succeed message
-                vscode.window.showInformationMessage(
-                    localize("fileDeployed.text", 
-                        "This file has deployed to server succesfully"
-                    )
-                );
-            }
-        });
+                    // If there is only one failure, wrap it with array
+                    if (_.isObject(componentFailures)) {
+                        componentFailures = [componentFailures];
+                    }
+
+                    if (_.isArray(componentFailures)) {
+                        let problem: string = "";
+                        for (const msg of componentFailures) {
+                            problem += `[sf:retrieve] ${msg.fileName} - ` +
+                                `${util.unescape(msg.problem)}\n`;
+                        }
+
+                        return vscode.window.showErrorMessage(problem);
+                    }
+                }
+                else {
+                    // Update the lastModifiedDate of local file property
+                    util.updateFilePropertyAfterDeploy(result);
+
+                    // Show succeed message
+                    vscode.window.showInformationMessage(
+                        localize("fileDeployed.text", 
+                            "This file has deployed to server succesfully"
+                        )
+                    );
+                }
+            });
     });
 }
 
@@ -438,7 +461,8 @@ export function refreshThisFromServer() {
         // Send get request
         let restApi = new RestApi();
         ProgressNotification.showProgress(restApi, "query", {
-            serverUrl: `/${filep["id"]}`
+            serverUrl: `/${filep["id"]}`,
+            progressMessage: "Executing refresh request"
         })
         .then( body => {
             console.log(body);
@@ -468,11 +492,9 @@ export function retrieveThisFromServer() {
 export function retrieveOpenFilesFromServer() {
     let documents: vscode.TextDocument[] = vscode.workspace.textDocuments;
     if (documents) {
-        let fileNames: string[] = [];
-        for (const doc of documents) {
-            fileNames.push(doc.fileName);
-        }
-        retrieveFilesFromServer(fileNames);
+        retrieveFilesFromServer(_.map(documents, doc => {
+            return doc.fileName;
+        }));
     }
     else {
         util.showCommandWarning();
@@ -485,25 +507,32 @@ export function retrieveOpenFilesFromServer() {
  */
 export function retrieveFilesFromServer(fileNames: string[]) {
     let retrieveTypes = packages.getRetrieveTypes(fileNames);
-    new MetadataApi().retrieve({ "types": retrieveTypes })
-        .then(result => {
-            // Show error message as friendly format if have
-            let messages: Object | any[] = result["messages"];
-            if (_.isObject(messages)) {
-                messages = [messages];
+    new MetadataApi().retrieve({ 
+        "types": retrieveTypes 
+    })
+    .then( (result: RetrieveResult) => {
+        // Show error message as friendly format if have
+        let messages: any = result.messages;
+        if (_.isObject(messages)) {
+            messages = [messages];
+        }
+
+        if (_.isArray(messages)) {
+            let problem: string = "";
+            for (const msg of messages) {
+                problem += `[sf:retrieve] ${msg.fileName} - ` +
+                    `${util.unescape(msg.problem)}\n`;
             }
 
-            if (_.isArray(messages)) {
-                let problem: string = "";
-                for (const msg of messages) {
-                    problem += util.unescape(msg.problem) + "\n";
-                }
+            return vscode.window.showErrorMessage(problem);
+        }
 
-                return vscode.window.showErrorMessage(problem);
-            }
+        // Extract retrieved zipFile
+        packages.extractZipFile(result.zipFile);
 
-            packages.extractZipFile(result);
-        });
+        // Keep fileProperties to local disk
+        util.setFileProperties(result.fileProperties);
+    });
 }
 
 /**
@@ -521,17 +550,18 @@ export function createNewProject() {
 
     // If there is no subscribed metaObjects, so subscribe first
     if (!subscribedMetaObjects || subscribedMetaObjects.length === 0) {
-        return utility.toggleMetadataObjects().then( metaObjects => {
-            if (!metaObjects || metaObjects.length === 0) {
-                return vscode.window.showWarningMessage(
-                    localize("noSubscribedMetadata.text", 
-                        "No subscribed metaObjects for this project"
-                    )
-                );
-            }
+        return utility.toggleMetadataObjects()
+            .then( metaObjects => {
+                if (!metaObjects || metaObjects.length === 0) {
+                    return vscode.window.showWarningMessage(
+                        localize("noSubscribedMetadata.text", 
+                            "No subscribed metaObjects for this project"
+                        )
+                    );
+                }
 
-            createNewProject();
-        });
+                createNewProject();
+            });
     }
 
     let retrieveTypes: any = {};
@@ -540,8 +570,12 @@ export function createNewProject() {
     }
 
     new MetadataApi().retrieve({ "types": retrieveTypes })
-        .then(result => {
-            packages.extractZipFile(result);
+        .then( (result: RetrieveResult) => {
+            // Extract retrieved zipFile
+            packages.extractZipFile(result.zipFile);
+
+            // Keep fileProperties to local disk
+            util.setFileProperties(result.fileProperties);
         })
         .catch(err => {
             console.error(err);

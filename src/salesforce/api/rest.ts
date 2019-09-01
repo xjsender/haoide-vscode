@@ -5,6 +5,7 @@
 
 import * as _ from "lodash";
 import * as request from "request-promise";
+
 import * as auth from "../../commands/auth";
 import * as querystring from "querystring";
 import ProgressNotification from "../../utils/progress";

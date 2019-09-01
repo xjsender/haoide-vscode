@@ -5,6 +5,7 @@
 
 import * as request from "request-promise";
 import * as _ from "lodash";
+
 import * as auth from "../../commands/auth";
 import * as util from "../../utils/util";
 import SOAP from "../lib/soap";

@@ -11,7 +11,7 @@ import {
 
 import {
     FileAttributes, FileProperty
-} from "../../../models/attr";
+} from "../../../models";
 
 describe("Test all functions for ./utils/package", () => {
     // Prepare test data

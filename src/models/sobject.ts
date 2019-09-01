@@ -4,7 +4,7 @@
  * @author Mouse Liu <mouse.mliu@gmail.com>
  */
 
-export interface SObject {
+export interface SObjectDesc {
     actionOverrides: any[];
     activateable: boolean;
     childRelationships: ChildRelationship[];
@@ -153,5 +153,5 @@ export interface Urls2 {
 }
 
 export interface DescribeSObjectResult {
-    result: SObject;
+    result: SObjectDesc;
 }

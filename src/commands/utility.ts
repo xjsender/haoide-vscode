@@ -6,11 +6,12 @@
 import * as vscode from "vscode";
 import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
-import * as util from "../utils/util";
 import * as nls from 'vscode-nls';
+
+import * as util from "../utils/util";
 import * as settingsUtil from "../settings/settingsUtil";
 import JSONConverter from "../utils/json2Apex";
-import SessionModel from "../models/session";
+import { Session as SessionModel, FileProperty } from "../models";
 import { settings, _session, metadata } from "../settings";
 
 const localize = nls.loadMessageBundle();
@@ -125,9 +126,9 @@ export function locateThisInBrowser() {
     }
 
     let fileName = editor.document.fileName;
-    let fileProperty = util.getFilePropertyByFileName(fileName);
-    if (fileProperty["id"]) {
-        return loginToSFDC("/" + fileProperty["id"]);
+    let fileProperty: FileProperty = util.getFilePropertyByFileName(fileName);
+    if (fileProperty.id) {
+        return loginToSFDC("/" + fileProperty.id);
     }
 
     vscode.window.showErrorMessage(

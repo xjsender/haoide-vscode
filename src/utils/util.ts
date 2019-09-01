@@ -5,10 +5,11 @@ import * as os from "os";
 import * as _ from "lodash";
 import * as vscode from "vscode";
 import * as xmlParser from "fast-xml-parser";
+
 import * as packageUtil from "../utils/package";
 import * as settingsUtil from "../settings/settingsUtil";
 import { extensionSettings } from "../settings";
-import { FileProperty, FileAttributes } from "../models/attr";
+import { FileProperty, FileAttributes, ComponentSuccess, DeployResult } from "../models";
 
 export function showCommandWarning(warningMessage?: string) {
     return vscode.window.showQuickPick([{
@@ -441,35 +442,38 @@ export function setFileProperties(fileProperties: any[]) {
  * 
  * @param deployResult deploy response body
  */
-export function updateFilePropertyAfterDeploy(deployResult: any) {
-    // If no succeed record, just return
-    if (!deployResult.details["componentSuccesses"]) {
-        return;
-    }
-
-    // Update fileProperties cache
+export function updateFilePropertyAfterDeploy(deployResult: DeployResult) {
+    // Get fileProperties cache
     let componentMetadata: any = settingsUtil.getConfig(
         "componentMetadata.json"
     );
 
-    for (const cmp of deployResult.details["componentSuccesses"]) {
-        // Ignore package.xml
-        if (cmp.fileName === "package.xml") {
-            continue;
-        }
+    // If there is only one success, wrap it as array
+    let componentSuccesses: any = deployResult.details.componentSuccesses;
+    if (_.isObject(componentSuccesses)) {
+        componentSuccesses = [componentSuccesses];
+    }
 
-        let [metaFolder, cmpName] = cmp.fileName.split("/");
+    if (_.isArray(componentSuccesses)) {
+        for (const cmp of componentSuccesses) {
+            // Ignore package.xml
+            if (cmp.fileName === "package.xml") {
+                continue;
+            }
 
-        if (!componentMetadata[metaFolder]) {
-            componentMetadata[metaFolder] = {};
-        }
+            let [metaFolder, cmpName] = cmp.fileName.split("/");
 
-        try {
-            componentMetadata[metaFolder][cmpName].lastModifiedDate = 
-                deployResult.lastModifiedDate;
-        }
-        catch (err) {
-            console.log('Ignore exception in updateFilePropertyAfterDeploy');
+            if (!componentMetadata[metaFolder]) {
+                componentMetadata[metaFolder] = {};
+            }
+
+            try {
+                componentMetadata[metaFolder][cmpName].lastModifiedDate = 
+                    deployResult.lastModifiedDate;
+            }
+            catch (err) {
+                console.log('Ignore exception in updateFilePropertyAfterDeploy');
+            }
         }
     }
 

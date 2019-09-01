@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import * as util from "../utils/util";
-import { SObject } from "../models/sobject";
+import { SObjectDesc } from "../models";
 
 /**
  * Get all configs or get value of spcified key
@@ -116,7 +116,7 @@ export function getSobjectsCache() {
  * @param sobjectName sobject name, i.e., Account
  * @returns sobject describe result
  */
-export function getSobjectDesc(sobjectName: string): SObject {
+export function getSobjectDesc(sobjectName: string): SObjectDesc {
     // Get file path of {sobjectName}.json
     let filePath = getFilePath(
         `${sobjectName}.json`, "sobjects"
@@ -125,10 +125,10 @@ export function getSobjectDesc(sobjectName: string): SObject {
     // Read file as Sobject
     if (fs.existsSync(filePath)) {
         let data = fs.readFileSync(filePath, "utf-8");
-        return JSON.parse(data.toString()) as SObject;
+        return JSON.parse(data.toString()) as SObjectDesc;
     }
 
-    return {} as SObject;
+    return {} as SObjectDesc;
 }
 
 /**

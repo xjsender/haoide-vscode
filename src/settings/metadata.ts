@@ -4,9 +4,9 @@
  */
 
 import * as _ from "lodash";
-import * as settingsUtil from "./settingsUtil";
-import { MetadataModel, MetaObject } from "../models/meta";
 
+import * as settingsUtil from "./settingsUtil";
+import { MetadataModel, MetaObject } from "../models";
 
 export default class Metadata {
     private static instance: Metadata;
@@ -23,6 +23,7 @@ export default class Metadata {
 
     /**
      * Keep metadata describe result to local disk
+     * 
      * @param metaObject metadata describe result
      */
     public setMetaObjects(metaObject: any) {
