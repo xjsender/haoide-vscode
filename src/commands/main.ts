@@ -74,13 +74,16 @@ export function executeRestTest() {
     });
 }
 
+/**
+ * Run sync test for active class file
+ */
 export function runSyncTest() {
     let editor = vscode.window.activeTextEditor;
     if (editor) {
         let property = util.getFilePropertyByFileName(
             editor.document.fileName
         );
-        retrieveFilesFromServer([property.id]);
+        runSyncTests([property.id]);
     }
     else {
         util.showCommandWarning();
