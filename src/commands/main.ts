@@ -513,7 +513,7 @@ export function retrieveFilesFromServer(fileNames: string[]) {
     .then( (result: RetrieveResult) => {
         // Show error message as friendly format if have
         let messages: any = result.messages;
-        if (_.isObject(messages)) {
+        if (!_.isArray(messages)) {
             messages = [messages];
         }
 

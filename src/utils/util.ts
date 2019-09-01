@@ -450,7 +450,7 @@ export function updateFilePropertyAfterDeploy(deployResult: DeployResult) {
 
     // If there is only one success, wrap it as array
     let componentSuccesses: any = deployResult.details.componentSuccesses;
-    if (_.isObject(componentSuccesses)) {
+    if (!_.isArray(componentSuccesses)) {
         componentSuccesses = [componentSuccesses];
     }
 
