@@ -381,8 +381,11 @@ export function destructOpenFilesFromServer() {
 export function deployThisToServer() {
     let editor = vscode.window.activeTextEditor;
     if (editor) {
+        // Save dirty file
         let fileName = editor.document.fileName;
-        deployFilesToServer([fileName]);
+        editor.document.save().then( () => {
+            deployFilesToServer([fileName]);
+        });
     }
     else {
         util.showCommandWarning();
@@ -397,7 +400,10 @@ export function deployOpenFilesToServer() {
     if (documents) {
         let fileNames: string[] = [];
         for (const doc of documents) {
-            fileNames.push(doc.fileName);
+            // Save dirty file
+            doc.save().then( () => {
+                fileNames.push(doc.fileName);
+            });
         }
         deployFilesToServer(fileNames);
     }
