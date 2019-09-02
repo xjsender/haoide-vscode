@@ -179,7 +179,14 @@ export function convertJson2Apex() {
         return util.showCommandWarning();
     }
 
-    let jsonStr = editor.document.getText(editor.selection) || "{}";
+    let jsonStr = editor.document.getText(editor.selection);
+    let jsonObj = {};
+    try {
+        jsonObj = JSON.parse(jsonStr);
+    }
+    catch (err) {
+        return vscode.window.showWarningMessage(err.message);
+    }
 
     vscode.window.showInputBox({
         placeHolder: localize(
@@ -193,7 +200,6 @@ export function convertJson2Apex() {
             ));
         }
 
-        let jsonObj = JSON.parse(jsonStr);
         let jsonConverter = new JSONConverter();
         let snippet = jsonConverter.convertToApex(className, jsonObj).snippet;
         util.openNewUntitledFile(snippet, "apex");
