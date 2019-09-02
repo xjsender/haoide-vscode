@@ -1,0 +1,208 @@
+{
+    "Aura": {
+        "Application": {
+            "directory": "Aura/Application.app",
+            "extension": ".app",
+            "children": [{
+                    "type": "Controller",
+                    "directory": "AuraElement/Controller.js",
+                    "extension": ".js"
+                },
+                {
+                    "type": "Helper",
+                    "directory": "AuraElement/Helper.js",
+                    "extension": ".js"
+                },
+                {
+                    "type": "Style",
+                    "directory": "AuraElement/Style.css",
+                    "extension": ".css"
+                },
+                {
+                    "type": "Documentation",
+                    "directory": "AuraElement/Documentation.auradoc",
+                    "extension": ".auradoc"
+                },
+                {
+                    "type": "Renderer",
+                    "directory": "AuraElement/Renderer.js",
+                    "extension": ".js"
+                },
+                {
+                    "type": "Design",
+                    "directory": "AuraElement/Design.design",
+                    "extension": ".design"
+                },
+                {
+                    "type": "SVG",
+                    "directory": "AuraElement/SVG.svg",
+                    "extension": ".svg"
+                }
+            ]
+        },
+
+        "Component": {
+            "directory": "Aura/Component.cmp",
+            "extension": ".cmp",
+            "children": [
+                {
+                    "type": "Controller",
+                    "directory": "AuraElement/Controller.js",
+                    "extension": ".js"
+                },
+                {
+                    "type": "Helper",
+                    "directory": "AuraElement/Helper.js",
+                    "extension": ".js"
+                },
+                {
+                    "type": "Style",
+                    "directory": "AuraElement/Style.css",
+                    "extension": ".css"
+                },
+                {
+                    "type": "Documentation",
+                    "directory": "AuraElement/Documentation.auradoc",
+                    "extension": ".auradoc"
+                },
+                {
+                    "type": "Renderer",
+                    "directory": "AuraElement/Renderer.js",
+                    "extension": ".js"
+                },
+                {
+                    "type": "Design",
+                    "directory": "AuraElement/Design.design",
+                    "extension": ".design"
+                },
+                {
+                    "type": "SVG",
+                    "directory": "AuraElement/SVG.svg",
+                    "extension": ".svg"
+                }
+            ]
+        },
+
+        "Interface": {
+            "directory": "Aura/Interface.intf",
+            "extension": ".intf",
+            "children": []
+        },
+
+        "Event": {
+            "directory": "Aura/Event.evt",
+            "extension": ".evt",
+            "children": []
+        }
+    },
+
+    "LWC": {
+        "Basic": [{
+            "directory": "lwc/lwc.html",
+            "extension": ".html",
+            "description": "Component"
+        },
+        {
+            "directory": "lwc/lwc.js",
+            "extension": ".js",
+            "description": "Controller"
+        },
+        {
+            "directory": "lwc/lwc.js-meta.xml",
+            "extension": ".js-meta.xml",
+            "description": "Metafile"
+        }]
+    },
+
+    "ApexClass": {
+        "Aura": {
+            "directory": "ApexClass/Aura.cls",
+            "extension": ".cls",
+            "description": "Basic template for Aura Class"
+        },
+        "Basic": {
+            "directory": "ApexClass/Basic.cls",
+            "extension": ".cls",
+            "description": "Basic Pattern"
+        },
+        "Batch": {
+            "directory": "ApexClass/Batch.cls",
+            "extension": ".cls",
+            "description": "Batch Class Template"
+        },
+        "Controller": {
+            "directory": "ApexClass/Controller.cls",
+            "extension": ".cls",
+            "description": "Custom Controller"
+        },
+        "Queueable": {
+            "directory": "ApexClass/Queueable.cls",
+            "extension": ".cls",
+            "description": "Queueable Apex Template"
+        },
+        "StandardController Extension": {
+            "directory": "ApexClass/StandardController Extension.cls",
+            "extension": ".cls",
+            "description": "directory for StandardController"
+        },
+        "StandardSetController Extension": {
+            "directory": "ApexClass/StandardSetController Extension.cls",
+            "extension": ".cls",
+            "description": "directory for StandardSetController"
+        },
+        "Schedule": {
+            "directory": "ApexClass/Schedule.cls",
+            "extension": ".cls",
+            "description": "Schedule Class Template"
+        },
+        "Exception": {
+            "directory": "ApexClass/Exception.cls",
+            "extension": ".cls",
+            "description": "Exception Class"
+        },
+        "Apex REST": {
+            "directory": "ApexClass/Apex REST.cls",
+            "extension": ".cls",
+            "description": "REST Class"
+        },
+        "Test": {
+            "directory": "ApexClass/Test.cls",
+            "extension": ".cls",
+            "description": "Test Class"
+        },
+        "Triggers Template": {
+            "directory": "ApexClass/Triggers Template.cls",
+            "extension": ".cls",
+            "description": "Triggers Template"
+        },
+        "Triggers Implementation": {
+            "directory": "ApexClass/Triggers Implementation.cls",
+            "extension": ".cls",
+            "description": "Implementation Class for Triggers Template"
+        }
+    },
+
+    "ApexTrigger": {
+        "Basic": {
+            "directory": "ApexTrigger/Basic.trigger",
+            "extension": ".trigger",
+            "description": "Trigger Template"
+        }
+    },
+    
+    "ApexComponent": {
+        "Basic": {
+            "directory": "ApexComponent/Basic.component",
+            "extension": ".component",
+            "description": "component Template"
+        }
+    },
+
+    "ApexPage": {
+        "Basic": {
+            "directory": "ApexPage/Basic.page",
+            "extension": ".page",
+            "description": "Visualforce Page Template"
+        }
+    }
+}

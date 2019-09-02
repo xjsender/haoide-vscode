@@ -3,7 +3,7 @@
 haoide-vscode is migrated from haoide, more and more features will be delivered in the next months.
 
 ## Installation
-You can install [haoide-vscode](https://marketplace.visualstudio.com/items?itemName=mouseliu.haoide-vscode) extension by searching ``haoide-vscode`` in the vscode marketplace.
+You can install [haoide](https://marketplace.visualstudio.com/items?itemName=mouseliu.haoide) extension by searching ``haoide-vscode`` in the vscode marketplace.
 
 ## Usage
 

@@ -25,5 +25,9 @@
     "extension.haoide.convertXml2Json.title": "Convert XML to JSON",
     "extension.haoide.convertJson2Apex.title": "Convert JSON to Apex",
     "extension.haoide.convert15IdTo18Id.title": "Convert 15Id to 18Id",
+    "extension.haoide.createLightningWebComponent.title": "Create Lightning Web Component",
+    "extension.haoide.createAuraComponent.title": "Create Aura Component",
+    "extension.haoide.createApexClass.title": "Create Apex Class",
+    "extension.haoide.createApexTrigger.title": "Create Apex Trigger",
     "extension.haoide.testCmd.title": "Test Haoide"
 }

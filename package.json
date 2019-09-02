@@ -1,10 +1,10 @@
 {
-	"name": "haoide-vscode",
-	"displayName": "haoide-vscode",
+	"name": "haoide",
+	"displayName": "haoide",
 	"publisher": "mouseliu",
 	"repository": "https://github.com/xjsender/haoide-vscode",
 	"description": "haoide-vscode is a vscode extension for salesforce development",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"engines": {
 		"vscode": "^1.35.0"
 	},
@@ -147,6 +147,26 @@
 			{
 				"command": "extension.haoide.convertXml2Json",
 				"title": "%extension.haoide.convertXml2Json.title%",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.createLightningWebComponent",
+				"title": "%extension.haoide.createLightningWebComponent.title%",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.createAuraComponent",
+				"title": "%extension.haoide.createAuraComponent.title%",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.createApexClass",
+				"title": "%extension.haoide.createApexClass.title%",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.createApexTrigger",
+				"title": "%extension.haoide.createApexTrigger.title%",
 				"category": "Haoide"
 			}
 		],

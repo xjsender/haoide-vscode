@@ -167,6 +167,36 @@ export function activate(context: ExtensionContext) {
 		utility.convertJson2Apex
 	));
 
+	/**
+	 * Register for creating metaObject
+	 */
+	// Register createLightningWebComponent command
+	context.subscriptions.push(commands.registerCommand(
+		"extension.haoide.createLightningWebComponent", () => {
+			main.createMetaObject("LWC");
+		}
+	));
+
+	// Register createAuraComponent command
+	context.subscriptions.push(commands.registerCommand(
+		"extension.haoide.createAuraComponent", () => {
+			main.createMetaObject("Aura");
+		}
+	));
+
+	// Register createApexClass command
+	context.subscriptions.push(commands.registerCommand(
+		"extension.haoide.createApexClass", () => {
+			main.createMetaObject("ApexClass");
+		}
+	));
+
+	// Register createApexTrigger command
+	context.subscriptions.push(commands.registerCommand(
+		"extension.haoide.createApexTrigger", () => {
+			main.createMetaObject("ApexTrigger");
+		}
+	));
 
 	/**
 	 * Completion part

@@ -6,6 +6,8 @@
 import * as vscode from "vscode";
 import * as _ from "lodash";
 import * as nls from 'vscode-nls';
+import * as path from 'path';
+import * as fs from 'fs';
 
 import * as util from "../utils/util";
 import * as utility from "./utility";
@@ -22,7 +24,8 @@ import {
     MetadataModel, 
     TestSuite, TestObject,
     RetrieveResult, Message, 
-    DeployResult
+    DeployResult,
+    Template
 } from "../models";
 
 const localize = nls.loadMessageBundle();
@@ -547,7 +550,7 @@ export function retrieveFilesFromServer(fileNames: string[]) {
  * Update project according to subscribed meta objects
  */
 export function updateProject() {
-    return createNewProject();
+    return createNewProject(false);
 }
 
 /**
@@ -596,6 +599,67 @@ export function createNewProject(reloadCache = true) {
         });
 }
 
-export function createMetaObject(metaObject: string) {
+export async function createMetaObject(metaType: string) {
+    const extension: vscode.Extension<any> | undefined =
+        vscode.extensions.getExtension("mouseliu.haoide");
+    if (!extension) {
+        return;
+    }
 
+    // Get templates folder
+    const templateFolder = path.join(
+        extension.extensionPath,
+        'resources/templates/templates.json'
+    );
+    
+    // Get templates.json
+    const templateFile = path.join(
+        templateFolder, "templates.json"
+    );
+    
+    // Get templates defined by haoide
+    let templates: any = {};
+    try {
+        let data = fs.readFileSync(templateFile, "utf-8");
+        templates = JSON.parse(data);
+    }
+    catch (err) {
+        return vscode.window.showErrorMessage(err.message);
+    }
+
+    // Get specified template by metaType
+    let template: any = templates[metaType];
+    let chosenItem: any = await vscode.window.showQuickPick(
+        _.map(template, (v, k) => {
+            return {
+                label: k,
+                description: v.description || v.directory
+            };
+        })
+    );
+
+    if (!chosenItem) {
+        return util.showCommandWarning(localize(
+            'requiredInput.text', 'Please input the required info'
+        ));
+    }
+
+    // Get template attribute of chosen template
+    let templateAttrs: Template[] | Template = template[chosenItem.label];
+    if (!_.isArray(templateAttrs)) {
+        templateAttrs = [templateAttrs];
+    }
+
+    if (metaType === "ApexTrigger") {
+        // Need to get sobject input from user
+
+    }
+    else {
+        for (const templateAttr of templateAttrs) {
+            let metaObjectFile = path.join(
+                templateFolder, templateAttr.directory
+            );
+            
+        }
+    }
 }

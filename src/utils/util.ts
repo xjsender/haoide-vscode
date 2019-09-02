@@ -11,6 +11,17 @@ import * as settingsUtil from "../settings/settingsUtil";
 import { extensionSettings } from "../settings";
 import { FileProperty, FileAttributes, ComponentSuccess, DeployResult } from "../models";
 
+/**
+ * Get extension version of haoide
+ * 
+ * @param extension instance of vscode.Extension
+ */
+export function getExtensionVersion(extension: vscode.Extension<any>) {
+    let packageJSON = extension.packageJSON;
+    
+    return packageJSON["version"];
+}
+
 export function showCommandWarning(warningMessage?: string) {
     return vscode.window.showQuickPick([{
         label: warningMessage || "No text editor active at this time"
