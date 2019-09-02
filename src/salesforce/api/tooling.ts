@@ -85,7 +85,7 @@ export default class ToolingApi {
                 options.progressMessage ||
                 `Start rest ${options.method} request...`
             );
-
+            
             request(requestOptions).then(body => {
                 // Send finish notification
                 ProgressNotification.notify(
@@ -385,8 +385,7 @@ export default class ToolingApi {
      */
     public runSyncTest(options: any) {
         return this.post(_.extend(options, {
-            serverUrl: "/runTestsSynchronous",
-            data: options.testObject as TestObject
+            serverUrl: "/runTestsSynchronous/"
         }));
     }
 }

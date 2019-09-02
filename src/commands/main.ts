@@ -88,7 +88,15 @@ export function runSyncTest() {
         let property = util.getFilePropertyByFileName(
             editor.document.fileName
         );
-        runSyncTests([property.id]);
+        
+        runSyncTests([{
+            classId: property.id,
+            testMethods: [
+                "testCommunitiesLoginController"
+            ]
+        }, {
+            maxFailedTests: 2
+        }]);
     }
     else {
         util.showCommandWarning();
@@ -100,19 +108,13 @@ export function runSyncTest() {
  * 
  * @param classIds ids of test class to be ran
  */
-export function runSyncTests(classIds: string[]) {
-    let testObject: TestObject = {
-        "tests": _.map(classIds, classId => {
-            return {
-                "classId": classId
-            };
-        }) as TestSuite[]
-    };
-
+export function runSyncTests(testSuites: TestSuite[]) {
     let toolingApi = new ToolingApi();
     ProgressNotification.showProgress(
         toolingApi, "runSyncTest", {
-            testObject: testObject,
+            data: {
+                "tests": testSuites
+            },
             progressMessage: "Running test class, please hold on"
         }
     )
@@ -334,7 +336,7 @@ export function destructFilesFromServer(files: string[]) {
                 // Show succeed message
                 vscode.window.showInformationMessage(
                     localize("fileDestruted.text",
-                        "This file has destructed to server succesfully"
+                        "Files were deleted from server succesfully"
                     )
                 );
             }
@@ -439,7 +441,7 @@ export function deployFilesToServer(files: string[]) {
                     // Show succeed message
                     vscode.window.showInformationMessage(
                         localize("fileDeployed.text", 
-                            "This file has deployed to server succesfully"
+                            "Files were deployed to server succesfully"
                         )
                     );
                 }
@@ -545,7 +547,7 @@ export function updateProject() {
 /**
  * Create new project based on subscribed metadata objects
  */
-export function createNewProject() {
+export function createNewProject(reloadCache = true) {
     let subscribedMetaObjects = settings.getSubscribedMetaObjects();
 
     // If there is no subscribed metaObjects, so subscribe first
@@ -576,6 +578,11 @@ export function createNewProject() {
 
             // Keep fileProperties to local disk
             util.setFileProperties(result.fileProperties);
+
+            // Reload sObject cache
+            if (reloadCache) {
+                reloadSobjectCache();
+            }
         })
         .catch(err => {
             console.error(err);

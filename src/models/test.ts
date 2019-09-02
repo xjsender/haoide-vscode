@@ -16,8 +16,9 @@ export interface TestObject {
  * Test Suite for Test sobject for runTestsSynchronous
  */
 export interface TestSuite {
-    classId: string;
+    classId?: string;
     testMethods?: string[];
+    maxFailedTests?: number;
 }
 
 /**
