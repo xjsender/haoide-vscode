@@ -3,7 +3,7 @@
 haoide-vscode is migrated from haoide, more and more features will be delivered in the next months.
 
 ## Installation
-You can install [haoide](https://marketplace.visualstudio.com/items?itemName=mouseliu.haoide) extension by searching ``haoide-vscode`` in the vscode marketplace.
+You can install [haoide](https://marketplace.visualstudio.com/items?itemName=mouseliu.haoide) extension by searching ``haoide`` in the vscode marketplace.
 
 ## Usage
 
@@ -34,6 +34,13 @@ Also support basic project operation, such as,
 + Destruct Open Files from Server
 + Deploy This File to Server
 + Deploy Open Files to Server
++ Create New MetaObject
+    - Create New ApexClass
+    - Create New ApexTrigger
+    - Create New Visualforce Page
+    - Create new Visualforce Component
+    - Create Lightning Web Component
+    - Create Aura Component
 + Locate File in Server
 + Utilities
     - Open Default Org
