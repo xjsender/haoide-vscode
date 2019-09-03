@@ -2,6 +2,20 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.1.5]
+
++ Add new command for ``Convert JSON to Apex``
++ Add new command for ``Creating ApexTrigger``
++ Add new command for ``Creating ApexClass``
++ Add new command for ``Creating Visualforce Page``
++ Add new command for ``Creating Visualforce Component``
++ Add new command for ``Creating LWC``
++ Add new command for ``Creating Aura Application, Component, Event and Interface``
++ Enhancement: save dirty files before execute deploy command
++ Enhancement: reload sobject cache after project is created
++ Enhancement: set new untitled file with apex syntax
++ Fix bug for metadata api when session expired
+
 ## [0.1.4]
 
 + Add new command for ``Destruct This File From Server``
