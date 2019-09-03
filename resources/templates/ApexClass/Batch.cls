@@ -1,7 +1,7 @@
-global class Class_Name__c implements Database.Batchable<sObject> {
+global class {MetaObject_Name__c} implements Database.Batchable<sObject> {
     public String query;
 
-    global Class_Name__c() {
+    global {MetaObject_Name__c}() {
         this.query = query;
     }
 

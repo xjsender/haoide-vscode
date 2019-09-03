@@ -24,8 +24,9 @@ describe("Test for ./utils/package", () => {
     describe("#replaceAll()", () => {
         it("All matched result should be replaced", () => {
             let result = util.replaceAll(
-                'tobeReplace/xxx/tobeReplace',
-                'tobeReplace', 'Replaced'
+                'tobeReplace/xxx/tobeReplace', [{
+                    from: "tobeReplace", to: "Replaced"
+                }]
             );
 
             assert(result, 'Replaced/xxx/Replaced');

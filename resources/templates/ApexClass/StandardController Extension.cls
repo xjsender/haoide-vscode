@@ -1,5 +1,5 @@
-public with sharing class Class_Name__c {
-    public Class_Name__c(ApexPages.StandardController con) {
+public with sharing class {MetaObject_Name__c} {
+    public {MetaObject_Name__c}(ApexPages.StandardController con) {
         
     }
 }

@@ -82,12 +82,20 @@ export function buildDeployPackage(files: string[]) {
         if (packageDict.hasOwnProperty(xmlName)) {
             const members: FileAttributes[] = packageDict[xmlName];
             
+            let dirNames: string[] = [];
             for (const member of members) {
                 if (["lwc", "aura"].includes(member.directoryName)) {
                     let dirName = path.dirname(member.dir);
-                    let fileNames = fs.readdirSync(dirName);
 
-                    for (const fileName of fileNames) {
+                    // Used to prevent duplicate member
+                    if (dirNames.includes(dirName)) {
+                        continue;
+                    }
+                    else {
+                        dirNames.push(dirName);
+                    }
+
+                    for (const fileName of fs.readdirSync(dirName)) {
                         let fileFullName = path.join(dirName, fileName);
                         zip.addFile(fileFullName, path.join(
                             member.directoryName, member.folder, fileName
@@ -164,7 +172,7 @@ export function buildPackageDict(files: string[], ignoreFolder=true) {
         // Get file attrs from file uri
         let attrs: FileAttributes = getFileAttributes(_file);
 
-        // Exclud invalid SF metaObject
+        // Exclude invalid SF metaObject
         if (!metaObjectNames.includes(attrs.xmlName)) {
             continue;
         }
@@ -201,7 +209,11 @@ export function buildPackageXml(packageDict: any, apiVersion=46) {
     let types = [];
     for (const xmlName in packageDict) {
         if (packageDict.hasOwnProperty(xmlName)) {
-            const members: FileAttributes[] = packageDict[xmlName];
+            let members: FileAttributes[] = packageDict[xmlName];
+
+            // Remove duplicate member
+            members = _.uniqBy(members, "memberName");
+
             types.push(`
                 <types>
                     ${_.map(members, m => {
@@ -216,7 +228,7 @@ export function buildPackageXml(packageDict: any, apiVersion=46) {
     let packageXmlContent = `<?xml version="1.0" encoding="UTF-8"?>
         <Package xmlns="http://soap.sforce.com/2006/04/metadata">
             ${types.join(" ")}
-            <version>${apiVersion || 46}</version>
+            <version>${apiVersion || 46}.0</version>
         </Package>
     `;
 

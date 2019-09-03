@@ -1,5 +1,5 @@
 @isTest
-private class Class_Name__c {
+private class {MetaObject_Name__c} {
     static testMethod void testMethod1() {
         
     }

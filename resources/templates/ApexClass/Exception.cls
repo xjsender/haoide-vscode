@@ -1,1 +1,1 @@
-public class Class_Name__c extends Exception {}
+public class {MetaObject_Name__c} extends Exception {}

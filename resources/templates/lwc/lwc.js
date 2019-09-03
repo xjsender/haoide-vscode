@@ -1,6 +1,6 @@
 
 import { LightningElement, track, wire } from 'lwc';
 
-export default class {class_name__c} extends LightningElement {
+export default class {MetaObject_Name__c} extends LightningElement {
     
 }

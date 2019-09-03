@@ -198,6 +198,20 @@ export function activate(context: ExtensionContext) {
 		}
 	));
 
+	// Register createVisualforcePage command
+	context.subscriptions.push(commands.registerCommand(
+		"extension.haoide.createVisualforcePage", () => {
+			main.createMetaObject("ApexPage");
+		}
+	));
+
+	// Register createVisualforceComponent command
+	context.subscriptions.push(commands.registerCommand(
+		"extension.haoide.createVisualforceComponent", () => {
+			main.createMetaObject("ApexComponent");
+		}
+	));
+
 	/**
 	 * Completion part
 	 */

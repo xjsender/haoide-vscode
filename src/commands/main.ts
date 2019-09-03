@@ -8,6 +8,7 @@ import * as _ from "lodash";
 import * as nls from 'vscode-nls';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as shelljs from 'shelljs';
 
 import * as util from "../utils/util";
 import * as utility from "./utility";
@@ -326,24 +327,40 @@ export function describeMetadata() {
  */
 export function destructFilesFromServer(files: string[]) {
     packages.buildDestructPackage(files).then( base64Str => {
-        new MetadataApi().deploy(base64Str).then( result => {
-            // If deploy failed, show error message
-            if (!result["success"]) {
-                let componentFailures = result.details["componentFailures"];
-                vscode.window.showErrorMessage(componentFailures["problem"]);
-            }
-            else {
-                // Remove files from local disk
-                util.unlinkFiles(files);
+        new MetadataApi().deploy(base64Str)
+            .then( result => {
+                // If deploy failed, show error message
+                if (!result["success"]) {
+                    // Get failure in deploy result
+                    let componentFailures: any = result.details.componentFailures;
 
-                // Show succeed message
-                vscode.window.showInformationMessage(
-                    localize("fileDestruted.text",
-                        "Files were deleted from server succesfully"
-                    )
-                );
-            }
-        });
+                    // If there is only one failure, wrap it with array
+                    if (componentFailures && !_.isArray(componentFailures)) {
+                        componentFailures = [componentFailures];
+                    }
+
+                    if (_.isArray(componentFailures)) {
+                        let problem: string = "";
+                        for (const msg of componentFailures) {
+                            problem += `[sf:deploy] ${msg.fileName} - ` +
+                                `${util.unescape(msg.problem)}\n`;
+                        }
+
+                        return vscode.window.showErrorMessage(problem);
+                    }
+                }
+                else {
+                    // Remove files from local disk
+                    util.unlinkFiles(files);
+
+                    // Show succeed message
+                    vscode.window.showInformationMessage(
+                        localize("fileDestruted.text",
+                            "Files were deleted from server succesfully"
+                        )
+                    );
+                }
+            });
     });
 }
 
@@ -417,6 +434,7 @@ export function deployOpenFilesToServer() {
 
 /**
  * Deploy files to server
+ * 
  * @param files files to be deployed
  */
 export function deployFilesToServer(files: string[]) {
@@ -429,14 +447,14 @@ export function deployFilesToServer(files: string[]) {
                     let componentFailures: any = result.details.componentFailures;
 
                     // If there is only one failure, wrap it with array
-                    if (_.isObject(componentFailures)) {
+                    if (componentFailures && !_.isArray(componentFailures)) {
                         componentFailures = [componentFailures];
                     }
 
                     if (_.isArray(componentFailures)) {
                         let problem: string = "";
                         for (const msg of componentFailures) {
-                            problem += `[sf:retrieve] ${msg.fileName} - ` +
+                            problem += `[sf:deploy] ${msg.fileName} - ` +
                                 `${util.unescape(msg.problem)}\n`;
                         }
 
@@ -524,7 +542,7 @@ export function retrieveFilesFromServer(fileNames: string[]) {
     .then( (result: RetrieveResult) => {
         // Show error message as friendly format if have
         let messages: any = result.messages;
-        if (!_.isArray(messages)) {
+        if (messages && !_.isArray(messages)) {
             messages = [messages];
         }
 
@@ -600,19 +618,28 @@ export function createNewProject(reloadCache = true) {
 }
 
 export async function createMetaObject(metaType: string) {
+    // Get metaObject name from user input
+    let metaObjectName = await vscode.window.showInputBox({
+        placeHolder: "Input your component name"
+    });
+    if (!metaObjectName) {
+        return;
+    }
+
+    // Get extension instance
     const extension: vscode.Extension<any> | undefined =
         vscode.extensions.getExtension("mouseliu.haoide");
     if (!extension) {
         return;
     }
 
-    // Get templates folder
+    // Get path of templates folder of extension
     const templateFolder = path.join(
         extension.extensionPath,
-        'resources/templates/templates.json'
+        'resources', 'templates'
     );
     
-    // Get templates.json
+    // Get file path of templates.json
     const templateFile = path.join(
         templateFolder, "templates.json"
     );
@@ -637,11 +664,8 @@ export async function createMetaObject(metaType: string) {
             };
         })
     );
-
     if (!chosenItem) {
-        return util.showCommandWarning(localize(
-            'requiredInput.text', 'Please input the required info'
-        ));
+        return;
     }
 
     // Get template attribute of chosen template
@@ -650,16 +674,73 @@ export async function createMetaObject(metaType: string) {
         templateAttrs = [templateAttrs];
     }
 
+    // Get sobject name from user input
+    let sObjectName;
     if (metaType === "ApexTrigger") {
-        // Need to get sobject input from user
+        sObjectName = await vscode.window.showInputBox({
+            placeHolder: "Input your sObject name"
+        });
 
-    }
-    else {
-        for (const templateAttr of templateAttrs) {
-            let metaObjectFile = path.join(
-                templateFolder, templateAttr.directory
-            );
-            
+        if (!sObjectName) {
+            return;
         }
     }
+
+    let targetFiles = [];
+    for (const templateAttr of templateAttrs) {
+        // Get file path of template
+        let sourceFile = path.join(
+            templateFolder, templateAttr.sourceDirectoryName
+        );
+        let data = fs.readFileSync(sourceFile, "utf-8");
+        data = util.replaceAll(data, [
+            {
+                from: "{MetaObject_Name__c}",
+                to: metaObjectName
+            }, {
+                from: "{API_Version__c}",
+                to: "46"
+            }, {
+                from: "{Sobject_Name__c}",
+                to: sObjectName || ""
+            }
+        ]);
+
+        // Create target folder if not exists
+        let targetFolder = path.join(
+            util.getProjectPath(), "src",
+            templateAttr.targetDirectoryName,
+            templateAttr.inFolder
+                ? (metaType === "LWC" 
+                    ? _.lowerFirst(metaObjectName) 
+                    : metaObjectName)
+                : ""
+        );
+        if (!fs.existsSync(targetFolder)) {
+            shelljs.mkdir("-p", targetFolder);
+        }
+
+        // Get target file path
+        let targetFile = path.join(targetFolder,
+            metaType === "LWC"
+                ? _.lowerFirst(metaObjectName) + templateAttr.extension
+                : metaObjectName + templateAttr.extension
+        );
+        targetFiles.push(targetFile);
+        
+        // Write template content to target file
+        fs.writeFileSync(targetFile, data, "utf-8");
+    }
+
+    // Open newly created files
+    for (const file of targetFiles) {
+        if (!file.endsWith("-meta.xml")) {
+            vscode.commands.executeCommand(
+                "vscode.open", vscode.Uri.file(file)
+            );
+        }
+    }
+
+    // Deploy newly created files to server
+    deployFilesToServer(targetFiles);
 }

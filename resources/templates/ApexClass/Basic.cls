@@ -1,3 +1,3 @@
-public with sharing class Class_Name__c {
+public with sharing class {MetaObject_Name__c} {
     
 }

@@ -13,7 +13,7 @@ public class Triggers {
         apex class here.
     */
     public interface Handler {
-        void handle();          
+        void handle();
     } 
     
     // Internal mapping of handlers

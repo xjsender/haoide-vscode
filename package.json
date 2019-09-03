@@ -168,6 +168,16 @@
 				"command": "extension.haoide.createApexTrigger",
 				"title": "%extension.haoide.createApexTrigger.title%",
 				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.createVisualforcePage",
+				"title": "%extension.haoide.createVisualforcePage.title%",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.createVisualforceComponent",
+				"title": "%extension.haoide.createVisualforceComponent.title%",
+				"category": "Haoide"
 			}
 		],
 		"menus": {
@@ -252,10 +262,6 @@
 					"when": "haoide.hasOpenProject"
 				},
 				{
-					"command": "extension.haoide.runSyncTest",
-					"when": "haoide.hasOpenProject"
-				},
-				{
 					"command": "extension.haoide.reloadSobjectCache",
 					"when": "haoide.hasOpenProject"
 				},
@@ -273,6 +279,30 @@
 				},
 				{
 					"command": "extension.haoide.convert15IdTo18Id"
+				},
+				{
+					"command": "extension.haoide.createLightningWebComponent",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.createAuraComponent",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.createApexClass",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.createApexTrigger",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.createVisualforcePage",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.createVisualforceComponent",
+					"when": "haoide.hasOpenProject"
 				}
 			],
 			"editor/context": [

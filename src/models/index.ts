@@ -11,8 +11,10 @@ import { TestObject, TestSuite, TestResponse } from "./test";
 
 // Template for creating meta object
 export interface Template {
-    directory: string;
+    sourceDirectoryName: string;
+    targetDirectoryName: string;
     extension: string;
+    inFolder?: boolean;
     type?: string;
     description?: string;
     children?: Template[];

@@ -29,5 +29,7 @@
     "extension.haoide.createAuraComponent.title": "Create Aura Component",
     "extension.haoide.createApexClass.title": "Create Apex Class",
     "extension.haoide.createApexTrigger.title": "Create Apex Trigger",
+    "extension.haoide.createVisualforcePage.title": "Create Visualforce Page",
+    "extension.haoide.createVisualforceComponent.title": "Create Visualforce Component",
     "extension.haoide.testCmd.title": "Test Haoide"
 }

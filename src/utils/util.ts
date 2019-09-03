@@ -110,29 +110,34 @@ export function convert15Id218Id(the15Id: string) {
  */
 export function unescape(escapedStr: string) {
     // Replace all &apos; to ""
-    escapedStr = replaceAll(
-        escapedStr, "&apos;", ""
+    return replaceAll(
+        escapedStr, [{
+            from: "&apos;", to: ""
+        }, {
+            from: "&quot;", to: ""
+        }]
     );
-
-    // Replace all &quot; to ""
-    escapedStr = replaceAll(
-        escapedStr, "&quot;", ""
-    );
-
-    return escapedStr;
 }
 
 /**
- * Replace all matched oldText to newText in the spcified text
+ * Used in replaceAll
+ */
+export interface FromTo {
+    from: string;
+    to: string;
+}
+
+/**
+ * Replace all matched string to other in the spcified text
  * 
  * @param text Text to be replaced
- * @param from oldText
- * @param to newText
- * @returns return replaced result
+ * @param fromTos array of FromTo, [{from: "", to: ""}]
  */
-export function replaceAll(text: string, from: string, to: string) {
-    while (text.indexOf(from) !== -1) {
-        text = text.replace(from, to);
+export function replaceAll(text: string, fromTos: FromTo[]) {
+    for (const fromTo of fromTos) {
+        while (text.indexOf(fromTo.from) !== -1) {
+            text = text.replace(fromTo.from, fromTo.to);
+        }
     }
 
     return text;
@@ -454,6 +459,8 @@ export function setFileProperties(fileProperties: any[]) {
  * @param deployResult deploy response body
  */
 export function updateFilePropertyAfterDeploy(deployResult: DeployResult) {
+    console.log(deployResult);
+    
     // Get fileProperties cache
     let componentMetadata: any = settingsUtil.getConfig(
         "componentMetadata.json"
@@ -478,13 +485,22 @@ export function updateFilePropertyAfterDeploy(deployResult: DeployResult) {
                 componentMetadata[metaFolder] = {};
             }
 
-            try {
-                componentMetadata[metaFolder][cmpName].lastModifiedDate = 
-                    deployResult.lastModifiedDate;
+            let attrs = componentMetadata[metaFolder][cmpName];
+            if (!attrs) {
+                attrs = {
+                    id: cmp.id,
+                    type: cmp.componentType,
+                    metaFolder: metaFolder,
+                    fileName: cmp.fileName,
+                    fullName: cmp.fullName,
+                    createdById: deployResult.createdBy,
+                    createdByName: deployResult.createdByName,
+                    createdDate: cmp.createdDate,
+                    lastModifiedDate: deployResult.lastModifiedDate
+                };
             }
-            catch (err) {
-                console.log('Ignore exception in updateFilePropertyAfterDeploy');
-            }
+
+            componentMetadata[metaFolder][cmpName] = attrs;
         }
     }
 
