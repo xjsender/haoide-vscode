@@ -105,7 +105,10 @@ export default class RestApi {
                                 resolve(body);
                             });
                     })
-                    .catch( err => {});
+                    .catch( () => {
+                        // Stop notification progress if any exception
+                        resolve();
+                    });
                 }
 
                 // If this is invoked from promise.all, wrap err with success

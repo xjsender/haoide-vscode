@@ -86,7 +86,7 @@ export default class ToolingApi {
                 `Start rest ${options.method} request...`
             );
             
-            request(requestOptions).then(body => {
+            request(requestOptions).then( body => {
                 // Send finish notification
                 ProgressNotification.notify(
                     options.progress, `${options.method} is finished`, 100
@@ -94,26 +94,29 @@ export default class ToolingApi {
 
                 resolve(body);
             })
-                .catch(err => {
-                    // If session is expired, just login again
-                    if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
-                        return auth.authorizeDefaultProject().then(() => {
-                            self.initiate()._invoke_method(options)
-                                .then(body => {
-                                    resolve(body);
-                                });
-                        })
-                        .catch(err => { });
-                    }
+            .catch(err => {
+                // If session is expired, just login again
+                if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
+                    return auth.authorizeDefaultProject().then(() => {
+                        self.initiate()._invoke_method(options)
+                            .then(body => {
+                                resolve(body);
+                            });
+                    })
+                    .catch( () => {
+                        // Stop notification progress if any exception
+                        resolve();
+                    });
+                }
 
-                    // If this is invoked from promise.all, wrap err with success
-                    if (options.ignoreError) {
-                        console.log(`${err.message} is ignored`);
-                        return resolve({});
-                    }
+                // If this is invoked from promise.all, wrap err with success
+                if (options.ignoreError) {
+                    console.log(`${err.message} is ignored`);
+                    return resolve({});
+                }
 
-                    reject(err);
-                });
+                reject(err);
+            });
         });
     }
 

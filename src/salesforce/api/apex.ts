@@ -81,9 +81,9 @@ export default class ApexApi {
                                 resolve(body);
                             });
                     })
-                    .catch( err => {
+                    .catch( () => {
                         // Stop notification progress if any exception
-                        resolve("");
+                        resolve();
                     });
                 }
                 

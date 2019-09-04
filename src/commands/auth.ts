@@ -76,34 +76,41 @@ export function authorizeDefaultProject() {
     let session = _session.getSession();
     let oauth = new OAuth(session.instanceUrl);
 
-    return ProgressNotification.showProgress(
-        oauth, "refreshToken", {
-            refresh_token: session.refreshToken
-        }
-    )
-    .then( body => {
-        _session.setSessionId(body["access_token"]);
+    return new Promise<any>( (resolve, reject) => {
+        ProgressNotification.showProgress(
+            oauth, "refreshToken", {
+                refresh_token: session.refreshToken
+            }
+        )
+        .then( body => {
+            let sessionId = body["access_token"];
+            _session.setSessionId(sessionId);
 
-        // Add project to workspace
-        let projectName = util.getDefaultProject();
-        util.addProjectToWorkspace(projectName);
+            // Add project to workspace
+            let projectName = util.getDefaultProject();
+            util.addProjectToWorkspace(projectName);
 
-        // Show success information
-        vscode.window.setStatusBarMessage(
-            localize("sessionRefreshed.text","Session information is refreshed")
-        );
-    })
-    .catch( err => {
-        if (err.message.indexOf("expired access/refresh token")) {
-            vscode.window.showWarningMessage(
-                "Refresh token expired or not exist, " +
-                    "it will start new authorization"
+            // Show success information
+            vscode.window.setStatusBarMessage(
+                localize("sessionRefreshed.text","Session information is refreshed")
             );
 
-            // Refresh token expired, start new authorization
-            authorizeNewProject(
-                session.projectName, session.loginUrl
-            );
-        }
+            resolve(sessionId);
+        })
+        .catch( err => {
+            if (err.message.indexOf("expired access/refresh token")) {
+                vscode.window.showWarningMessage(
+                    "Refresh token expired or not exist, " +
+                        "it will start new authorization"
+                );
+
+                // Refresh token expired, start new authorization
+                authorizeNewProject(
+                    session.projectName, session.loginUrl
+                );
+            }
+
+            reject(err);
+        });
     });
 }

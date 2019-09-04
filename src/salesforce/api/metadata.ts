@@ -63,7 +63,7 @@ export default class MetadataApi {
                     `Start ${requestType}...`
             );
 
-            request(requestOptions).then(body => {
+            request(requestOptions).then( body => {
                 // Parse request result as json format
                 let result = util.parseResult(body, requestType);
 
@@ -80,17 +80,16 @@ export default class MetadataApi {
             .catch (err => {
                 // If session is expired, just login again
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
-                    return auth.authorizeDefaultProject().then(() => {
+                    return auth.authorizeDefaultProject().then( () => {
                         self.initiate()._invoke_method(options)
                             .then( result => {
                                 resolve(result);
                             });
+                    })
+                    .catch( () => {
+                        // Stop notification progress if any exception
+                        resolve();
                     });
-                }
-
-                // If network is timeout, just throw exception
-                if (err.message.indexOf("getaddrinfo ENOTFOUND")) {
-                    err.message = "Connection timeout, please check your network.";
                 }
 
                 reject(err);
@@ -105,10 +104,9 @@ export default class MetadataApi {
      * @returns {Promise.<Response>}
      */
     public describeMetadata(options: any) {
-        return this._invoke_method({
-            "requestType": "DescribeMetadata",
-            "progress": options.progress
-        });
+        return this._invoke_method(_.extend(options, {
+            "requestType": "DescribeMetadata"
+        }));
     }
 
     /**
@@ -252,7 +250,7 @@ export default class MetadataApi {
     * @param testClasses the classes to run when runSpecifiedTest
     * @returns new Promise<any>{ body }
     */
-    public deploy(zipfile: string, testClasses?: Array<string>) {
+    public deploy(zipfile: string, testClasses?: string[]) {
         let self = this;
 
         return new Promise<any>( (resolve, reject) => {
