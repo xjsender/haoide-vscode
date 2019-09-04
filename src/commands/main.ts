@@ -696,6 +696,7 @@ export async function createMetaObject(metaType: string) {
     }
 
     let targetFiles = [];
+    let yesOrNo;
     for (const templateAttr of templateAttrs) {
         // Get file path of template
         let sourceFile = path.join(
@@ -736,6 +737,17 @@ export async function createMetaObject(metaType: string) {
                 : metaObjectName + templateAttr.extension
         );
         targetFiles.push(targetFile);
+
+        // Check confict
+        if (!yesOrNo && fs.existsSync(targetFile)) {
+            yesOrNo = await vscode.window.showWarningMessage(
+                `${targetFile} is already exist, continue?`,
+                ConfirmAction.OVERRIDE, ConfirmAction.NO
+            );
+            if (yesOrNo === ConfirmAction.NO) {
+                return;
+            }
+        }
         
         // Write template content to target file
         fs.writeFileSync(targetFile, data, "utf-8");
