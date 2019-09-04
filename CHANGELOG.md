@@ -2,6 +2,13 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.1.6]
+
++ Add confirmation for existing-config check when creating new metaobject
++ Add confirmation when destructing files from server
++ Fix recursive login bug when refresh token expired
+
+
 ## [0.1.5]
 
 + Add new command for ``Convert JSON to Apex``
