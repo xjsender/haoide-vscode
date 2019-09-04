@@ -26,7 +26,8 @@ import {
     TestSuite, TestObject,
     RetrieveResult, Message, 
     DeployResult,
-    Template
+    Template,
+    ConfirmAction
 } from "../models";
 
 const localize = nls.loadMessageBundle();
@@ -325,7 +326,15 @@ export function describeMetadata() {
  * 
  * @param files files to be destructed
  */
-export function destructFilesFromServer(files: string[]) {
+export async function destructFilesFromServer(files: string[]) {
+    let yesOrNo = await vscode.window.showWarningMessage(
+        "Are you sure you really want to remove these files from server",
+        ConfirmAction.YES, ConfirmAction.NO
+    );
+    if (yesOrNo === ConfirmAction.NO) {
+        return;
+    }
+
     packages.buildDestructPackage(files).then( base64Str => {
         new MetadataApi().deploy(base64Str)
             .then( result => {

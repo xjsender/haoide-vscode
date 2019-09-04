@@ -20,6 +20,13 @@ export interface Template {
     children?: Template[];
 }
 
+// Enum used in confirmation dialog
+export enum ConfirmAction {
+    YES = "Yes",
+    NO = "No",
+    OVERRIDE = "Override"
+}
+
 export {
     MetaObject, MetadataModel,
     FileAttributes,
