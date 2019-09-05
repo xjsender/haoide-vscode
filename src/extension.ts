@@ -239,14 +239,14 @@ export function activate(context: ExtensionContext) {
     /**
      * Events part
      */
-    context.subscriptions.push(workspace.onDidOpenTextDocument(document => {
-        if (document.isUntitled) {
-            // Set language of new open file as apex
-            languages.setTextDocumentLanguage(
-                document, 'apex'
-            );
-        }
-    }));
+    // context.subscriptions.push(workspace.onDidOpenTextDocument(document => {
+    //     if (document.isUntitled) {
+    //         // Set language of new open file as apex
+    //         languages.setTextDocumentLanguage(
+    //             document, 'apex'
+    //         );
+    //     }
+    // }));
 
     /**
      * Context part
