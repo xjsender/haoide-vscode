@@ -12,6 +12,7 @@ import { createCompletionItem } from "../utils/util";
 import * as settingsUtil from "../../../settings/settingsUtil";
 import { extensionSettings } from "../../../settings";
 import { PositionOption } from "../models/completion";
+import { PicklistValue, Field } from "../../../models/sobject";
 
 export class SobjectCompletionItemProvider implements vscode.CompletionItemProvider {
 
@@ -72,7 +73,49 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
             }
         }
         else if (pos.char === "=") {
-            
+            let pattern = /[a-zA-Z_1-9]+\.[a-zA-Z_1-9]+/i;
+            let match, matchedText, index;
+            while (match = pattern.exec(pos.wholeText)) {
+                if (index === match.index 
+                        || match.index > pos.offset) {
+                    break;
+                }
+
+                index = match.index;
+                matchedText = match[0];
+            }
+
+            if (matchedText) {
+                let [word, fieldName] = matchedText.trim().split('.');
+                pos.word = word;
+                let variableType = util.getVariableType(pos);
+                if (sobjects[variableType.toLowerCase()]) {
+                    // Get sobject name
+                    let sobjectName = sobjects[variableType.toLowerCase()];
+
+                    // Get sobjectDescribeResult
+                    let sobjectDesc = settingsUtil.getSobjectDesc(sobjectName);
+
+                    // Get fieldDescribeResult
+                    let fieldDesc: Field | undefined = _.find(
+                        sobjectDesc.fields, f => {
+                            return f.name === fieldName;
+                        }
+                    );
+
+                    // Picklist value(label) completion
+                    if (fieldDesc) {
+                        for (const pv of fieldDesc.picklistValues) {
+                            completionItems.push(createCompletionItem(
+                                `${pv.value}(${pv.label})}`,
+                                CompletionItemKind.Value,
+                                undefined, undefined,
+                                ` '${pv.value}'`
+                            ));
+                        }
+                    }
+                }
+            }
         }
         // Add keyword completion
         else {
