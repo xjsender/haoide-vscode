@@ -4,11 +4,6 @@
  */
 
 import * as vscode from "vscode";
-import { ltnTagDefs } from "../lib";
-import { 
-    getLastCharOfPosition, 
-    createCompletionItem 
-} from "../utils";
 import { 
     TextDocument, 
     Position, 
@@ -16,6 +11,10 @@ import {
     CompletionItemKind, 
     Range 
 } from "vscode";
+
+import * as util from "../utils/util";
+import { createCompletionItem } from "../utils/util";
+import { ltnTagDefs } from "../lib";
 import { extensionSettings } from "../../../settings";
 import { PositionOption } from "../models/completion";
 
@@ -37,7 +36,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
             offset: document.offsetAt(position),
             wholeText: document.getText(),
             lineText: document.lineAt(position.line).text,
-            char: getLastCharOfPosition(document, position),
+            char: util.getLastCharOfPosition(document, position),
             word: document.getText(wordRange).trim()
         };
 

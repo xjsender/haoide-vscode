@@ -6,10 +6,9 @@
 import * as vscode from "vscode";
 import * as _ from "lodash";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
-import {
-    getLastCharOfPosition,
-    createCompletionItem
-} from "../utils";
+
+import * as util from "../utils/util";
+import { createCompletionItem } from "../utils/util";
 import * as settingsUtil from "../../../settings/settingsUtil";
 import { extensionSettings } from "../../../settings";
 import { PositionOption } from "../models/completion";
@@ -33,7 +32,7 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
             offset: document.offsetAt(position),
             wholeText: document.getText(),
             lineText: document.lineAt(position.line).text,
-            char: getLastCharOfPosition(document, position),
+            char: util.getLastCharOfPosition(document, position),
             word: document.getText(wordRange).trim()
         };
 
@@ -54,59 +53,36 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
         // Completion for Namespace
         if (pos.char === ".") {
             // parent relationship completion
-            console.log(parentRelationships[pos.word]);
             if (parentRelationships[pos.word]) {
                 let sobjectNames = parentRelationships[pos.word];
-                for (const sobjectName of sobjectNames) {
-                    completionItems.push(createCompletionItem(
-                        sobjectName, CompletionItemKind.Class
-                    ));
-                }
+                completionItems.push(...util.getFieldCompletionItem(sobjectNames));
             }
 
             // Sobject fields and relationships completion
             if (sobjects[pos.word.toLowerCase()]) {
                 let sobjectName = sobjects[pos.word.toLowerCase()];
-                let sobjectDesc = settingsUtil.getSobjectDesc(sobjectName);
+                completionItems.push(...util.getFieldCompletionItem([sobjectName]));
+            }
 
-                // Add fields completion
-                for (const field of sobjectDesc.fields) {
-                    let detail = undefined;
-                    if (field.type === "picklist") {
-                        detail = _.map(field.picklistValues, lov => {
-                            return `${lov.value} => ${lov.label}`;
-                        }).join("\n");
-                    }
-
-                    completionItems.push(createCompletionItem(
-                        `${field.name}(${field.label})`,
-                        CompletionItemKind.Field,
-                        `${field.type} ${pos.word}.${field.name}`,
-                        detail, field.name
-                    ));
-
-                    if (field.type === "reference") {
-                        completionItems.push(createCompletionItem(
-                            `${field.relationshipName}(${field.label})`,
-                            CompletionItemKind.Field,
-                            `${field.type} ${pos.word}.${field.relationshipName}`,
-                            detail, field.relationshipName
-                        ));
-                    }
-                }
+            // Sobject instance fields and relationship completion
+            let variableType = util.getVariableType(pos);
+            if (sobjects[variableType.toLowerCase()]) {
+                let sobjectName = sobjects[variableType.toLowerCase()];
+                completionItems.push(...util.getFieldCompletionItem([sobjectName]));
             }
         }
         else if (pos.char === "=") {
             
         }
         // Add keyword completion
-        else if (/a-zA-Z-/i.test(pos.char)) {
+        else {
             for (const sobjectName of _.values(sobjects)) {
                 completionItems.push(createCompletionItem(
                     sobjectName, CompletionItemKind.Keyword
                 ));
             }
         }
-        return completionItems;
+
+        return _.uniqBy(completionItems, "label");
     }
 }

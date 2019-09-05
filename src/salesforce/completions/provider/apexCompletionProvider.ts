@@ -12,11 +12,8 @@ import {
     CompletionItemKind,
     Range
 } from "vscode";
-import { 
-    getLastCharOfPosition, 
-    createCompletionItem, 
-    getMethodCompletionItem 
-} from "../utils";
+import * as util from "../utils/util";
+import { createCompletionItem } from "../utils/util";
 import { namespaces, classes } from "../lib";
 import { extensionSettings } from "../../../settings";
 import { PositionOption } from "../models/completion";
@@ -41,7 +38,7 @@ export class ApexCompletionItemProvider implements vscode.CompletionItemProvider
             offset: document.offsetAt(position),
             wholeText: document.getText(),
             lineText: document.lineAt(position.line).text,
-            char: getLastCharOfPosition(document, position),
+            char: util.getLastCharOfPosition(document, position),
             word: document.getText(wordRange).trim()
         };
 
@@ -68,10 +65,9 @@ export class ApexCompletionItemProvider implements vscode.CompletionItemProvider
             // Static method or property for class
             if (classes.hasOwnProperty(pos.word.toLowerCase())) {
                 let _class = classes[pos.word.toLowerCase()];
-                let className = _class["name"];
 
                 // Add static method completion
-                let methodCompletionItems = getMethodCompletionItem(_class);
+                let methodCompletionItems = util.getMethodCompletionItem(_class);
                 completionItems.push(...methodCompletionItems);
 
                 // Add property completion
@@ -79,10 +75,35 @@ export class ApexCompletionItemProvider implements vscode.CompletionItemProvider
                     completionItems.push(createCompletionItem(
                         `${_property["name"]}`,
                         CompletionItemKind.Property,
-                        `${className}.${_property["name"]}`, 
+                        `${_class["name"]}.${_property["name"]}`, 
                         undefined,
                         `${_property["name"]}$0`
                     ));
+                }
+            }
+
+            // Instance method or property for class
+            let variableType = util.getVariableType(pos);
+            if (variableType) {
+                if (classes.hasOwnProperty(variableType.toLowerCase())) {
+                    let _class = classes[variableType.toLowerCase()];
+
+                    // Add static method completion
+                    let methodCompletionItems = util.getMethodCompletionItem(
+                        _class, false
+                    );
+                    completionItems.push(...methodCompletionItems);
+
+                    // Add property completion
+                    for (const _property of _class["properties"]) {
+                        completionItems.push(createCompletionItem(
+                            `${_property["name"]}`,
+                            CompletionItemKind.Property,
+                            `${_class["name"]}.${_property["name"]}`,
+                            undefined,
+                            `${_property["name"]}$0`
+                        ));
+                    }
                 }
             }
         }

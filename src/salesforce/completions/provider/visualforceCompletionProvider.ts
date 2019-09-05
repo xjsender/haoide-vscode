@@ -11,10 +11,9 @@ import {
     CompletionItemKind,
     Range
 } from "vscode";
-import {
-    getLastCharOfPosition,
-    createCompletionItem
-} from "../utils";
+
+import * as util from "../utils/util";
+import { createCompletionItem } from "../utils/util";
 import { vfTagDefs } from "../lib";
 import { extensionSettings } from "../../../settings";
 import { PositionOption } from "../models/completion";
@@ -37,7 +36,7 @@ export class VisualforceCompletionItemProvider implements vscode.CompletionItemP
             offset: document.offsetAt(position),
             wholeText: document.getText(),
             lineText: document.lineAt(position.line).text,
-            char: getLastCharOfPosition(document, position),
+            char: util.getLastCharOfPosition(document, position),
             word: document.getText(wordRange).trim()
         };
 
