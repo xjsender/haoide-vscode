@@ -161,10 +161,13 @@ export function createCompletionItem(label: string, kind?: any,
  * @returns variable type
  */
 export function getVariableType(pos: PositionOption) {
-    let regStr = `.+\\s(?=${pos.word})*?[,;\\s:=\)\{]`;
-    let pattern = new RegExp(regStr);
-    let matches = pattern.exec(pos.wholeText);
-    console.log("Variable Type Matches: ", matches);
+    let matches = pos.wholeText.match(new RegExp(
+        "([a-zA-Z_1-9]+[\\[\\]]*|" + 
+        "(map|list|set)[^\\n^(]" + 
+        "[<,.\\s>a-zA-Z_1-9]+)\\s+" + 
+            pos.word +
+        "[,;\\s:=\)\{]", "im")
+    );
     
     let variableType = "";
     if (matches) {
@@ -180,6 +183,7 @@ export function getVariableType(pos: PositionOption) {
             variableType = matchedContent.split(" ")[0];
         }
     }
+    console.log("variableType: ", variableType);
 
     return variableType.trim();
 }
