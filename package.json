@@ -178,6 +178,11 @@
 				"command": "extension.haoide.createVisualforceComponent",
 				"title": "%extension.haoide.createVisualforceComponent.title%",
 				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.startRestExplorer",
+				"title": "%extension.haoide.startRestExplorer.title%",
+				"category": "Haoide"
 			}
 		],
 		"menus": {

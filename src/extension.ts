@@ -14,6 +14,7 @@ import {
 } from "./salesforce/completions/provider";
 import * as contextUtil from "./utils/context";
 import { auth, utility, main } from "./commands";
+import { RestWebPanel } from './utils/webview';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -233,6 +234,12 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(languages.registerCompletionItemProvider(
         'apex', sobjectCompletionProvider, ".", "="
     ));
+
+    context.subscriptions.push(
+        commands.registerCommand('extension.haoide.startRestExplorer', () => {
+            RestWebPanel.showPanel(context.extensionPath);
+        })
+    );
 
     /**
      * NLS i18n part

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST Explorer</title>
+
+    <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../lib/json/json.css" rel="stylesheet" media="screen">
+</head>
+
+<body>
+    <div class="container">
+        <form name="form">
+            <div class="form-group col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title alert alert-success">
+                            Place HTTP method, REST URI and Body here: 
+                        </h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="btn-group btn-group-sm" data-toggle="buttons">
+                            <label class="radioBtn btn btn-default active">
+                                <input type="radio" id="get" name="restMethod" value="get" checked="true" /> Get
+                            </label>
+
+                            <label class="radioBtn btn btn-default">
+                                <input type="radio" id="post" name="restMethod" value="post" /> Post
+                            </label>
+
+                            <label class="radioBtn btn btn-default">
+                                <input type="radio" id="put" name="restMethod" value="put" /> Put
+                            </label>
+
+                            <label class="radioBtn btn btn-default">
+                                <input type="radio" id="patch" name="restMethod" value="patch" /> Patch
+                            </label>
+
+                            <label class="radioBtn btn btn-default">
+                                <input type="radio" id="delete" name="restMethod" value="delete" /> Delete
+                            </label>
+
+                            <label class="radioBtn btn btn-default">
+                                <input type="radio" id="head" name="restMethod" value="head" /> Head
+                            </label>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-8" style="margin-top: 5px;">
+                                <input type="text" class="form-control" id="restUri"
+                                    name="rest_uri" required="true" value="${restUri}">
+                                </textarea>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="btn-group" style="margin-top: 5px;">
+                                    <button type="button" id="executeRest" 
+                                            tabindex="0" class="btn btn-primary connect">
+                                        <span class="glyphicon glyphicon-ok"></span> Execute
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="restBodyDiv" class="row" style="display: none; ">
+                            <div class="col-sm-8" style="margin-top:5px;">
+                                <textarea class="form-control" rows="10" cols="10" 
+                                        id="restBody" name="rest_body" value="${restData}"
+                                        placeholder="Place your body here">
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+<script src="../lib/jquery/jquery-3.3.1.slim.min.js"></script>
+<script src="../lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../lib/json/jsonformatter.js"></script>
+
+<div style="height: 50px;" />
