@@ -9,6 +9,7 @@ import * as nls from 'vscode-nls';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as shelljs from 'shelljs';
+import * as promiseLimit from 'promise-limit';
 
 import * as util from "../utils/util";
 import * as utility from "./utility";
@@ -162,87 +163,87 @@ export function executeQuery() {
     });
 }
 
+export async function reloadSymbolTable() {
+
+}
+
 /**
  * Describe sobjects and keep it to local disk
  * 
  * @param sobjects sobjects array, if not spcified, just describe global
  */
-export async function reloadSobjectCache(sobjects?: string[]) {
+export async function reloadSobjectCache(options?: any) {
     let restApi = new RestApi();
 
-    // If sobjects is not specified, describe global
+    let sobjects = (options && options.sobjects) || [];
     if (!sobjects || sobjects.length === 0) {
         return ProgressNotification.showProgress(
             restApi, "describeGlobal", {
-                progressMessage: "Executing describeGlobal request"
-            }
-        )
-        .then( body => {
+            progressMessage: "Executing global describe request"
+        })
+        .then( async body => {
             let sobjectsDesc: any[] = body["sobjects"];
             sobjects = _.map(sobjectsDesc, sobjectDesc => {
                 return sobjectDesc["name"];
             });
 
-            reloadSobjectCache(sobjects);
+            // Reload all sobjects
+            if (options && !options.reloadAll) {
+                sobjects = await vscode.window.showQuickPick(sobjects, {
+                    canPickMany: true
+                });
+            }
+
+            reloadSobjectCache({
+                sobjects: sobjects
+            });
         })
-        .catch (err => {
-            vscode.window.showErrorMessage(err.message);
+        .catch( err => {
+            return vscode.window.showErrorMessage(err.message);
         });
     }
-    
-    let chunkedSobjectsList = _.chunk(sobjects, 30);
-    Promise.all(_.map(chunkedSobjectsList, chunkedSobjects => {
-        return new Promise<any>( (resolve, reject) => {
-            restApi.describeSobjects({
-                sobjects: chunkedSobjects
-            })
-            .then( result => {
-                resolve(result);
-            })
-            .catch(err => {
-                console.log(err);
-                reject(err);
-            });
-        });
+
+    var limit = promiseLimit(30);
+    Promise.all(_.map(sobjects, sobject => {
+        return limit(() => restApi.describeSobject({ 
+            sobject: sobject,
+            ignoreError: true
+        }));
     }))
-    .then( result => {
-        let parentRelationships: any = {};
-        let allSobjects: any = {};
+    .then( (sobjectsDesc : any) => {
+        sobjectsDesc = sobjectsDesc as SObjectDesc[];
 
-        for (const key in result) {
-            if (result.hasOwnProperty(key)) {
-                const sobjectsDesc: SObjectDesc[] = result[key];
+        let { allSobjects = {},  parentRelationships = {} } = 
+            settingsUtil.getSobjectsCache();
 
-                // Collect parentRelationships
-                for (const sobjectDesc of sobjectsDesc) {
-                    // If no name, skip
-                    if (!sobjectDesc.name) {
-                        continue;
-                    }
+        // Collect parentRelationships
+        for (const sobjectDesc of sobjectsDesc) {
+            // If no name, skip
+            if (!sobjectDesc.name) {
+                continue;
+            }
 
-                    // Collect sobjects
-                    allSobjects[sobjectDesc.name.toLowerCase()] =
-                        sobjectDesc.name;
+            // Collect sobjects
+            allSobjects[sobjectDesc.name.toLowerCase()] =
+                sobjectDesc.name;
 
-                    // Write sobject.json to local disk
-                    settingsUtil.saveSobjectCache(sobjectDesc);
+            // Write sobject.json to local disk
+            settingsUtil.saveSobjectCache(sobjectDesc);
 
-                    for (const field of sobjectDesc.fields) {
-                        if (field.referenceTo.length !== 1) {
-                            continue;
-                        }
+            for (const field of sobjectDesc.fields) {
+                if (field.referenceTo.length !== 1) {
+                    continue;
+                }
 
-                        let rsName = field.relationshipName;
-                        let referenceTo = field.referenceTo[0];
-                        if (parentRelationships[rsName]) {
-                            let referenceTos: string[] = parentRelationships[rsName];
-                            referenceTos.push(referenceTo);
-                            parentRelationships[rsName] = _.uniq(referenceTos);
-                        }
-                        else {
-                            parentRelationships[rsName] = [referenceTo];
-                        }
-                    }
+                let rsName = field.relationshipName;
+                let referenceTo = field.referenceTo[0];
+                if (parentRelationships[rsName]) {
+                    let referenceTos: string[] = parentRelationships[rsName];
+                    referenceTos.push(referenceTo);
+                    parentRelationships[rsName] = _.uniq(referenceTos);
+                }
+                else {
+                    parentRelationships[rsName] = [referenceTo];
                 }
             }
         }
@@ -617,7 +618,9 @@ export function createNewProject(reloadCache = true) {
 
             // Reload sObject cache
             if (reloadCache) {
-                reloadSobjectCache();
+                reloadSobjectCache({ 
+                    reloadAll: true
+                });
             }
         })
         .catch(err => {
@@ -636,8 +639,7 @@ export async function createMetaObject(metaType: string) {
     }
 
     // Get extension instance
-    const extension: vscode.Extension<any> | undefined =
-        vscode.extensions.getExtension("mouseliu.haoide");
+    const extension = util.getExtensionInstance();
     if (!extension) {
         return;
     }

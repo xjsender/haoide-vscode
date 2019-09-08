@@ -128,8 +128,11 @@ export function activate(context: ExtensionContext) {
 
     // Register reloadSobjectCache command
     context.subscriptions.push(commands.registerCommand(
-        "extension.haoide.reloadSobjectCache",
-        main.reloadSobjectCache
+        "extension.haoide.reloadSobjectCache", () => {
+            main.reloadSobjectCache({
+                reloadAll: false
+            });
+        }
     ));
 
     // Register loginToSFDC command

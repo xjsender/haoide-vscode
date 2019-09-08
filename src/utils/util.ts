@@ -22,6 +22,19 @@ export function getExtensionVersion(extension: vscode.Extension<any>) {
     return packageJSON["version"];
 }
 
+/**
+ * Get extension path
+ * 
+ * @returns extension path
+ */
+export function getExtensionInstance() {
+    // Get extension instance
+    const extension: vscode.Extension<any> | undefined =
+        vscode.extensions.getExtension("mouseliu.haoide");
+
+    return extension;
+}
+
 export function showCommandWarning(warningMessage?: string) {
     return vscode.window.showQuickPick([{
         label: warningMessage || "No text editor active at this time"

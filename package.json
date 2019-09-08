@@ -376,7 +376,7 @@
 					"Apex",
 					"apex"
 				],
-				"configuration": "./syntaxes/apex-configuration.json"
+				"configuration": "./resources/syntaxes/apex-configuration.json"
 			},
 			{
 				"id": "visualforce",
@@ -388,7 +388,7 @@
 					".page",
 					".component"
 				],
-				"configuration": "./syntaxes/visualforce-configuration.json"
+				"configuration": "./resources/syntaxes/visualforce-configuration.json"
 			},
 			{
 				"id": "html",
@@ -407,12 +407,12 @@
 			{
 				"language": "apex",
 				"scopeName": "source.apex",
-				"path": "./syntaxes/apex.tmLanguage"
+				"path": "./resources/syntaxes/apex.tmLanguage"
 			},
 			{
 				"language": "visualforce",
 				"scopeName": "text.visualforce.markup",
-				"path": "./syntaxes/visualforce.json",
+				"path": "./resources/syntaxes/visualforce.json",
 				"embeddedLanguages": {
 					"source.css": "css",
 					"source.js": "javascript"
@@ -421,7 +421,7 @@
 			{
 				"language": "html",
 				"scopeName": "text.html.basic",
-				"path": "./syntaxes/html-tmLanguage.json"
+				"path": "./resources/syntaxes/html-tmLanguage.json"
 			}
 		],
 		"snippets": [
@@ -496,6 +496,7 @@
 		"@types/request-promise": "^4.1.44",
 		"@types/shelljs": "^0.8.5",
 		"@types/yazl": "^2.4.1",
+		"promise-limit": "^2.7.0",
 		"cometd": "^3.1.10",
 		"adm-zip": "^0.4.13",
 		"express": "^4.16.4",
