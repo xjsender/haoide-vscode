@@ -2,6 +2,15 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.1.7]
+
++ Add instance completion for apex and sobject
++ Add picklist value completion for sobject
++ Add rest explorer for rest testing, check [REST Explorer](https://github.com/xjsender/haoide-vscode/blob/master/docs/restExplorer.gif) for detail
++ Add sobjects reloading feature for specified sobjects
++ Add ```.gitignore`` after create new project
+
+
 ## [0.1.6]
 
 + Add confirmation for existing-config check when creating new metaobject
