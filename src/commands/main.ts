@@ -626,6 +626,24 @@ export function createNewProject(reloadCache = true) {
                     reloadAll: true
                 });
             }
+
+            // Copy .gitignore file to project 
+            // if .gitignore is not exist in the project
+            let extension = util.getExtensionInstance();
+            if (extension) {
+                let sourceFile = path.join(
+                    extension.extensionPath,
+                    "resources", ".gitignore"
+                );
+
+                let destFile = path.join(
+                    util.getProjectPath(), ".gitignore"
+                );
+                
+                if (!fs.existsSync(destFile)) {
+                    shelljs.cp("-f", sourceFile, destFile);
+                }
+            }
         })
         .catch(err => {
             console.error(err);
