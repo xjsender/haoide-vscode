@@ -2,10 +2,10 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 
+import { main } from "../commands";
+
 export class RestWebPanel {
     public static currentPanel: RestWebPanel | undefined;
-
-    public static readonly viewType = 'restExplorer';
 
     private readonly _panel: vscode.WebviewPanel;
     private readonly _extensionPath: string;
@@ -15,10 +15,29 @@ export class RestWebPanel {
         this._panel = panel;
         this._extensionPath = extensionPath;
 
+        // Listen for when the panel is disposed
+        // This happens when the user closes the panel or
+        // when the panel is closed programatically
+        this._panel.onDidDispose(
+            () => this.dispose(), null, this._disposables
+        );
+
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(
             message => {
-                console.log(message);
+                // Parse data from webview to object
+                if (message && message.data) {
+                    try {
+                        let data = JSON.parse(message.data);
+                        message.data = data;
+                    } 
+                    catch (err) {
+                        return vscode.window.showErrorMessage(err.message);
+                    }
+                }
+
+                // Execute rest test
+                main.executeRestTest(message);
             },
             null,
             this._disposables
@@ -39,7 +58,7 @@ export class RestWebPanel {
         }
 
         const panel = vscode.window.createWebviewPanel(
-            RestWebPanel.viewType, 'REST Explorer',
+            "RESTExplorer", 'REST Explorer',
             column || vscode.ViewColumn.One, {
                 enableScripts: true, // Enable scripts
                 retainContextWhenHidden: true

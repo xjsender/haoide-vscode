@@ -61,25 +61,28 @@ export async function updateUserLanguage() {
     });
 }
 
-export function executeRestTest() {
-    // Get selection in the active editor
-    let editor = vscode.window.activeTextEditor;
-    if (!editor) {
-        return util.showCommandWarning();
-    }
-    
-    let serverUrl = "";
-    if (editor.selection) {
-        serverUrl = editor.document.getText(editor.selection);
-    }
-
+/**
+ * Execute rest test
+ * 
+ * @param options rest options, i.e., {
+ *    serverUrl: ""
+ *    method: "",
+ *    data: {} | []
+ * }
+ */
+export function executeRestTest(options: any) {
     let restApi = new RestApi();
-    restApi.get(serverUrl).then( result => {
+    ProgressNotification.showProgress(
+        restApi, options.method, _.extend(options, {
+            progressMessage: "Executing REST Test"
+        })
+    )
+    .then( result => {
         util.openNewUntitledFile(
-            JSON.stringify(JSON.parse(result), null, 4)
+            JSON.stringify(result, null, 4)
         );
     })
-    .catch(err => {
+    .catch( err => {
         console.log(err);
         vscode.window.showErrorMessage(err.message);
     });
