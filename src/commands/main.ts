@@ -216,8 +216,9 @@ export async function reloadSobjectCache(options?: any) {
     .then( (sobjectsDesc : any) => {
         sobjectsDesc = sobjectsDesc as SObjectDesc[];
 
-        let { allSobjects = {},  parentRelationships = {} } = 
+        let { sobjects = {},  parentRelationships = {} } = 
             settingsUtil.getSobjectsCache();
+        console.log(sobjects, parentRelationships);
 
         // Collect parentRelationships
         for (const sobjectDesc of sobjectsDesc) {
@@ -227,7 +228,7 @@ export async function reloadSobjectCache(options?: any) {
             }
 
             // Collect sobjects
-            allSobjects[sobjectDesc.name.toLowerCase()] =
+            sobjects[sobjectDesc.name.toLowerCase()] =
                 sobjectDesc.name;
 
             // Write sobject.json to local disk
@@ -252,7 +253,7 @@ export async function reloadSobjectCache(options?: any) {
         }
 
         settingsUtil.setConfigValue("sobjects.json", {
-            "sobjects": allSobjects,
+            "sobjects": sobjects,
             "parentRelationships": parentRelationships
         });
     })
