@@ -432,23 +432,23 @@
 		"snippets": [
 			{
 				"language": "apex",
-				"path": "./snippets/trigger.code-snippets"
+				"path": "./resources/snippets/trigger.code-snippets"
 			},
 			{
 				"language": "apex",
-				"path": "./snippets/class.code-snippets"
+				"path": "./resources/snippets/class.code-snippets"
 			},
 			{
 				"language": "html",
-				"path": "./snippets/lwc.code-snippets"
+				"path": "./resources/snippets/lwc.code-snippets"
 			},
 			{
 				"language": "html",
-				"path": "./snippets/aura.code-snippets"
+				"path": "./resources/snippets/aura.code-snippets"
 			},
 			{
 				"language": "visualforce",
-				"path": "./snippets/visualforce.code-snippets"
+				"path": "./resources/snippets/visualforce.code-snippets"
 			}
 		],
 		"configuration": {
