@@ -238,6 +238,11 @@ export async function reloadSobjectCache(options?: any) {
             reloadSobjectCache({
                 sobjects: sobjects
             });
+
+            vscode.window.showInformationMessage(
+                "There is long time process to " + 
+                "load sobjects cache, please wait"
+            );
         })
         .catch( err => {
             return vscode.window.showErrorMessage(err.message);
@@ -256,7 +261,6 @@ export async function reloadSobjectCache(options?: any) {
 
         let { sobjects = {},  parentRelationships = {} } = 
             settingsUtil.getSobjectsCache();
-        console.log(sobjects, parentRelationships);
 
         // Collect parentRelationships
         for (const sobjectDesc of sobjectsDesc) {
@@ -294,6 +298,11 @@ export async function reloadSobjectCache(options?: any) {
             "sobjects": sobjects,
             "parentRelationships": parentRelationships
         });
+
+        // Succeed message after finished
+        vscode.window.showInformationMessage(
+            "Your sobjects cache were saved at '.haoide'"
+        );
     })
     .catch( err => {
         console.log(err);

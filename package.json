@@ -125,11 +125,6 @@
 				"category": "Haoide"
 			},
 			{
-				"command": "extension.haoide.runSyncTest",
-				"title": "%extension.haoide.runSyncTest.title%",
-				"category": "Haoide"
-			},
-			{
 				"command": "extension.haoide.reloadSobjectCache",
 				"title": "%extension.haoide.reloadSobjectCache.title%",
 				"category": "Haoide"
@@ -226,7 +221,11 @@
 				},
 				{
 					"command": "extension.haoide.executeQuery",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorHasSelection"
+				},
+				{
+					"command": "extension.haoide.executeToolingQuery",
+					"when": "haoide.hasOpenProject && editorHasSelection"
 				},
 				{
 					"command": "extension.haoide.switchProject",
@@ -348,10 +347,6 @@
 				{
 					"group": "z_commands",
 					"command": "extension.haoide.locateThisInBrowser"
-				},
-				{
-					"group": "z_commands",
-					"command": "extension.haoide.runSyncTest"
 				}
 			]
 		},
