@@ -120,20 +120,30 @@ export function convert15Id218Id(the15Id: string) {
 }
 
 /**
+ * Quote specified string
+ * 
+ * @param unquotedStr string to be quoted
+ * @returns quoted string
+ */
+export function quoteattr(unquotedStr: string) {
+    unquotedStr = unquotedStr.replace(/&/g, "&amp;");
+    unquotedStr = unquotedStr.replace(/</g, "&lt;");
+    unquotedStr = unquotedStr.replace(/>/g, "&gt;");
+    
+    return unquotedStr;
+}
+
+/**
  * Unescape string
  * 
  * @param escapedStr string to be unescaped
  * @returns unescaped string
  */
 export function unescape(escapedStr: string) {
-    // Replace all &apos; to ""
-    return replaceAll(
-        escapedStr, [{
-            from: "&apos;", to: ""
-        }, {
-            from: "&quot;", to: ""
-        }]
-    );
+    escapedStr = escapedStr.replace(/&apos;/g, "");
+    escapedStr = escapedStr.replace(/&quot;/g, "");
+    
+    return escapedStr;
 }
 
 /**
@@ -159,6 +169,7 @@ export function replaceAll(text: string, fromTos: FromTo[]) {
 
     return text;
 }
+
 
 /**
  * Parse Metadata api response body as JSON format

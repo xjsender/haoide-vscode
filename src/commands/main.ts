@@ -321,7 +321,7 @@ export function executeAnonymous(apexCode?: string) {
     let apexApi = new ApexApi();
     let requestType = "executeAnonymous";
     ProgressNotification.showProgress(apexApi, requestType, { 
-        "apexCode": apexCode 
+        "apexCode": util.quoteattr(apexCode)
     })
     .then( (body: string) => {
         if (body) {

@@ -301,7 +301,6 @@ export default class SOAP {
      * @param options Used to pass apex string
      */
     private createExecuteAnonymousRequest(options: any) {
-        let apexCode = _.escape(options["apexCode"]);
         let soapBody = `
             <apex:executeAnonymous>
                 <apex:String>${options["apexCode"]}</apex:String>
