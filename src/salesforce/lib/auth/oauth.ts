@@ -6,6 +6,7 @@
 import * as querystring from "querystring";
 import * as request from "request-promise";
 import * as _ from "lodash";
+
 import ProgressNotification from "../../../utils/progress";
 import { appConfig } from "./config";
 

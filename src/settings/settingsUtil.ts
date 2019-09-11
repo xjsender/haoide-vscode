@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import * as util from "../utils/util";
-import { SObjectDesc } from "../models";
+import { SObjectDesc } from "../typings";
 
 /**
  * Get all configs or get value of spcified key
@@ -64,6 +64,15 @@ export function setConfigValue(fileName: string,
     }
 
     fs.writeFileSync(filePath, JSON.stringify(config, null, 4));
+}
+
+/**
+ * Save symbol tables to local disk
+ * 
+ * @param symbolTables symbol tables from apex class query result
+ */
+export function saveSymbolTables(symbolTables: any) {
+    setConfigValue("symbolTables.json", symbolTables);
 }
 
 /**

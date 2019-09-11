@@ -9,7 +9,11 @@ import * as xmlParser from "fast-xml-parser";
 import * as packageUtil from "../utils/package";
 import * as settingsUtil from "../settings/settingsUtil";
 import { extensionSettings } from "../settings";
-import { FileProperty, FileAttributes, ComponentSuccess, DeployResult } from "../models";
+import { 
+    FileProperty, FileAttributes, 
+    ComponentSuccess, DeployResult, 
+    ApexClass 
+} from "../typings";
 
 /**
  * Get extension version of haoide
@@ -560,4 +564,18 @@ export function unlinkFiles(files: string[]) {
             fs.unlinkSync(metaFile);
         }
     }
+}
+
+/**
+ * Save symbol tables to local disk
+ * 
+ * @param records apex class query result
+ */
+export function saveSymbolTable(records: ApexClass[]) {
+    let symbolTables: any = {};
+    for (const record of records) {
+        symbolTables[record.Name.toLowerCase()] = record.SymbolTable;
+    }
+
+    settingsUtil.saveSymbolTables(symbolTables);
 }

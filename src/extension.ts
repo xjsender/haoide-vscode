@@ -109,16 +109,18 @@ export function activate(context: ExtensionContext) {
         main.executeAnonymous
     ));
 
-    // Register executeRestTest command
-    // context.subscriptions.push(commands.registerCommand(
-    // 	"extension.haoide.executeRestTest",
-    // 	utility.executeRestTest
-    // ));
-
     // Register executeQuery command
     context.subscriptions.push(commands.registerCommand(
-        "extension.haoide.executeQuery",
-        main.executeQuery
+        "extension.haoide.executeQuery", () => {
+            main.executeQuery(false);
+        }
+    ));
+
+    // Register executeToolingQuery command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.executeToolingQuery", () => {
+            main.executeQuery(true);
+        }
     ));
 
     // Register runSyncTest command
@@ -133,6 +135,13 @@ export function activate(context: ExtensionContext) {
             main.reloadSobjectCache({
                 reloadAll: false
             });
+        }
+    ));
+
+    // Register reloadSymbolTable command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.reloadSymbolTable", () => {
+            main.reloadSymbolTable();
         }
     ));
 

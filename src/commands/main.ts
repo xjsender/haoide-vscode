@@ -28,8 +28,10 @@ import {
     RetrieveResult, Message, 
     DeployResult,
     Template,
-    ConfirmAction
-} from "../models";
+    ConfirmAction,
+    ApexClass,
+    QueryResult
+} from "../typings";
 
 const localize = nls.loadMessageBundle();
 
@@ -138,7 +140,7 @@ export function runSyncTests(testSuites: TestSuite[]) {
 /**
  * Execute query and display result in new untitled file
  */
-export function executeQuery() {
+export function executeQuery(isTooling=false) {
     // Get selection in the active editor
     let editor = vscode.window.activeTextEditor;
     if (!editor) {
@@ -150,14 +152,14 @@ export function executeQuery() {
         soql = editor.document.getText(editor.selection);
     }
 
-    let restApi = new RestApi();
-    ProgressNotification.showProgress(restApi, "query", {
+    let api = isTooling ? new ToolingApi() : new RestApi();
+    ProgressNotification.showProgress(api, "query", {
         soql: soql,
         progressMessage: "Executing query request"
     })
-    .then( body => {
+    .then( result => {
         util.openNewUntitledFile(
-            JSON.stringify(body, null, 4)
+            JSON.stringify(result, null, 4)
         );
     })
     .catch (err => {
@@ -166,8 +168,44 @@ export function executeQuery() {
     });
 }
 
-export async function reloadSymbolTable() {
+/**
+ * Reload symbol table of apex class, which is used 
+ * by completion provider
+ */
+export function reloadSymbolTable() {
+    let toolingApi = new ToolingApi();
+    ProgressNotification.showProgress(toolingApi, "query", {
+        soql: "SELECT Id, Name, SymbolTable FROM ApexClass",
+        batchSize: 200,
+        progressMessage: "This is a long time request, please waiting..."
+    })
+    .then( (result: QueryResult) => {
+        util.saveSymbolTable(result.records);
 
+        // If it is not done, retrieve next records
+        if (!result.done && result.nextRecordsUrl) {
+            retrieveNextRecordsUrl(result.nextRecordsUrl);
+        }
+
+        // Recursive request for nextRecordsUrl until done
+        function retrieveNextRecordsUrl(nextRecordsUrl: string) {
+            ProgressNotification.showProgress(toolingApi, "get", {
+                serverUrl: nextRecordsUrl,
+                progressMessage: `Retrieve nextRecordsUrl: ${nextRecordsUrl}`
+            })
+            .then( (result: QueryResult) => {
+                util.saveSymbolTable(result.records);
+
+                if (result.nextRecordsUrl) {
+                    retrieveNextRecordsUrl(result.nextRecordsUrl);
+                }
+            });
+        }
+    })
+    .catch( err => {
+        console.log(err.message);
+        vscode.window.showErrorMessage(err.message);
+    });
 }
 
 /**

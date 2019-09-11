@@ -74,9 +74,12 @@ export default class RestApi {
         return new Promise<any>(function (resolve, reject) {
             let requestOptions = {
                 method: options.method,
-                headers: self.headers,
+                headers: _.extend(self.headers, {
+                    "Sforce-Query-Options": `batchSize=${options.batchSize || 2000}`
+                }),
                 uri: self.buildFullUrl(options.serverUrl),
                 body: options.data,
+                timeout: options.timeout || 120000000,
                 json: options.json || true
             };
             console.log(requestOptions);
@@ -130,7 +133,7 @@ export default class RestApi {
     /**
      * REST Get Request
      * 
-     * @param options, options, {serverUrl: "", progress?, timeout?: 120}
+     * @param options, options, {serverUrl: "", progress?, timeout?: 120000}
      * @returns Promise<any>
      */
     public get(options: any) {
@@ -156,7 +159,7 @@ export default class RestApi {
     /**
      * REST Patch Request
      * 
-     * @param options, options, {serverUrl: "", data: "", progress?, timeout?: 120}
+     * @param options, options, {serverUrl: "", data: "", progress?, timeout?: 120000}
      * @returns Promise<any>
      */
     public patch(options: any) {
@@ -168,7 +171,7 @@ export default class RestApi {
     /**
      * REST put request
      * 
-     * @param options, options, {serverUrl: "", data: "", progress?, timeout?: 120}
+     * @param options, options, {serverUrl: "", data: "", progress?, timeout?: 120000}
      * @returns Promise<any>
      */
     public put(options: any) {
@@ -180,7 +183,7 @@ export default class RestApi {
     /**
      * REST delete request
      * 
-     * @param options, options, {serverUrl: "", progress?, timeout?: 120}
+     * @param options, options, {serverUrl: "", progress?, timeout?: 120000}
      * @returns Promise<any>
      */
     public delete(options: any) {
@@ -192,7 +195,7 @@ export default class RestApi {
     /**
      * REST query request
      * 
-    * @param options, options, {soql: "", progress?, timeout?: 120}
+    * @param options, options, {soql: "", progress?, timeout?: 120000}
     * @returns Promise<any>
      */
     public query(options: any) {
@@ -238,7 +241,7 @@ export default class RestApi {
     /**
     * REST queryMore request
     * 
-    * @param options, options, {nextRecordUrl: "", progress?, timeout?: 120}
+    * @param options, options, {nextRecordUrl: "", progress?, timeout?: 120000}
     * @returns Promise<any>
     */
     public queryMore(options: any) {
@@ -255,7 +258,7 @@ export default class RestApi {
      */
     public search(options: any) {
         return this.get(_.extend(options, {
-            serverUrl: "/search" + querystring.stringify({
+            serverUrl: "/search?" + querystring.stringify({
                 "q": options.sosl
             })
         }));
@@ -270,12 +273,12 @@ export default class RestApi {
     /**
     * REST queryAll request
     * 
-    * @param options, options, {soql: "", progress?, timeout?: 120}
+    * @param options, options, {soql: "", progress?, timeout?: 120000}
     * @returns Promise<any>
     */
     public queryAll(options: any) {
         return this.get(_.extend(options, {
-            serverUrl: "/queryAll" + querystring.stringify({
+            serverUrl: "/queryAll?" + querystring.stringify({
                 "q": options.soql
             })
         }));
@@ -284,7 +287,7 @@ export default class RestApi {
     /**
      * REST getLimits request
      *
-     * @param options, options, {progress?, timeout?: 120}
+     * @param options, options, {progress?, timeout?: 120000}
      * @returns Promise<any>
      */
     public getLimits(options: any) {
@@ -342,7 +345,7 @@ export default class RestApi {
     /**
      * REST describe global request
      * 
-     * @param options, options, {progress?, timeout?: 120}
+     * @param options, options, {progress?, timeout?: 120000}
      * @returns Promise<any>
      */
     public describeGlobal(options: any) {
@@ -372,7 +375,7 @@ export default class RestApi {
     /**
      * Get array of sobjects describe result
      * 
-     * @param options options, {sobjects: [], progress?, timeout?: 120}
+     * @param options options, {sobjects: [], progress?, timeout?: 120000}
      * @returns  any[], describe result array
      */
     public describeSobjects(options: any) {
@@ -381,7 +384,7 @@ export default class RestApi {
             return self.describeSobject({
                 sobject: sobject,
                 progress: options.progress,
-                timeout: options.timeout || 120,
+                timeout: options.timeout || 120000,
                 ignoreError: true
             });
         }));

@@ -60,6 +60,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.executeToolingQuery",
+				"title": "%extension.haoide.executeToolingQuery.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.switchProject",
 				"title": "%extension.haoide.switchProject.title%",
 				"category": "Haoide"
@@ -127,6 +132,11 @@
 			{
 				"command": "extension.haoide.reloadSobjectCache",
 				"title": "%extension.haoide.reloadSobjectCache.title%",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.reloadSymbolTable",
+				"title": "%extension.haoide.reloadSymbolTable.title%",
 				"category": "Haoide"
 			},
 			{
@@ -267,7 +277,15 @@
 					"when": "haoide.hasOpenProject"
 				},
 				{
+					"command": "extension.haoide.startRestExplorer",
+					"when": "haoide.hasOpenProject"
+				},
+				{
 					"command": "extension.haoide.reloadSobjectCache",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.reloadSymbolTable",
 					"when": "haoide.hasOpenProject"
 				},
 				{
@@ -307,6 +325,10 @@
 				},
 				{
 					"command": "extension.haoide.createVisualforceComponent",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.startRestExplorer",
 					"when": "haoide.hasOpenProject"
 				}
 			],

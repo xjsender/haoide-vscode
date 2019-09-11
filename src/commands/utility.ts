@@ -11,7 +11,7 @@ import * as nls from 'vscode-nls';
 import * as util from "../utils/util";
 import * as settingsUtil from "../settings/settingsUtil";
 import JSONConverter from "../utils/json2Apex";
-import { Session as SessionModel, FileProperty } from "../models";
+import { Session as SessionModel, FileProperty } from "../typings";
 import { settings, _session, metadata } from "../settings";
 
 const localize = nls.loadMessageBundle();

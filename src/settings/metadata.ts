@@ -6,7 +6,7 @@
 import * as _ from "lodash";
 
 import * as settingsUtil from "./settingsUtil";
-import { MetadataModel, MetaObject } from "../models";
+import { MetadataModel, MetaObject } from "../typings";
 
 export default class Metadata {
     private static instance: Metadata;

@@ -12,7 +12,7 @@ import { createCompletionItem } from "../utils/util";
 import * as settingsUtil from "../../../settings/settingsUtil";
 import { extensionSettings } from "../../../settings";
 import { PositionOption } from "../models/completion";
-import { PicklistValue, Field } from "../../../models/sobject";
+import { PicklistValue, Field } from "../../../typings/sobject";
 
 export class SobjectCompletionItemProvider implements vscode.CompletionItemProvider {
 

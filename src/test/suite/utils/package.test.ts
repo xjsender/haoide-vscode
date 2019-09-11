@@ -7,11 +7,11 @@ import * as assert from "assert";
 import * as pkg from "../../../utils/package";
 import { 
     MetadataModel, MetaObject
-} from "../../../models/meta";
+} from "../../../typings/meta";
 
 import {
     FileAttributes, FileProperty
-} from "../../../models";
+} from "../../../typings";
 
 describe("Test all functions for ./utils/package", () => {
     // Prepare test data

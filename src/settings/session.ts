@@ -5,7 +5,7 @@
 
 import * as moment from "moment";
 import * as settingsUtil from "./settingsUtil";
-import { Session as SessionModel } from "../models";
+import { Session as SessionModel } from "../typings";
 
 export default class Session {
     private static instance: Session;

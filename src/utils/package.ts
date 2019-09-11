@@ -14,7 +14,7 @@ import { Buffer } from "buffer";
 
 import * as util from "../utils/util";
 import { metadata } from "../settings";
-import { MetaObject, FileAttributes } from "../models";
+import { MetaObject, FileAttributes } from "../typings";
 
 /**
  * Build destruct package by files
