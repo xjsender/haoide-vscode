@@ -9,6 +9,8 @@ All notable changes to the "haoide" extension will be documented in this file.
 + Add rest explorer for rest testing, check [REST Explorer](https://github.com/xjsender/haoide-vscode/blob/master/docs/restExplorer.gif) for detail
 + Add sobjects reloading feature for specified sobjects
 + Add ```.gitignore``` after create new project
++ Add new command ``Execute Tooling Query`` for query tooling objects
++ Add new command ``Reload Symbol Table`` for custom apex class completion
 
 
 ## [0.1.6]
