@@ -12,7 +12,7 @@ function callVscode(data) {
 let app = new Vue({
     el: '#app',
     data: {
-        restUri: "",
+        restUri: "/sobjects/",
         restMethod: "get",
         restBody: ""
     },
