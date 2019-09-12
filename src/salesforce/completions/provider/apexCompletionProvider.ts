@@ -67,7 +67,7 @@ export class ApexCompletionItemProvider implements vscode.CompletionItemProvider
                 let _class = classes[pos.word.toLowerCase()];
 
                 // Add static method completion
-                let methodCompletionItems = util.getMethodCompletionItem(_class);
+                let methodCompletionItems = util.getMethodCompletionsOfClass(_class);
                 completionItems.push(...methodCompletionItems);
 
                 // Add property completion
@@ -88,8 +88,8 @@ export class ApexCompletionItemProvider implements vscode.CompletionItemProvider
                 if (classes.hasOwnProperty(variableType.toLowerCase())) {
                     let _class = classes[variableType.toLowerCase()];
 
-                    // Add static method completion
-                    let methodCompletionItems = util.getMethodCompletionItem(
+                    // Add instance method completion
+                    let methodCompletionItems = util.getMethodCompletionsOfClass(
                         _class, false
                     );
                     completionItems.push(...methodCompletionItems);

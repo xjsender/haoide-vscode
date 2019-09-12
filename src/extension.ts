@@ -10,6 +10,7 @@ import {
     ltnCompletionProvider,
     vfCompletionProvider,
     apexCompletionProvider,
+    customApexCompletionProvider,
     sobjectCompletionProvider
 } from "./salesforce/completions/provider";
 import * as contextUtil from "./utils/context";
@@ -226,6 +227,15 @@ export function activate(context: ExtensionContext) {
     ));
 
     /**
+     * Webview part
+     */
+    context.subscriptions.push(
+        commands.registerCommand('extension.haoide.startRestExplorer', () => {
+            RestWebPanel.showPanel(context.extensionPath);
+        })
+    );
+
+    /**
      * Completion part
      */
     context.subscriptions.push(languages.registerCompletionItemProvider(
@@ -241,19 +251,12 @@ export function activate(context: ExtensionContext) {
     ));
 
     context.subscriptions.push(languages.registerCompletionItemProvider(
-        'apex', sobjectCompletionProvider, ".", "="
+        'apex', customApexCompletionProvider, "."
     ));
 
-    context.subscriptions.push(
-        commands.registerCommand('extension.haoide.startRestExplorer', () => {
-            RestWebPanel.showPanel(context.extensionPath);
-        })
-    );
-
-    /**
-     * NLS i18n part
-     */
-    console.log(localize("activated.text", "Activated at {0}", Date.now()));
+    context.subscriptions.push(languages.registerCompletionItemProvider(
+        'apex', sobjectCompletionProvider, ".", "="
+    ));
 
     /**
      * Events part

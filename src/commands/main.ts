@@ -126,7 +126,7 @@ export function runSyncTests(testSuites: TestSuite[]) {
             data: {
                 "tests": testSuites
             },
-            progressMessage: "Running test class, please hold on"
+            progressMessage: "Running test class, please wait"
         }
     )
     .then( result => {
@@ -177,10 +177,10 @@ export function reloadSymbolTable() {
     ProgressNotification.showProgress(toolingApi, "query", {
         soql: "SELECT Id, Name, SymbolTable FROM ApexClass",
         batchSize: 200,
-        progressMessage: "This is a long time request, please waiting..."
+        progressMessage: "This is a long time request, please wait..."
     })
     .then( (result: QueryResult) => {
-        util.saveSymbolTable(result.records);
+        util.saveSymbolTables(result.records);
 
         // If it is not done, retrieve next records
         if (!result.done && result.nextRecordsUrl) {
@@ -191,10 +191,10 @@ export function reloadSymbolTable() {
         function retrieveNextRecordsUrl(nextRecordsUrl: string) {
             ProgressNotification.showProgress(toolingApi, "get", {
                 serverUrl: nextRecordsUrl,
-                progressMessage: `Retrieve nextRecordsUrl: ${nextRecordsUrl}`
+                progressMessage: `Retrieving nextRecordsUrl: ${nextRecordsUrl}`
             })
             .then( (result: QueryResult) => {
-                util.saveSymbolTable(result.records);
+                util.saveSymbolTables(result.records);
 
                 if (result.nextRecordsUrl) {
                     retrieveNextRecordsUrl(result.nextRecordsUrl);
@@ -241,7 +241,7 @@ export async function reloadSobjectCache(options?: any) {
 
             vscode.window.showInformationMessage(
                 "There is long time process to " + 
-                "load sobjects cache, please wait"
+                "load sobjects cache, please wait..."
             );
         })
         .catch( err => {
@@ -260,7 +260,7 @@ export async function reloadSobjectCache(options?: any) {
         sobjectsDesc = sobjectsDesc as SObjectDesc[];
 
         let { sobjects = {},  parentRelationships = {} } = 
-            settingsUtil.getSobjectsCache();
+            settingsUtil.getSobjects();
 
         // Collect parentRelationships
         for (const sobjectDesc of sobjectsDesc) {
@@ -273,8 +273,9 @@ export async function reloadSobjectCache(options?: any) {
             sobjects[sobjectDesc.name.toLowerCase()] =
                 sobjectDesc.name;
 
-            // Write sobject.json to local disk
-            settingsUtil.saveSobjectCache(sobjectDesc);
+            // Write different sobject describe result 
+            // to different json file at local disk
+            settingsUtil.saveSobjectDesc(sobjectDesc);
 
             for (const field of sobjectDesc.fields) {
                 if (field.referenceTo.length !== 1) {

@@ -67,12 +67,72 @@ export function setConfigValue(fileName: string,
 }
 
 /**
- * Save symbol tables to local disk
+ * Save custom apex class map to local disk
  * 
- * @param symbolTables symbol tables from apex class query result
+ * @param classMap apex calss map, i.e., {"lowerName", name}
  */
-export function saveSymbolTables(symbolTables: any) {
-    setConfigValue("symbolTables.json", symbolTables);
+export function saveClassMap(classMap: any) {
+    setConfigValue("classMap.json", classMap);
+}
+
+/**
+ * Get custom apex class map
+ * 
+ * @returns class map cache, i.e., {"<lowerName>", name}
+ */
+export function getClassMap() {
+    let filePath = getFilePath("classMap.json");
+
+    // Read file as Sobject
+    if (fs.existsSync(filePath)) {
+        let data = fs.readFileSync(filePath, "utf-8");
+        return JSON.parse(data.toString());
+    }
+
+    return {};
+}
+
+/**
+ * Get symbol table of spcified class
+ * 
+ * @param className custom apex class name
+ * @returns symbol table of specified custom class
+ */
+export function getSymbolTable(className: string) {
+    // Get file path of {sobjectName}.json
+    let filePath = getFilePath(
+        `${className}.json`, "symbolTables"
+    );
+
+    // Read file as Sobject
+    if (fs.existsSync(filePath)) {
+        let data = fs.readFileSync(filePath, "utf-8");
+        return JSON.parse(data.toString());
+    }
+
+    return {};
+}
+
+/**
+ * Save single symbol table of custom apex class to local disk
+ * 
+ * @param symbolTable symbol table of apex class
+ */
+export function saveSymbolTable(symbolTable: any) {
+    // Get fileName 
+    let filePath = getFilePath(
+        `${symbolTable.name}.json`, "symbolTables"
+    );
+
+    // Write file to cache
+    fs.writeFile(filePath,
+        JSON.stringify(symbolTable, null, 4),
+        err => {
+            vscode.window.setStatusBarMessage(
+                `${symbolTable.name} is saved to ${filePath}`
+            );
+        }
+    );
 }
 
 /**
@@ -81,11 +141,10 @@ export function saveSymbolTables(symbolTables: any) {
  * @param fileName config file name
  * @param options k-vs to replace in the config file
  */
-export function saveSobjectCache(sobjectDesc: any) {
+export function saveSobjectDesc(sobjectDesc: any) {
     // Get fileName 
     let filePath = getFilePath(
-        `${sobjectDesc.name}.json`, 
-        "sobjects"
+        `${sobjectDesc.name}.json`, "sobjects"
     );
 
     // Write file to cache
@@ -103,11 +162,11 @@ export function saveSobjectCache(sobjectDesc: any) {
  * Get sobjects cache
  * 
  * @returns sobjects cache, i.e. {
- *      "account": Account,
- *      "opportunity": "Opportunity"
+ *      "sobjects": any,
+ *      "parentRelationships": any
  * }
  */
-export function getSobjectsCache() {
+export function getSobjects() {
     let filePath = getFilePath("sobjects.json");
     
     // Read file as Sobject

@@ -24,20 +24,108 @@ export function getLastCharOfPosition(document: TextDocument, postition: Positio
 }
 
 /**
+ * Get completion items of properties for spcified class
+ * 
+ * @param className class name
+ * @param properties properties of specified class
+ * @returns properties completion items
+ */
+export function getPropertyCompletion(className: string, properties: any[]) {
+    let completionItems = [];
+
+    for (const _property of properties) {
+        let propertyName = _property["name"];
+        completionItems.push(createCompletionItem(
+            `${propertyName}`,
+            CompletionItemKind.Property,
+            `${className}.${propertyName}`,
+            undefined,
+            `${propertyName}$0`
+        ));
+    }
+
+    return completionItems;
+}
+
+/**
  * Get completion for class methods
  * 
  * @param _class class completion json from tooling api
- * @param isStatic if true, menas just return static method
+ * @param isStatic if true, menas just return static method, default is true
  * 
- * @returns completion item of std apex method
+ * @returns completion item for methods of standard apex class
  */
-export function getMethodCompletionItem(_class: any, isStatic=true): CompletionItem[] {
+export function getMethodCompletionsOfClass(_class: any, isStatic = true): CompletionItem[] {
     let completionItems = [];
 
     for (const _method of _class["methods"]) {
         if (_method["isStatic"] === isStatic) {
             let methodName = _method["name"];
             let returnType: string = _method["returnType"] || "";
+            let params: [] = _method["parameters"] || [];
+
+            // Add method parameters
+            if (params && params.length) {
+                let displayParams = [];
+                for (const param of params) {
+                    displayParams.push(`${param["type"]} ${param["name"]}`);
+                }
+
+                // Add tab index for every param
+                let returnParams = [];
+                for (let idx = 0; idx < displayParams.length; idx++) {
+                    const displayParam = displayParams[idx];
+                    returnParams.push("${" + (idx + 1) + ":" + displayParam + "}");
+                }
+
+                let displayParamStr = displayParams.join(", ");
+                let returnParamStr = returnParams.join(", ");
+                completionItems.push(createCompletionItem(
+                    `${methodName}(${displayParamStr})`,
+                    CompletionItemKind.Method,
+                    `${returnType} ${methodName}(${displayParamStr})`,
+                    undefined,
+                    `${methodName}(${returnParamStr})$0`
+                ));
+            }
+            else {
+                completionItems.push(createCompletionItem(
+                    `${methodName}()`,
+                    CompletionItemKind.Method,
+                    `${returnType} ${methodName}()`,
+                    undefined,
+                    `${methodName}()$0`
+                ));
+            }
+        }
+    }
+
+    return completionItems;
+}
+
+/**
+ * Get completion for methods in symbol table
+ * 
+ * @param symbolTable symbol table of apex class
+ * @param isStatic if true, menas just return static method, default is true
+ * 
+ * @returns completion item for methods of custom apex class
+ */
+export function getMethodCompletionsOfSymbolTable(symbolTable: any, isStatic=true): CompletionItem[] {
+    let completionItems = [];
+
+    for (const _method of symbolTable["methods"]) {
+        let modifiers: string[] = _method["modifiers"] || [];
+        let isStaticMethod = modifiers.includes("static");
+        let isPublicMethod = modifiers.includes("public");
+
+        // Only public method can be access out of class
+        if (isPublicMethod && isStaticMethod === isStatic) {
+            let methodName = _method["name"];
+            let returnType: string = _method["returnType"] || "";
+            let annotations: string = _.map(_method["annotations"], notation => {
+                return `@${notation["name"]}\n`;
+            }).join();
             let params: [] = _method["parameters"] || [];
 
             // Add method parameters
@@ -59,7 +147,7 @@ export function getMethodCompletionItem(_class: any, isStatic=true): CompletionI
                 completionItems.push(createCompletionItem(
                     `${methodName}(${displayParamStr})`,
                     CompletionItemKind.Method,
-                    `${returnType} ${methodName}(${displayParamStr})`,
+                    `${annotations}${returnType} ${methodName}(${displayParamStr})`,
                     undefined,
                     `${methodName}(${returnParamStr})$0`
                 ));
@@ -68,7 +156,7 @@ export function getMethodCompletionItem(_class: any, isStatic=true): CompletionI
                 completionItems.push(createCompletionItem(
                     `${methodName}()`,
                     CompletionItemKind.Method,
-                    `${returnType} ${methodName}()`,
+                    `${annotations}${returnType} ${methodName}()`,
                     undefined,
                     `${methodName}()$0`
                 ));

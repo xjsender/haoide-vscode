@@ -45,7 +45,7 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
         let completionItems: CompletionItem[] = [];
 
         // Get local cache for sobjects
-        let sobjectCache = settingsUtil.getSobjectsCache();
+        let sobjectCache = settingsUtil.getSobjects();
         let { sobjects, parentRelationships } = sobjectCache;
         if (!sobjects || !parentRelationships) {
             return [];

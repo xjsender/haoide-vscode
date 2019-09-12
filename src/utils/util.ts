@@ -582,11 +582,16 @@ export function unlinkFiles(files: string[]) {
  * 
  * @param records apex class query result
  */
-export function saveSymbolTable(records: ApexClass[]) {
-    let symbolTables: any = {};
+export function saveSymbolTables(records: ApexClass[]) {
+    let classMap: any = {};
     for (const record of records) {
-        symbolTables[record.Name.toLowerCase()] = record.SymbolTable;
+        let className = record.Name;
+        classMap[className.toLowerCase()] = className;
+
+        // Saves symbol table for every custom class 
+        // to different json file
+        settingsUtil.saveSymbolTable(record.SymbolTable);
     }
 
-    settingsUtil.saveSymbolTables(symbolTables);
+    settingsUtil.saveClassMap(classMap);
 }
