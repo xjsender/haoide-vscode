@@ -19,6 +19,8 @@ As today, haoide-vscode supports many completion, such as below,
     - Aura Completion
     - LWC Completion
     - sObject Completion
+    - sObject Picklist completion
+    - Custom Apex Completion
 
 Also support basic project operation, such as,
 + Authorized New Project
