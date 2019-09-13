@@ -10,7 +10,7 @@ import * as nls from 'vscode-nls';
 
 import * as util from "../utils/util";
 import * as settingsUtil from "../settings/settingsUtil";
-import JSONConverter from "../utils/json2Apex";
+import { JSON2Apex, JSON2Typescript } from "../utils/json";
 import { Session as SessionModel, FileProperty } from "../typings";
 import { settings, _session, metadata } from "../settings";
 
@@ -200,9 +200,46 @@ export function convertJson2Apex() {
             ));
         }
 
-        let jsonConverter = new JSONConverter();
+        let jsonConverter = new JSON2Apex();
         let snippet = jsonConverter.convertToApex(className, jsonObj).snippet;
         util.openNewUntitledFile(snippet, "apex");
+    });
+}
+
+/**
+ * Convert json to typescript
+ */
+export function convertJson2Typescript() {
+    // Get selection in the active editor if no jsonStr param
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return util.showCommandWarning();
+    }
+
+    let jsonStr = editor.document.getText(editor.selection);
+    let jsonObj = {};
+    try {
+        jsonObj = JSON.parse(jsonStr);
+    }
+    catch (err) {
+        return vscode.window.showWarningMessage(err.message);
+    }
+
+    vscode.window.showInputBox({
+        placeHolder: localize(
+            "inputClassName.text", "Please input your class name..."
+        )
+    })
+    .then(className => {
+        if (!className) {
+            return util.showCommandWarning(localize(
+                'requiredInput.text', "Please input required info"
+            ));
+        }
+
+        let jsonConverter = new JSON2Typescript();
+        let snippet = jsonConverter.convertToTypescript(className, jsonObj).snippet;
+        util.openNewUntitledFile(snippet, "typescript");
     });
 }
 

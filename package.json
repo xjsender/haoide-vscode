@@ -150,6 +150,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.convertJson2Typescript",
+				"title": "%extension.haoide.convertJson2Typescript.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.convertXml2Json",
 				"title": "%extension.haoide.convertXml2Json.title%",
 				"category": "Haoide"
@@ -298,6 +303,10 @@
 				{
 					"command": "extension.haoide.convertJson2Apex",
 					"when": "editorHasSelection"
+				},
+				{
+					"command": "extension.haoide.convertJson2Typescript",
+					"when": "editorHasSelection && false"
 				},
 				{
 					"command": "extension.haoide.convert15IdTo18Id"

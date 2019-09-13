@@ -5,7 +5,7 @@
 
 import * as _ from "lodash";
 
-export default class JSONConverter {
+export class JSON2Apex {
     private classes: string[];
     public snippet!: string;
     private scope = "public";
@@ -27,7 +27,7 @@ export default class JSONConverter {
     private addParser(name: string) {
         let parser = `${this.scope} static ${name} parse(String jsonStr) {` +
             `\n\treturn (${name})JSON.deserialize(jsonStr, ${name}.class);` +
-        '\n}';
+            '\n}';
 
         this.classes.push(parser);
     }
@@ -54,7 +54,7 @@ export default class JSONConverter {
      * @param jsonObj json object, it can be object or array of object
      * @param level convertion level
      */
-    public convertToApex(name: string, jsonObj: any, level=0) {
+    public convertToApex(name: string, jsonObj: any, level = 0) {
         if (_.isArray(jsonObj)) {
             if (jsonObj.length === 0) {
                 this.classes.push(`${this.scope} class ${name} {\n\n}\n`);
@@ -90,7 +90,7 @@ export default class JSONConverter {
                 else if (_.isUndefined(value) || _.isNull(value)) {
                     dataType = "Object";
                 }
-                
+
                 if (_.isArray(value)) {
                     statements.push(`\t${this.scope} List<${_.upperFirst(key)}> ${key};`);
                     if (!jsonObj[key]) {
@@ -109,7 +109,7 @@ export default class JSONConverter {
                 }
             });
 
-            let _class = `${this.scope} class ${name} ` + 
+            let _class = `${this.scope} class ${name} ` +
                 `{\n${statements.join("\n")}\n}\n`;
 
             if (!this.classes.includes(_class)) {
@@ -118,6 +118,91 @@ export default class JSONConverter {
 
             if (level === 0) {
                 this.addParser(name);
+                this.snippet = this.classes.join("\n");
+            }
+        }
+
+        return this;
+    }
+}
+
+export class JSON2Typescript {
+    private classes: string[];
+    public snippet!: string;
+    private scope = "export";
+
+    /**
+     * Get instance of converter
+     * 
+     * @param options options, {scope: export}
+     */
+    constructor(options?: any) {
+        this.classes = [];
+
+        if (options && options.scope) {
+            this.scope = options.scope;
+        }
+    }
+
+    /**
+     * Set converted snippet
+     * 
+     * @param name class name
+     * @param jsonObj json object, it can be object or array of object
+     * @param level convertion level
+     */
+    public convertToTypescript(name: string, jsonObj: any, level = 0) {
+        if (_.isArray(jsonObj)) {
+            if (jsonObj.length === 0) {
+                this.classes.push(`${this.scope} class ${name} {\n\n}\n`);
+                this.snippet = this.classes.join("\n");
+                return this;
+            }
+            else {
+                jsonObj = jsonObj[0];
+            }
+        }
+
+        if (_.isObject(jsonObj)) {
+            let statements: string[] = [];
+            _.map(jsonObj, (value, key) => {
+                let dataType = "string";
+                if (_.isInteger(value) || _.isNumber(value)) {
+                    dataType = "number";
+                }
+                else if (_.isBoolean(value)) {
+                    dataType = "boolean";
+                }
+                else if (_.isUndefined(value) || _.isNull(value)) {
+                    dataType = "Object | undefined";
+                }
+
+                if (_.isArray(value)) {
+                    statements.push(`\t${key}: ${_.upperFirst(key)}[];`);
+                    if (!jsonObj[key]) {
+                        this.classes.push(`${this.scope} class ${_.upperFirst(key)} {\n\n}\n`);
+                    }
+                    else {
+                        this.convertToTypescript(_.upperFirst(key), jsonObj[key][0], 1);
+                    }
+                }
+                else if (_.isObject(value)) {
+                    statements.push(`\t${key}: ${_.upperFirst(key)};`);
+                    this.convertToTypescript(_.upperFirst(key), jsonObj[key], 1);
+                }
+                else {
+                    statements.push(`\t${key}: ${dataType};`);
+                }
+            });
+
+            let _class = `${this.scope} class ${name} ` +
+                `{\n${statements.join("\n")}\n}\n`;
+
+            if (!this.classes.includes(_class)) {
+                this.classes.push(_class);
+            }
+
+            if (level === 0) {
                 this.snippet = this.classes.join("\n");
             }
         }

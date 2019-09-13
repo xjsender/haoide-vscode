@@ -181,6 +181,12 @@ export function activate(context: ExtensionContext) {
         utility.convertJson2Apex
     ));
 
+    // Register convertJson2Typescript command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.convertJson2Typescript",
+        utility.convertJson2Typescript
+    ));
+
     /**
      * Register for creating metaObject
      */

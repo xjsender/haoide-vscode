@@ -34,7 +34,7 @@ export interface QueryResult {
     totalSize: number;
     nextRecordsUrl: string;
     size?: number; // For Tooling
-    queryLocator?: undefined; // For Tooling
+    queryLocator?: Object | undefined; // For Tooling
     entityTypeName: string; // For Tooling
 }
 

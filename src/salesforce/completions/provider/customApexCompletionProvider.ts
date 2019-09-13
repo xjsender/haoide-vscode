@@ -68,7 +68,7 @@ export class CustomApexCompletionItemProvider implements vscode.CompletionItemPr
 
                 // Add properties completion
                 let propertiesCompletionItems = util.getPropertyCompletion(
-                    className, symbolTable["properties"] || []
+                    className, symbolTable.properties || []
                 );
                 completionItems.push(...propertiesCompletionItems);
             }
@@ -91,7 +91,7 @@ export class CustomApexCompletionItemProvider implements vscode.CompletionItemPr
 
                     // Add properties completion of class instance
                     let propertiesCompletionItems = util.getPropertyCompletion(
-                        className, symbolTable["properties"] || []
+                        className, symbolTable.properties || []
                     );
                     completionItems.push(...propertiesCompletionItems);
                 }

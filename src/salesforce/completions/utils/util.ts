@@ -7,6 +7,7 @@ import * as _ from "lodash";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range, SnippetString } from "vscode";
 import { PositionOption } from "../models/completion";
 import * as settingsUtil from "../../../settings/settingsUtil";
+import { SymbolTable } from "../../../typings/symbolTable";
 
 /**
  * Get last character in the cursor position
@@ -111,28 +112,28 @@ export function getMethodCompletionsOfClass(_class: any, isStatic = true): Compl
  * 
  * @returns completion item for methods of custom apex class
  */
-export function getMethodCompletionsOfSymbolTable(symbolTable: any, isStatic=true): CompletionItem[] {
+export function getMethodCompletionsOfSymbolTable(symbolTable: SymbolTable, isStatic=true): CompletionItem[] {
     let completionItems = [];
 
-    for (const _method of symbolTable["methods"]) {
-        let modifiers: string[] = _method["modifiers"] || [];
+    for (const _method of symbolTable.methods) {
+        let modifiers: string[] = _method.modifiers || [];
         let isStaticMethod = modifiers.includes("static");
         let isPublicMethod = modifiers.includes("public");
 
         // Only public method can be access out of class
         if (isPublicMethod && isStaticMethod === isStatic) {
-            let methodName = _method["name"];
-            let returnType: string = _method["returnType"] || "";
-            let annotations: string = _.map(_method["annotations"], notation => {
-                return `@${notation["name"]}\n`;
+            let methodName = _method.name;
+            let returnType: string = _method.returnType || "";
+            let annotations: string = _.map(_method.annotations, notation => {
+                return `@${notation.name}\n`;
             }).join();
-            let params: [] = _method["parameters"] || [];
+            let params = _method.parameters || [];
 
             // Add method parameters
             if (params && params.length) {
                 let displayParams = [];
                 for (const param of params) {
-                    displayParams.push(`${param["type"]} ${param["name"]}`);
+                    displayParams.push(`${param.type} ${param.name}`);
                 }
 
                 // Add tab index for every param
@@ -144,10 +145,13 @@ export function getMethodCompletionsOfSymbolTable(symbolTable: any, isStatic=tru
 
                 let displayParamStr = displayParams.join(", ");
                 let returnParamStr = returnParams.join(", ");
+
                 completionItems.push(createCompletionItem(
                     `${methodName}(${displayParamStr})`,
                     CompletionItemKind.Method,
-                    `${annotations}${returnType} ${methodName}(${displayParamStr})`,
+                    `${annotations} ` +
+                    `public ${isStaticMethod ? 'static ' : ''}` +
+                    `${returnType} ${methodName}(${displayParamStr})`,
                     undefined,
                     `${methodName}(${returnParamStr})$0`
                 ));
@@ -156,7 +160,9 @@ export function getMethodCompletionsOfSymbolTable(symbolTable: any, isStatic=tru
                 completionItems.push(createCompletionItem(
                     `${methodName}()`,
                     CompletionItemKind.Method,
-                    `${annotations}${returnType} ${methodName}()`,
+                    `${annotations} ` + 
+                    `public ${isStaticMethod ? 'static ' : ''}` +
+                    `${returnType} ${methodName}`,
                     undefined,
                     `${methodName}()$0`
                 ));

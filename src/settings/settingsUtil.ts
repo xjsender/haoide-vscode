@@ -3,6 +3,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as util from "../utils/util";
 import { SObjectDesc } from "../typings";
+import { SymbolTable } from "../typings/symbolTable";
 
 /**
  * Get all configs or get value of spcified key
@@ -98,7 +99,7 @@ export function getClassMap() {
  * @param className custom apex class name
  * @returns symbol table of specified custom class
  */
-export function getSymbolTable(className: string) {
+export function getSymbolTable(className: string): SymbolTable {
     // Get file path of {sobjectName}.json
     let filePath = getFilePath(
         `${className}.json`, "symbolTables"
@@ -107,10 +108,10 @@ export function getSymbolTable(className: string) {
     // Read file as Sobject
     if (fs.existsSync(filePath)) {
         let data = fs.readFileSync(filePath, "utf-8");
-        return JSON.parse(data.toString());
+        return JSON.parse(data.toString()) as SymbolTable;
     }
 
-    return {};
+    return {} as SymbolTable;
 }
 
 /**
