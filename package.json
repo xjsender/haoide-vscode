@@ -193,6 +193,15 @@
 				"command": "extension.haoide.startRestExplorer",
 				"title": "%extension.haoide.startRestExplorer.title%",
 				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.setSyntaxToApex",
+				"title": "%extension.haoide.setSyntaxToApex.title%",
+				"icon": {
+					"light": "./resources/media/svgs/language.svg",
+					"dark": "./resources/media/svgs/language.svg"
+				},
+				"category": "Haoide"
 			}
 		],
 		"menus": {
@@ -357,7 +366,11 @@
 					"group": "z_commands",
 					"command": "extension.haoide.locateThisInBrowser"
 				}
-			]
+			],
+			"editor/title": [{
+				"command": "extension.haoide.setSyntaxToApex",
+				"group": "navigation"
+			}]
 		},
 		"keybindings": [
 			{

@@ -232,6 +232,13 @@ export function activate(context: ExtensionContext) {
         }
     ));
 
+    // Register setSyntaxToApex command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.setSyntaxToApex", () => {
+            utility.setSyntax("apex");
+        }
+    ));
+
     /**
      * Webview part
      */

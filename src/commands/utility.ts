@@ -117,6 +117,20 @@ export async function switchProject(projectName?: string) {
 }
 
 /**
+ * Set the language of active editor to specified one
+ * 
+ * @param languageId languageId to be set
+ */
+export function setSyntax(languageId="apex") {
+    let editor = vscode.window.activeTextEditor;
+    if (editor) {
+        vscode.languages.setTextDocumentLanguage(
+            editor.document, languageId
+        );
+    }
+}
+
+/**
  * Command for locate active file in browser
  */
 export function locateThisInBrowser() {
