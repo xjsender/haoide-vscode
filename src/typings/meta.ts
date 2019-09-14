@@ -31,6 +31,7 @@ export interface MetadataModel {
     testRequired: boolean;
 }
 
+// Model for retrieve request result
 export interface RetrieveResult {
     done: boolean;
     zipFile: string;
@@ -41,6 +42,7 @@ export interface RetrieveResult {
     success: boolean;
 }
 
+// Message in retrieve request result
 export interface Message {
     fileName: string;
     problem: string;

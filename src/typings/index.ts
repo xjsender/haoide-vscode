@@ -28,6 +28,7 @@ export enum ConfirmAction {
     OVERRIDE = "Override"
 }
 
+// Used in rest query response
 export interface QueryResult {
     done: boolean;
     records: any[];

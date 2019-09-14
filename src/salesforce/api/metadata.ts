@@ -10,7 +10,7 @@ import * as auth from "../../commands/auth";
 import * as util from "../../utils/util";
 import SOAP from "../lib/soap";
 import ProgressNotification from "../../utils/progress";
-import { _session, settings } from "../../settings";
+import { _session, settings, metadata } from "../../settings";
 
 export default class MetadataApi {
     private soap!: SOAP;
@@ -157,6 +157,34 @@ export default class MetadataApi {
     }
 
     /**
+     * List package for 
+     * 
+     * @param options {"types": {"Folder": []}}
+     * @returns Promise<any>{ body }
+     */
+    public async listPackage(options: any) {
+        return this._invoke_method(_.extend(options, {
+            "requestType": "ListPackage"
+        }));
+    }
+
+    public prepareMembers(retrieveTypes: any, retrieveAll=false) {
+        // List package for metadata objects which 'inFolder' is true
+        // EmailFolder, DocumentFolder, DashboardFolder and ReportFolder
+        let records = [];
+        _.map(metadata.getXmlNamesInFolder(), (xmlName: string) => {
+            let members: string[] = retrieveTypes[xmlName];
+            if (members && members.includes("*")) {
+                xmlName = xmlName === 'EmailTemplate'
+                    ? 'EmailFolder' : xmlName + 'Folder';
+
+                
+            }
+        });
+        
+    }
+
+    /**
      * Retrieve files from server
      * 1. Issue a retrieve request to get asyncProcessId
      * 2. Issue a resursive checkRetrieveStatus util done
@@ -164,10 +192,10 @@ export default class MetadataApi {
      * 
      * @param options {
      *      "types" : {"ApexClass": ["*"], "ApexTrigger": ["A", "B"]}, 
-     *      "package_names": Array<string>,
+     *      "packageNames": Array<string>,
      *      "retrieveAll": true | false
      * }
-     * @returns new Promise<any>{ body }
+     * @returns Promise<any>{ body }
      */
     public retrieve(options: any = {}) {
         let self = this;

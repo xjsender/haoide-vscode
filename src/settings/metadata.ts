@@ -59,9 +59,8 @@ export default class Metadata {
     /**
      * Get metaObject by metaFolder(directoryName)
      * 
-     * @param metaFolder metadata folder (directoryName)
-     * @returns metaObject,
-     * i.e., {
+     * @param key directoryName or xmlName
+     * @returns metaObject, i.e., {
      *      "directoryName": "classes",
      *      "inFolder": "false",
      *      "metaFile": "true",
@@ -69,18 +68,38 @@ export default class Metadata {
      *      "xmlName": "ApexClass"
      *  }
      */
-    public getMetaObject(metaFolder: string): MetaObject {
+    public getMetaObject(key: string): MetaObject {
         if (this.metaObjects === undefined) {
             this.metaObjects = this.getMetaObjects();
         }
 
         for (const metaObject of this.metaObjects) {
-            if (metaObject.directoryName === metaFolder) {
+            if (metaObject.directoryName === key
+                    || metaObject.xmlName === key) {
                 return metaObject;
             }
         }
 
         return {} as MetaObject;
+    }
+
+    /**
+     * Get xmlName array of meta objects which inFolder attr is true
+     * 
+     * @returns xmlName array of metaObjects 
+     * which inFolder attribute is true, for example,
+     * EmailFolder, DocumentFolder, DashboardFolder and ReportFolder
+     */
+    public getXmlNamesInFolder() {
+        if (this.metaObjects === undefined) {
+            this.metaObjects = this.getMetaObjects();
+        }
+
+        return _.map(this.metaObjects, mo => {
+            if (mo.inFolder) {
+                return mo.xmlName;
+            }
+        });
     }
 
     /**
