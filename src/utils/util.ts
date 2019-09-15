@@ -566,7 +566,18 @@ export function getFilePropertyByFileName(fileName: string): FileProperty {
  */
 export function unlinkFiles(files: string[]) {
     for (const _file of files) {
-        if (fs.existsSync(_file)) {
+        let attr = packageUtil.getFileAttributes(_file);
+        if (["aura", "lwc"].includes(attr.directoryName)) {
+            let dirName = path.dirname(_file);
+            for (const fileName of fs.readdirSync(dirName)) {
+                let fileFullName = path.join(dirName, fileName);
+                fs.unlinkSync(fileFullName);
+            }
+
+            // Remove folder for aura or lwc
+            fs.rmdirSync(dirName);
+        }
+        else if (fs.existsSync(_file)) {
             fs.unlinkSync(_file);
         }
 
