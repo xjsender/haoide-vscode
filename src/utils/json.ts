@@ -154,7 +154,7 @@ export class JSON2Typescript {
     public convertToTypescript(name: string, jsonObj: any, level = 0) {
         if (_.isArray(jsonObj)) {
             if (jsonObj.length === 0) {
-                this.classes.push(`${this.scope} class ${name} {\n\n}\n`);
+                this.classes.push(`${this.scope} interface ${name} {\n\n}\n`);
                 this.snippet = this.classes.join("\n");
                 return this;
             }
@@ -180,7 +180,7 @@ export class JSON2Typescript {
                 if (_.isArray(value)) {
                     statements.push(`\t${key}: ${_.upperFirst(key)}[];`);
                     if (!jsonObj[key]) {
-                        this.classes.push(`${this.scope} class ${_.upperFirst(key)} {\n\n}\n`);
+                        this.classes.push(`${this.scope} interface ${_.upperFirst(key)} {\n\n}\n`);
                     }
                     else {
                         this.convertToTypescript(_.upperFirst(key), jsonObj[key][0], 1);
@@ -195,7 +195,7 @@ export class JSON2Typescript {
                 }
             });
 
-            let _class = `${this.scope} class ${name} ` +
+            let _class = `${this.scope} interface ${name} ` +
                 `{\n${statements.join("\n")}\n}\n`;
 
             if (!this.classes.includes(_class)) {

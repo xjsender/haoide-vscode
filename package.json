@@ -316,7 +316,7 @@
 				},
 				{
 					"command": "extension.haoide.convertJson2Typescript",
-					"when": "editorHasSelection && false"
+					"when": "editorHasSelection"
 				},
 				{
 					"command": "extension.haoide.convert15IdTo18Id"
