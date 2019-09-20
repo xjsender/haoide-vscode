@@ -30,6 +30,14 @@ let app = new Vue({
                 method: this.restMethod,
                 data: this.restBody
             })
+        },
+        formatBody() {
+            try {
+                this.restBody = JSON.stringify(JSON.parse(this.restBody), null, 4);
+            }
+            catch (err) {
+                
+            }
         }
     }
 });
