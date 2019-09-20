@@ -24,7 +24,7 @@ export class VisualforceCompletionItemProvider implements vscode.CompletionItemP
     public provideCompletionItems(document: TextDocument, position: Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 
         let enableDebugMode = extensionSettings.getConfigValue(
-            "enable-debug-mode", false
+            "enableDebugLog", false
         );
         
         // We can't get correct word if remove -1

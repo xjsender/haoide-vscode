@@ -21,7 +21,7 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
         context: vscode.CompletionContext) {
 
         let enableDebugMode = extensionSettings.getConfigValue(
-            "enable-debug-mode", true
+            "enableDebugLog", false
         );
 
         // We can't get correct word if remove -1

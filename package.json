@@ -495,9 +495,9 @@
 			"type": "object",
 			"title": "haoide",
 			"properties": {
-				"haoide.enable-debug-log": {
+				"haoide.enableDebugLog": {
 					"type": "boolean",
-					"default": true,
+					"default": false,
 					"description": "Indicate whether print debug log"
 				},
 				"haoide.workspace": {
