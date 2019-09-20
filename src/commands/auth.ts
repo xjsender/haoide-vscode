@@ -5,6 +5,7 @@
 
 import * as vscode from "vscode";
 import * as nls from 'vscode-nls';
+import * as moment from 'moment';
 
 import * as util from "../utils/util";
 import OAuth from "../salesforce/lib/auth/oauth";
@@ -74,9 +75,18 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
  */
 export function authorizeDefaultProject() {
     let session = _session.getSession();
-    let oauth = new OAuth(session.instanceUrl);
 
     return new Promise<any>( (resolve, reject) => {
+        // Check whether session is refreshed n minutes before,
+        // if not, don't need to refresh it again
+        if (moment(session.lastUpdatedTime).add(15, 'minutes').isAfter(new Date())) {
+            resolve(session);
+            return vscode.window.showInformationMessage(
+                localize('sessionNotExpired', "Session is still not expired")
+            );
+        }
+
+        let oauth = new OAuth(session.instanceUrl);
         ProgressNotification.showProgress(
             oauth, "refreshToken", {
                 refresh_token: session.refreshToken
@@ -95,7 +105,7 @@ export function authorizeDefaultProject() {
                 localize("sessionRefreshed.text","Session information is refreshed")
             );
 
-            resolve(sessionId);
+            resolve(_session.getSession());
         })
         .catch( err => {
             if (err.message.indexOf("expired access/refresh token")) {
