@@ -63,6 +63,12 @@ export function activate(context: ExtensionContext) {
         main.retrieveOpenFilesFromServer
     ));
 
+    // Register retrieveByManifest command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.retrieveByManifest",
+        main.retrieveByManifest
+    ));
+
     // Register destructThisFromServer command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.destructThisFromServer",
@@ -291,5 +297,5 @@ export function activate(context: ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
-    console.log(localize("deactivated.text", "Deactivated at {0}", Date.now()));
+    
 }

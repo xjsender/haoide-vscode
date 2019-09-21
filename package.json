@@ -357,6 +357,10 @@
 				},
 				{
 					"group": "z_commands",
+					"command": "extension.haoide.retrieveByManifest"
+				},
+				{
+					"group": "z_commands",
 					"command": "extension.haoide.deployThisToServer"
 				},
 				{
@@ -394,6 +398,13 @@
 				"mac": "alt+u",
 				"win": "alt+u",
 				"linux": "alt+u"
+			},
+			{
+				"command": "extension.haoide.retrieveByManifest",
+				"key": "ctrl+alt+m",
+				"mac": "ctrl+shift+m",
+				"win": "ctrl+alt+m",
+				"linux": "ctrl+alt+m"
 			},
 			{
 				"command": "extension.haoide.retrieveThisFromServer",
