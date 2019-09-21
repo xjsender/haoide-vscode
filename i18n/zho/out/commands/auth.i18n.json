@@ -4,5 +4,6 @@
     "productionEnv.text": "生产环境",
     "sandboxEnv.text": "沙盒环境",
     "chooseLoginUrl.text": "请选择LoginUrl",
-    "sessionRefreshed.text": "Session已更新"
+    "sessionRefreshed.text": "Session已更新",
+    "sessionNotExpired.text": "Session还未过期"
 }
