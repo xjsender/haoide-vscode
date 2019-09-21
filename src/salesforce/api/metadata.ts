@@ -120,10 +120,11 @@ export default class MetadataApi {
      * @returns Promise<any>{ body }
      */
     public listMetadata(options: any) {
+        let typesLiteral = _.keys(options.types).join(', ');
         return this._invoke_method(_.extend(options, {
             requestType: "ListMetadata",
             progressDone: false,
-            progressMessage: "Listing metadata for types"
+            progressMessage: `Listing metadata for ${typesLiteral}`
         }));
     }
 
@@ -164,13 +165,19 @@ export default class MetadataApi {
                     ? 'EmailFolder' : xmlName + 'Folder';
                 _types[metaObject] = [''];
 
-                let records: ListMetadataResponse[] = await self.listMetadata(_types);
+                let records: ListMetadataResponse[] = await self.listMetadata({
+                    progress: options.progress,
+                    types: _types
+                });
                 let folders = _.map(records, r => r.fullName);
 
                 // List metdata for folders
                 for (const _folders of _.chunk(folders, 3)) {
                     let _types: any = {}; _types[xmlName] = _folders;
-                    let result: ListMetadataResponse[] = await self.listMetadata(_types);
+                    let result: ListMetadataResponse[] = await self.listMetadata({
+                        progress: options.progress,
+                        types: _types
+                    });
 
                     if (_.isArray(result)) {
                         records.push(...result);
@@ -206,7 +213,10 @@ export default class MetadataApi {
                 _types[xmlName] = [''];
             }
 
-            let records: ListMetadataResponse[] = await self.listMetadata(_types);
+            let records: ListMetadataResponse[] = await self.listMetadata({
+                progress: options.progress,
+                types: _types
+            });
             for (const record of records) {
                 if (record.namespacePrefix || record.namespacePrefix !== namespacePrefix) {
                     continue;
@@ -286,7 +296,7 @@ export default class MetadataApi {
                         requestType: "CheckRetrieveStatus",
                         asyncProcessId: retrieveStatus.id,
                         progressDone: false,
-                        progressMessage: `Request Status: ${retrieveStatus.state}`
+                        progressMessage: `Request Status: ${checkRetrieveStatus.status}`
                     })
                 ) as CheckRetrieveResult;
             }
