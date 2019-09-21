@@ -5,7 +5,7 @@ export default class ProgressNotification {
      * Start vscode progress notfication
      * 
      * @param self the context of invoker
-     * @param methodName the method name in the metadata Api
+     * @param methodName the method name of the invoker
      * @param options any
      */
     public static showProgress(self: any, methodName: string, options: any) {
@@ -34,7 +34,7 @@ export default class ProgressNotification {
      * @param message message to report
      * @param increment progress rate, from 0 - 100
      */
-    public static notify(progress: any, message: string, increment?: number) {
+    public static notify(progress: vscode.Progress<any>, message: string, increment?: number) {
         if (progress) {
             progress.report({
                 message: message,

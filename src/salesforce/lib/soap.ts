@@ -143,9 +143,9 @@ export default class SOAP {
      * 
      * @param options {"asyncProcessId": string}
      * @param includeDetails true means including deploy details in the deployment result
-     * @returns Soap body for ````listPackage```` request
+     * @returns Soap body for ```listMetadata`` request
      */
-    private createListPackageRequest(options: any) {
+    private createListMetadataRequest(options: any) {
         let queries: string[] = [];
         _.map(options["types"], (folders, _type) => {
             for (const folder of folders) {
@@ -188,15 +188,15 @@ export default class SOAP {
      * @returns soap body for ```retrieve request```
      */
     private createRetrieveRequest(options: any) {
-        let packages = "";
+        let packages: string[] = [];
         if (options["packageNames"]) {
-            packages = options["packageNames"].map( (pn: string) => {
+            packages = _.map(options["packageNames"], (pn: string) => {
                 return `<met:packageNames>${pn}</met:packageNames>`;
-            }).join("");
+            });
         }
 
         let metadataObjects: string[] = [];
-        _.map(options["types"], (members, metaName) => {
+        _.map(options["types"], (members, xmlName) => {
             let membersStr = members.map((m: string) => {
                 return `<met:members>${m}</met:members>`;
             }).join("");
@@ -204,7 +204,7 @@ export default class SOAP {
             metadataObjects.push(
                 `<met:types>
                     ${membersStr}
-                    <name>${metaName}</name>
+                    <name>${xmlName}</name>
                 </met:types>`
             );
         });
@@ -213,8 +213,8 @@ export default class SOAP {
             <met:retrieve>
                 <met:retrieveRequest>
                     <met:apiVersion>${this.apiVerson}.0</met:apiVersion>
-                    ${packages}
-                    <met:unpackaged>${metadataObjects}</met:unpackaged>
+                    ${packages.join("")}
+                    <met:unpackaged>${metadataObjects.join("")}</met:unpackaged>
                 </met:retrieveRequest>
             </met:retrieve>
         `;

@@ -3,35 +3,35 @@
  * @author Mouse Liu <mouse.mliu@gmail.com>
  */
 
-import * as vscode from "vscode";
-import * as _ from "lodash";
+import * as vscode from 'vscode';
+import * as _ from 'lodash';
 import * as nls from 'vscode-nls';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as shelljs from 'shelljs';
 import * as promiseLimit from 'promise-limit';
+import * as xmlParser from 'fast-xml-parser';
 
-import * as util from "../utils/util";
-import * as utility from "./utility";
-import * as packages from "../utils/package";
-import * as settingsUtil from "../settings/settingsUtil";
-import MetadataApi from "../salesforce/api/metadata";
-import ApexApi from "../salesforce/api/apex";
-import RestApi from "../salesforce/api/rest";
-import ToolingApi from "../salesforce/api/tooling";
-import ProgressNotification from "../utils/progress";
-import { _session, settings, metadata } from "../settings";
+import * as util from '../utils/util';
+import * as utility from './utility';
+import * as packages from '../utils/package';
+import * as settingsUtil from '../settings/settingsUtil';
+import MetadataApi from '../salesforce/api/metadata';
+import ApexApi from '../salesforce/api/apex';
+import RestApi from '../salesforce/api/rest';
+import ToolingApi from '../salesforce/api/tooling';
+import ProgressNotification from '../utils/progress';
+import { _session, settings, metadata } from '../settings';
 import { 
     SObjectDesc, 
     MetadataModel, 
     TestSuite, TestObject,
-    RetrieveResult, Message, 
     DeployResult,
     Template,
     ConfirmAction,
-    ApexClass,
     QueryResult
-} from "../typings";
+} from '../typings';
+import { CheckRetrieveResult } from '../typings/meta';
 
 const localize = nls.loadMessageBundle();
 
@@ -598,10 +598,14 @@ export function retrieveOpenFilesFromServer() {
  */
 export function retrieveFilesFromServer(fileNames: string[]) {
     let retrieveTypes = packages.getRetrieveTypes(fileNames);
-    new MetadataApi().retrieve({ 
-        "types": retrieveTypes 
-    })
-    .then( (result: RetrieveResult) => {
+    ProgressNotification.showProgress(
+        new MetadataApi(), 'retrieve', {
+            types: retrieveTypes,
+            progressDone: false,
+            progressMessage: "Retrieving files from server"
+        }
+    )
+    .then( (result: CheckRetrieveResult) => {
         // Show error message as friendly format if have
         let messages: any = result.messages;
         if (messages && !_.isArray(messages)) {
@@ -660,43 +664,49 @@ export function createNewProject(reloadCache = true) {
         retrieveTypes[mo] = ["*"];
     }
 
-    new MetadataApi().retrieve({ "types": retrieveTypes })
-        .then( (result: RetrieveResult) => {
-            // Extract retrieved zipFile
-            packages.extractZipFile(result.zipFile);
+    ProgressNotification.showProgress(
+        new MetadataApi(), 'retrieve', {
+            types: retrieveTypes,
+            progressDone: false,
+            progressMessage: "Retrieving files from server"
+        }
+    )
+    .then( (result: CheckRetrieveResult) => {
+        // Extract retrieved zipFile
+        packages.extractZipFile(result.zipFile);
 
-            // Keep fileProperties to local disk
-            util.setFileProperties(result.fileProperties);
+        // Keep fileProperties to local disk
+        util.setFileProperties(result.fileProperties);
 
-            // Reload sObject cache
-            if (reloadCache) {
-                reloadSobjectCache({ 
-                    reloadAll: true
-                });
+        // Reload sObject cache
+        if (reloadCache) {
+            reloadSobjectCache({ 
+                reloadAll: true
+            });
+        }
+
+        // Copy .gitignore file to project 
+        // if .gitignore is not exist in the project
+        let extension = util.getExtensionInstance();
+        if (extension) {
+            let sourceFile = path.join(
+                extension.extensionPath,
+                "resources", ".gitignore"
+            );
+
+            let destFile = path.join(
+                util.getProjectPath(), ".gitignore"
+            );
+            
+            if (!fs.existsSync(destFile)) {
+                shelljs.cp("-f", sourceFile, destFile);
             }
-
-            // Copy .gitignore file to project 
-            // if .gitignore is not exist in the project
-            let extension = util.getExtensionInstance();
-            if (extension) {
-                let sourceFile = path.join(
-                    extension.extensionPath,
-                    "resources", ".gitignore"
-                );
-
-                let destFile = path.join(
-                    util.getProjectPath(), ".gitignore"
-                );
-                
-                if (!fs.existsSync(destFile)) {
-                    shelljs.cp("-f", sourceFile, destFile);
-                }
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            vscode.window.showErrorMessage(err.message);
-        });
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        vscode.window.showErrorMessage(err.message);
+    });
 }
 
 export async function createMetaObject(metaType: string) {

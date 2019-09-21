@@ -11,6 +11,8 @@ import * as util from "../../utils/util";
 import SOAP from "../lib/soap";
 import ProgressNotification from "../../utils/progress";
 import { _session, settings, metadata } from "../../settings";
+import { ListMetadataResponse, RetrieveResult, CheckRetrieveResult } from "../../typings";
+import { rejects } from "assert";
 
 export default class MetadataApi {
     private soap!: SOAP;
@@ -53,14 +55,16 @@ export default class MetadataApi {
                 method: options["method"] || "POST",
                 headers: self.headers,
                 uri: self.metadataUrl,
+                gzip: options.gzip || false,
                 body: soapBody
             };
+            console.log(requestOptions);
+            
 
             // Send notification
             ProgressNotification.notify(
                 options.progress, 
-                options.progressMessage || 
-                    `Start ${requestType}...`
+                options.progressMessage || `Start ${requestType} request...`
             );
 
             request(requestOptions).then( body => {
@@ -72,7 +76,7 @@ export default class MetadataApi {
                     options.progress, 
                     options.progressMessage ||
                         `${requestType} submitted successfully`, 
-                    100
+                    options.progressDone || undefined
                 );
 
                 resolve(result);
@@ -98,90 +102,141 @@ export default class MetadataApi {
     }
 
     /**
-     * Describe Metadata
+     * Dist package for specified metaObject or folders
      * 
-     * @param options options, {"progress": progress}
-     * @returns {Promise.<Response>}
+     * @param options {"progress": vscode.Progress}
+     * @returns Promise<any>
      */
     public describeMetadata(options: any) {
         return this._invoke_method(_.extend(options, {
-            "requestType": "DescribeMetadata"
+            requestType: "DescribeMetadata"
         }));
+    }
+
+    /**
+     * List package for speicifed metaObject or folders
+     * 
+     * @param options {"types": {"Folder": []}}
+     * @returns Promise<any>{ body }
+     */
+    public listMetadata(options: any) {
+        return this._invoke_method(_.extend(options, {
+            requestType: "ListMetadata",
+            progressDone: false,
+            progressMessage: "Listing metadata for types"
+        }));
+    }
+
+    /**
+     * List metadata for specified meta objects
+     * 
+     * @param options, for example, {
+     *      "types": {
+     *          "ApexClass": ["*"], "ApexTrigger": ["A", "B"]
+     *      },
+     *      "retrieveAll": true | false
+     * }
+     * @returns wrapped options with listMetadata result
+     */
+    private async prepareMembers(options: any) {
+        let self = this;
+        let retrieveTypes: any = options["types"];
+        
+        // If retrieveAll is true, listMetadata for all metaObjects
+        if (options.retrieveAll) {
+            for (const metaObject of metadata.getMetaObjects()) {
+                retrieveTypes[metaObject.xmlName] = ["*"];
+            }
+        }
+
+        // List package for metadata objects which inFolder is true
+        // for exmaple, EmailFolder, DocumentFolder, DashboardFolder and ReportFolder
+        let xmlNamesInFolder: string[] = metadata.getXmlNamesInFolder();
+        for (const xmlName in retrieveTypes) {
+            if (retrieveTypes.hasOwnProperty(xmlName)) {
+                const members: string[] = retrieveTypes[xmlName];
+                if (!xmlNamesInFolder.includes(xmlName) || !members.includes("*")) {
+                    continue;
+                }
+
+                let _types: any = {};
+                let metaObject = xmlName === 'EmailTemplate'
+                    ? 'EmailFolder' : xmlName + 'Folder';
+                _types[metaObject] = [''];
+
+                let records: ListMetadataResponse[] = await self.listMetadata(_types);
+                let folders = _.map(records, r => r.fullName);
+
+                // List metdata for folders
+                for (const _folders of _.chunk(folders, 3)) {
+                    let _types: any = {}; _types[xmlName] = _folders;
+                    let result: ListMetadataResponse[] = await self.listMetadata(_types);
+
+                    if (_.isArray(result)) {
+                        records.push(...result);
+                    }
+                    else {
+                        console.log(`Exception for ${_folders.join()}`, result);
+                    }
+                }
+
+                retrieveTypes[xmlName] = _.map(records, r => r.fullName);
+            }
+        }
+
+        // Get meta objects which need to be listMetadata
+        let xmlNamesToListMetadata: string[] = [];
+        for (const xmlName in retrieveTypes) {
+            if (retrieveTypes.hasOwnProperty(xmlName)) {
+                const members = retrieveTypes[xmlName];
+                if (!xmlNamesInFolder.includes(xmlName) 
+                        && ["CustomObject", "InstalledPackage"].includes(xmlName)
+                        && members.includes("*")) {
+                    xmlNamesToListMetadata.push(xmlName);
+                }
+            }
+        }
+
+        // Maximum number to every listMetadata request is 3
+        // so we need to chunk list to little pieces
+        let namespacePrefix = metadata.getMetadataModel().organizationNamespace;
+        for (const xmlNames of _.chunk(xmlNamesToListMetadata, 3)) {
+            let _types: any = {};
+            for (const xmlName of xmlNames) {
+                _types[xmlName] = [''];
+            }
+
+            let records: ListMetadataResponse[] = await self.listMetadata(_types);
+            for (const record of records) {
+                if (record.namespacePrefix || record.namespacePrefix !== namespacePrefix) {
+                    continue;
+                }
+
+                if (retrieveTypes[record.type]) {
+                    retrieveTypes[record.type].push(record.fullName);
+                }
+                else {
+                    retrieveTypes[record.type] = [record.fullName];
+                }
+            }
+        }
+
+        // Wrap types into options
+        options["types"] = retrieveTypes;
+
+        return options;
     }
 
     /**
      * Check retrieve status
      * 
-     * @param options {
-     *      "asyncProcessId": string
-     * }
-     * @returns {Promise.<Response>}
+     * @param options {"asyncProcessId": ""}s
+     * @returns Promise<CheckRetrieveResult>
      */
-    public checkRetriveStatus(options: any) {
-        let self = this;
-        let requestType = "CheckRetrieveStatus";
-        let soapBody = self.soap.getRequestBody(
-            requestType, options
-        );
-
-        let requestOptions = {
-            method: "POST",
-            headers: self.headers,
-            uri: self.metadataUrl,
-            body: soapBody
-        };
-
-        return new Promise<any>(function (resolve, reject) {
-            recursiveCheck();
-
-            function recursiveCheck() {
-                request(requestOptions).then(body => {
-                    let result = util.parseResult(body, requestType);
-
-                    // Show progress status
-                    ProgressNotification.notify(
-                        options.progress, 
-                        `[sf:retrieve] Request Status: ${result["status"]}`,
-                        result["done"] ? 100 : undefined
-                    );
-
-                    if (!result["done"]) {
-                        return setTimeout(recursiveCheck, 2000);
-                    }
-                    else {
-                        resolve(result);
-                    }
-                });
-            }
-        });
-    }
-
-    /**
-     * List package for 
-     * 
-     * @param options {"types": {"Folder": []}}
-     * @returns Promise<any>{ body }
-     */
-    public async listPackage(options: any) {
+    private checkRetrieveStatus(options: any) {
         return this._invoke_method(_.extend(options, {
-            "requestType": "ListPackage"
+            requestType: "CheckRetrieveStatus"
         }));
-    }
-
-    public prepareMembers(retrieveTypes: any, retrieveAll=false) {
-        // List package for metadata objects which 'inFolder' is true
-        // EmailFolder, DocumentFolder, DashboardFolder and ReportFolder
-        let records = [];
-        _.map(metadata.getXmlNamesInFolder(), (xmlName: string) => {
-            let members: string[] = retrieveTypes[xmlName];
-            if (members && members.includes("*")) {
-                xmlName = xmlName === 'EmailTemplate'
-                    ? 'EmailFolder' : xmlName + 'Folder';
-
-                
-            }
-        });
-        
     }
 
     /**
@@ -195,30 +250,48 @@ export default class MetadataApi {
      *      "packageNames": Array<string>,
      *      "retrieveAll": true | false
      * }
-     * @returns Promise<any>{ body }
+     * @returns Promise<any>{ CheckRetrieveStatus }
      */
     public retrieve(options: any = {}) {
         let self = this;
 
-        // let retrieveAll = options["retrieveAll"] || false;
-        
-        return new Promise<any>( (resolve, reject) => {
-            options["requestType"] = "Retrieve";
+        return new Promise<any>( async (resolve, reject) => {
+            // Prepare members for metaObject in folder or 
+            // with * pattern before retrieve
+            options = await self.prepareMembers(options);
 
-            ProgressNotification.showProgress(self, "_invoke_method", options)
-                .then( result => {
-                    options["asyncProcessId"] = result["id"];
-                    ProgressNotification.showProgress(self, "checkRetriveStatus", options)
-                        .then( result => {
-                            resolve(result);
-                        })
-                        .catch(err => {
-                            reject(err);
-                        });
+            // Start retrieve job and get asyncProcessId
+            let retrieveStatus = await self._invoke_method(
+                _.extend(options, {
+                    requestType: "Retrieve",
+                    progressDone: false,
+                    progressMessage: "Start request for a retrieving..."
                 })
-                .catch( err => {
-                    reject(err);
-                });
+            ) as RetrieveResult;
+
+            // Get retrieve status
+            let checkRetrieveStatus = await self.checkRetrieveStatus(
+                _.extend(options, {
+                    requestType: "CheckRetrieveStatus",
+                    asyncProcessId: retrieveStatus.id,
+                    progressDone: false,
+                    progressMessage: `Waiting for server to ` +
+                        `process the retrieve task: ${retrieveStatus.id}`
+                })
+            ) as CheckRetrieveResult;
+
+            while (!checkRetrieveStatus.done) {
+                checkRetrieveStatus = await self.checkRetrieveStatus(
+                    _.extend(options, {
+                        requestType: "CheckRetrieveStatus",
+                        asyncProcessId: retrieveStatus.id,
+                        progressDone: false,
+                        progressMessage: `Request Status: ${retrieveStatus.state}`
+                    })
+                ) as CheckRetrieveResult;
+            }
+
+            resolve(checkRetrieveStatus);
         });
     }
 
@@ -226,7 +299,7 @@ export default class MetadataApi {
      * Check deploy status
      * 
      * @param asyncProcessId async process Id
-     * @returns {Promise.<Response>}
+     * @returns Promise<any>
      */
     public checkDeployStatus(options: any) {
         let self = this;

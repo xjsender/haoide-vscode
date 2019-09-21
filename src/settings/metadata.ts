@@ -33,14 +33,25 @@ export default class Metadata {
     }
 
     /**
+     * Get metaobject Model
+     * 
+     * @returns metadata object model
+     */
+    public getMetadataModel(): MetadataModel {
+        let metadataModel: MetadataModel = settingsUtil.getConfig(
+            this.metaFileName
+        );
+
+        return metadataModel;
+    }
+
+    /**
      * Get metaobjects array
      * 
      * @returns MetaObject array of active project
      */
     public getMetaObjects(): MetaObject[] {
-        let metadataModel: MetadataModel = settingsUtil.getConfig(
-            this.metaFileName
-        );
+        let metadataModel = this.getMetadataModel();
 
         return metadataModel.metadataObjects;
     }
@@ -90,7 +101,7 @@ export default class Metadata {
      * which inFolder attribute is true, for example,
      * EmailFolder, DocumentFolder, DashboardFolder and ReportFolder
      */
-    public getXmlNamesInFolder() {
+    public getXmlNamesInFolder(): string[] {
         if (this.metaObjects === undefined) {
             this.metaObjects = this.getMetaObjects();
         }
@@ -99,7 +110,7 @@ export default class Metadata {
             if (mo.inFolder) {
                 return mo.xmlName;
             }
-        });
+        }) as string[];
     }
 
     /**

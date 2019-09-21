@@ -6,8 +6,8 @@
 import * as _ from "lodash";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range, SnippetString } from "vscode";
 import { PositionOption } from "../models/completion";
-import * as settingsUtil from "../../../settings/settingsUtil";
 import { SymbolTable } from "../../../typings/symbolTable";
+import * as settingsUtil from "../../../settings/settingsUtil";
 
 /**
  * Get last character in the cursor position
@@ -126,7 +126,7 @@ export function getMethodCompletionsOfSymbolTable(symbolTable: SymbolTable, isSt
             let returnType: string = _method.returnType || "";
             let annotations: string = _.map(_method.annotations, notation => {
                 return `@${notation.name}\n`;
-            }).join();
+            }).join("");
             let params = _method.parameters || [];
 
             // Add method parameters

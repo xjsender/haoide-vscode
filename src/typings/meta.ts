@@ -31,8 +31,15 @@ export interface MetadataModel {
     testRequired: boolean;
 }
 
-// Model for retrieve request result
+// Model for retrieve request
 export interface RetrieveResult {
+    done: boolean;
+    id: string;
+    state: string;
+}
+
+// Model for retrieve request result
+export interface CheckRetrieveResult {
     done: boolean;
     zipFile: string;
     fileProperties: FileProperty[];
@@ -46,6 +53,21 @@ export interface RetrieveResult {
 export interface Message {
     fileName: string;
     problem: string;
+}
+
+export interface ListMetadataResponse {
+    createdById: string;
+    createdByName: string;
+    createdDate: string;
+    fileName: string;
+    fullName: string;
+    id: string;
+    lastModifiedById: string;
+    lastModifiedByName: string;
+    lastModifiedDate: string;
+    manageableState: string;
+    namespacePrefix: string;
+    type: string;
 }
 
 // Model for fileProperties in retrieve result

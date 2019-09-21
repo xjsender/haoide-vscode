@@ -312,9 +312,9 @@ export function getRetrieveTypes(files: string[]) {
  * Extract base64 encoded zipfile to local disk
  * 
  * @param zipFile base64 encoded zipFile to be extracted
- * @param addProjectToWorkspace true means add default project to workspace
+ * @param extractedTo path to extract the files in the zip
  */
-export function extractZipFile(zipFile: string) {
+export function extractZipFile(zipFile: string, extractedTo?: string) {
     let zipFilePath = path.join(os.homedir(), "haoide.zip");
     fs.writeFileSync(
         zipFilePath, zipFile, "base64"
@@ -327,7 +327,7 @@ export function extractZipFile(zipFile: string) {
 
         // Get file path for every file
         let filePath = path.join(
-            util.getProjectPath(),
+            extractedTo || util.getProjectPath(),
             entryName.substr(0, entryName.lastIndexOf(fileName) - 1)
         );
 

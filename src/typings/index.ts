@@ -1,7 +1,8 @@
 import { 
     MetaObject, MetadataModel, 
     FileAttributes, 
-    RetrieveResult, FileProperty, Message,
+    RetrieveResult, CheckRetrieveResult, ListMetadataResponse,
+    FileProperty, Message,
     DeployResult, DeployResultDetails, 
     ComponentSuccess, RunTestResult
 } from "./meta";
@@ -45,13 +46,12 @@ export interface ErrorResonse {
 }
 
 export {
-    MetaObject, MetadataModel,
-    FileAttributes,
-    RetrieveResult, FileProperty, Message,
+    MetaObject, MetadataModel, FileAttributes,
+    RetrieveResult, CheckRetrieveResult, ListMetadataResponse,
+    FileProperty, Message,
     DeployResult, DeployResultDetails, 
     ComponentSuccess, RunTestResult,
-    Session,
     DescribeSObjectResult, SObjectDesc, Field,
     TestObject, TestSuite, TestResponse,
-    ApexClass
+    ApexClass, Session
 };
