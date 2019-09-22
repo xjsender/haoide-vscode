@@ -31,7 +31,7 @@ import {
     ConfirmAction,
     QueryResult
 } from '../typings';
-import { CheckRetrieveResult } from '../typings/meta';
+import { CheckRetrieveResult, CheckDeployResult } from '../typings/meta';
 import { Manifest } from '../typings/manifest';
 
 const localize = nls.loadMessageBundle();
@@ -390,40 +390,46 @@ export async function destructFilesFromServer(files: string[]) {
     }
 
     packages.buildDestructPackage(files).then( base64Str => {
-        new MetadataApi().deploy(base64Str)
-            .then( result => {
-                // If deploy failed, show error message
-                if (!result["success"]) {
-                    // Get failure in deploy result
-                    let componentFailures: any = result.details.componentFailures;
+        ProgressNotification.showProgress(
+            new MetadataApi(), 'deploy', {
+                zipfile: base64Str, 
+                progressDone: false,
+                progressMessage: "Deploying files to server"
+            }
+        )
+        .then( result => {
+            // If deploy failed, show error message
+            if (!result["success"]) {
+                // Get failure in deploy result
+                let componentFailures: any = result.details.componentFailures;
 
-                    // If there is only one failure, wrap it with array
-                    if (componentFailures && !_.isArray(componentFailures)) {
-                        componentFailures = [componentFailures];
+                // If there is only one failure, wrap it with array
+                if (componentFailures && !_.isArray(componentFailures)) {
+                    componentFailures = [componentFailures];
+                }
+
+                if (_.isArray(componentFailures)) {
+                    let problem: string = "";
+                    for (const msg of componentFailures) {
+                        problem += `[sf:deploy] ${msg.fileName} - ` +
+                            `${util.unescape(msg.problem)}\n`;
                     }
 
-                    if (_.isArray(componentFailures)) {
-                        let problem: string = "";
-                        for (const msg of componentFailures) {
-                            problem += `[sf:deploy] ${msg.fileName} - ` +
-                                `${util.unescape(msg.problem)}\n`;
-                        }
-
-                        return vscode.window.showErrorMessage(problem);
-                    }
+                    return vscode.window.showErrorMessage(problem);
                 }
-                else {
-                    // Remove files from local disk
-                    util.unlinkFiles(files);
+            }
+            else {
+                // Remove files from local disk
+                util.unlinkFiles(files);
 
-                    // Show succeed message
-                    vscode.window.showInformationMessage(
-                        localize("fileDestruted.text",
-                            "Files were deleted from server succesfully"
-                        )
-                    );
-                }
-            });
+                // Show succeed message
+                vscode.window.showInformationMessage(
+                    localize("fileDestruted.text",
+                        "Files were deleted from server succesfully"
+                    )
+                );
+            }
+        });
     });
 }
 
@@ -501,41 +507,47 @@ export function deployOpenFilesToServer() {
  * @param files files to be deployed
  */
 export function deployFilesToServer(files: string[]) {
-    packages.buildDeployPackage(files).then(base64Str => {
-        new MetadataApi().deploy(base64Str)
-            .then( (result: DeployResult) => {
-                // If deploy failed, show error message
-                if (!result.success) {
-                    // Get failure in deploy result
-                    let componentFailures: any = result.details.componentFailures;
+    packages.buildDeployPackage(files).then( base64Str => {
+        ProgressNotification.showProgress(
+            new MetadataApi(), 'deploy', {
+                zipfile: base64Str, 
+                progressDone: false,
+                progressMessage: "Deploying files to server"
+            }
+        )
+        .then( (result: CheckDeployResult) => {
+            // If deploy failed, show error message
+            if (!result.success) {
+                // Get failure in deploy result
+                let componentFailures: any = result.details.componentFailures;
 
-                    // If there is only one failure, wrap it with array
-                    if (componentFailures && !_.isArray(componentFailures)) {
-                        componentFailures = [componentFailures];
+                // If there is only one failure, wrap it with array
+                if (componentFailures && !_.isArray(componentFailures)) {
+                    componentFailures = [componentFailures];
+                }
+
+                if (_.isArray(componentFailures)) {
+                    let problem: string = "";
+                    for (const msg of componentFailures) {
+                        problem += `[sf:deploy] ${msg.fileName} - ` +
+                            `${util.unescape(msg.problem)}\n`;
                     }
 
-                    if (_.isArray(componentFailures)) {
-                        let problem: string = "";
-                        for (const msg of componentFailures) {
-                            problem += `[sf:deploy] ${msg.fileName} - ` +
-                                `${util.unescape(msg.problem)}\n`;
-                        }
-
-                        return vscode.window.showErrorMessage(problem);
-                    }
+                    return vscode.window.showErrorMessage(problem);
                 }
-                else {
-                    // Update the lastModifiedDate of local file property
-                    util.updateFilePropertyAfterDeploy(result);
+            }
+            else {
+                // Update the lastModifiedDate of local file property
+                util.updateFilePropertyAfterDeploy(result);
 
-                    // Show succeed message
-                    vscode.window.showInformationMessage(
-                        localize("fileDeployed.text", 
-                            "Files were deployed to server succesfully"
-                        )
-                    );
-                }
-            });
+                // Show succeed message
+                vscode.window.showInformationMessage(
+                    localize("fileDeployed.text", 
+                        "Files were deployed to server succesfully"
+                    )
+                );
+            }
+        });
     });
 }
 

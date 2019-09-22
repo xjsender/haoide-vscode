@@ -11,8 +11,10 @@ import * as util from "../../utils/util";
 import SOAP from "../lib/soap";
 import ProgressNotification from "../../utils/progress";
 import { _session, settings, metadata } from "../../settings";
-import { ListMetadataResponse, RetrieveResult, CheckRetrieveResult } from "../../typings";
-import { rejects } from "assert";
+import { 
+    ListMetadataResponse, RetrieveResult, CheckRetrieveResult, 
+    DeployResult, CheckDeployResult 
+} from "../../typings";
 
 export default class MetadataApi {
     private soap!: SOAP;
@@ -282,7 +284,6 @@ export default class MetadataApi {
             // Get retrieve status
             let checkRetrieveStatus = await self.checkRetrieveStatus(
                 _.extend(options, {
-                    requestType: "CheckRetrieveStatus",
                     asyncProcessId: retrieveStatus.id,
                     progressDone: false,
                     progressMessage: `Waiting for server to ` +
@@ -293,10 +294,9 @@ export default class MetadataApi {
             while (!checkRetrieveStatus.done) {
                 checkRetrieveStatus = await self.checkRetrieveStatus(
                     _.extend(options, {
-                        requestType: "CheckRetrieveStatus",
                         asyncProcessId: retrieveStatus.id,
                         progressDone: false,
-                        progressMessage: `Request Status: ${checkRetrieveStatus.status}`
+                        progressMessage: `Retrieve request status: ${checkRetrieveStatus.status}`
                     })
                 ) as CheckRetrieveResult;
             }
@@ -308,86 +308,56 @@ export default class MetadataApi {
     /**
      * Check deploy status
      * 
-     * @param asyncProcessId async process Id
+     * @param options for example, {"asyncProcessId": ""}
      * @returns Promise<any>
      */
-    public checkDeployStatus(options: any) {
-        let self = this;
-        let requestType = "CheckDeployStatus";
-
-        let soapBody = self.soap.getRequestBody(
-            requestType, options
-        );
-
-        let requestOptions = {
-            method: "POST",
-            headers: self.headers,
-            uri: self.metadataUrl,
-            body: soapBody
-        };
-
-        return new Promise<any>(function (resolve, reject) {
-            recursiveCheck();
-
-            function recursiveCheck() {
-                request(requestOptions).then(body => {
-                    let result = util.parseResult(body, requestType);
-
-                    // Show progress status
-                    ProgressNotification.notify(
-                        options.progress, result["status"],
-                        result["done"] ? 100 : undefined
-                    );
-
-                    if (!result["done"]) {
-                        return setTimeout(recursiveCheck, 2000);
-                    }
-                    else {
-                        resolve(result);
-                    }
-                })
-                .catch(err => {
-                    reject(err);
-                });
-            }
-        });
+    private checkDeployStatus(options: any) {
+        return this._invoke_method(_.extend(options, {
+            requestType: "CheckDeployStatus"
+        }));
     }
     
     /**
     *  1. Issue a deploy request to get the asyncProcessId
     *  2. Issue a resursive checkDeployStatus util done
     *  3. After that, you will get the deployment result
-    * @param zipfile the base64 encoded string of zip file
-    * @param testClasses the classes to run when runSpecifiedTest
-    * @returns new Promise<any>{ body }
+    * @param options params for deploy, 
+    * i.e., {"zipFile", "based64String", "testClasses": [TestClassArray]}
+    * @returns new Promise<any>{ CheckDeployResult }
     */
-    public deploy(zipfile: string, testClasses?: string[]) {
+    public deploy(options: any) {
         let self = this;
 
-        return new Promise<any>( (resolve, reject) => {
-            let options: any = {
-                "requestType": "Deploy",
-                "zipfile": zipfile,
-                "testClasses": testClasses,
-                "deployOptions": settings.getDeployOptions()
-            };
-
-            ProgressNotification.showProgress(self, "_invoke_method", options)
-                .then( result => {
-                    options = {
-                        "asyncProcessId": result["id"]
-                    };
-                    ProgressNotification.showProgress(self, "checkDeployStatus", options)
-                        .then(result => {
-                            resolve(result);
-                        })
-                        .catch(err => {
-                            reject(err);
-                        });
+        return new Promise<any>( async (resolve, reject) => {
+            let deployResult = await self._invoke_method(
+                _.extend(options, {
+                    requestType: "Deploy",
+                    progressDone: false,
+                    progressMessage: "Start request for a deploying...",
+                    deployOptions: settings.getDeployOptions()
                 })
-                .catch(err => {
-                    reject(err);
-                });
+            ) as DeployResult;
+            
+            let checkDeployResult = await self.checkDeployStatus({
+                asyncProcessId: deployResult.id,
+                progress: options.progress,
+                progressDone: false,
+                progressMessage: `Waiting for server to ` +
+                    `process the deploy task: ${deployResult.id}`
+            });
+
+            while (!checkDeployResult.done) {
+                checkDeployResult = await self.checkDeployStatus(
+                    _.extend(options, {
+                        asyncProcessId: deployResult.id,
+                        progress: options.progress,
+                        progressDone: false,
+                        progressMessage: `Deploy request status: ${checkDeployResult.status}`
+                    })
+                ) as CheckRetrieveResult;
+            }
+
+            resolve(checkDeployResult);
         });
     }
 }

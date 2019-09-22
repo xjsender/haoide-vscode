@@ -3,7 +3,7 @@ import {
     FileAttributes, 
     RetrieveResult, CheckRetrieveResult, ListMetadataResponse,
     FileProperty, Message,
-    DeployResult, DeployResultDetails, 
+    DeployResult, CheckDeployResult, DeployResultDetails, 
     ComponentSuccess, RunTestResult
 } from "./meta";
 import { Session } from "./session";
@@ -49,7 +49,7 @@ export {
     MetaObject, MetadataModel, FileAttributes,
     RetrieveResult, CheckRetrieveResult, ListMetadataResponse,
     FileProperty, Message,
-    DeployResult, DeployResultDetails, 
+    DeployResult, CheckDeployResult, DeployResultDetails, 
     ComponentSuccess, RunTestResult,
     DescribeSObjectResult, SObjectDesc, Field,
     TestObject, TestSuite, TestResponse,

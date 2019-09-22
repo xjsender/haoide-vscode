@@ -11,8 +11,8 @@ import * as settingsUtil from "../settings/settingsUtil";
 import { extensionSettings } from "../settings";
 import { 
     FileProperty, FileAttributes, 
-    ComponentSuccess, DeployResult, 
-    ApexClass 
+    ComponentSuccess, ApexClass, 
+    CheckDeployResult
 } from "../typings";
 
 /**
@@ -486,9 +486,7 @@ export function setFileProperties(fileProperties: any[]) {
  * 
  * @param deployResult deploy response body
  */
-export function updateFilePropertyAfterDeploy(deployResult: DeployResult) {
-    console.log(deployResult);
-    
+export function updateFilePropertyAfterDeploy(deployResult: CheckDeployResult) {    
     // Get fileProperties cache
     let componentMetadata: any = settingsUtil.getConfig(
         "componentMetadata.json"

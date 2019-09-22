@@ -96,6 +96,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.retrieveByManifest",
+				"title": "%extension.haoide.retrieveByManifest.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.retrieveThisFromServer",
 				"title": "%extension.haoide.retrieveThisFromServer.title%",
 				"category": "Haoide"
@@ -267,6 +272,10 @@
 					"when": "haoide.hasOpenProject"
 				},
 				{
+					"command": "extension.haoide.retrieveByManifest",
+					"when": "haoide.hasOpenProject"
+				},
+				{
 					"command": "extension.haoide.retrieveThisFromServer",
 					"when": "haoide.hasOpenProject"
 				},
@@ -372,10 +381,12 @@
 					"command": "extension.haoide.locateThisInBrowser"
 				}
 			],
-			"editor/title": [{
-				"command": "extension.haoide.setSyntaxToApex",
-				"group": "navigation"
-			}]
+			"editor/title": [
+				{
+					"command": "extension.haoide.setSyntaxToApex",
+					"group": "navigation"
+				}
+			]
 		},
 		"keybindings": [
 			{

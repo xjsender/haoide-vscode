@@ -89,6 +89,12 @@ export interface FileProperty {
 }
 
 export interface DeployResult {
+    done: boolean;
+    id: string;
+    state: string;
+}
+
+export interface CheckDeployResult {
     numberTestsTotal: number;
     runTestsEnabled: boolean;
     createdByName: string;
