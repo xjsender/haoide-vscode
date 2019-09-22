@@ -276,6 +276,7 @@ export default class MetadataApi {
             let retrieveStatus = await self._invoke_method(
                 _.extend(options, {
                     requestType: "Retrieve",
+                    gzip: true,
                     progressDone: false,
                     progressMessage: "Start request for a retrieving..."
                 })

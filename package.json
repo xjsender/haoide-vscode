@@ -201,6 +201,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.createManifestFile",
+				"title": "%extension.haoide.createManifestFile.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.setSyntaxToApex",
 				"title": "%extension.haoide.setSyntaxToApex.title%",
 				"icon": {
@@ -384,6 +389,13 @@
 			"editor/title": [
 				{
 					"command": "extension.haoide.setSyntaxToApex",
+					"group": "navigation"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "extension.haoide.createManifestFile",
+					"when": "explorerResourceIsFolder",
 					"group": "navigation"
 				}
 			]

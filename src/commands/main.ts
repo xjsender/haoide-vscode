@@ -394,7 +394,7 @@ export async function destructFilesFromServer(files: string[]) {
             new MetadataApi(), 'deploy', {
                 zipfile: base64Str, 
                 progressDone: false,
-                progressMessage: "Deploying files to server"
+                progressMessage: "Destructing files from server"
             }
         )
         .then( result => {

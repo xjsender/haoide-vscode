@@ -88,6 +88,22 @@ export default class Settings {
         return deployOptions;
     }
 
+    /**
+     * Get api version of default project
+     * 
+     * @returns apiVersion, default is 46
+     */
+    public getApiVersion() {
+        let apiVersion = this.getSettingValue('apiVersion');
+        
+        return apiVersion || 46;
+    }
+
+    /**
+     * Get user language list
+     * 
+     * @returns Object, {"languageLabel", "LanguageLocaleKey"}
+     */
     public getUserLanguages() {
         let userLanguages = settingsUtil.getConfigValue(
             this.settingsFileName, "userLanguages"

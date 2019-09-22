@@ -200,9 +200,7 @@ export function buildPackageDict(files: string[], ignoreFolder=true) {
         else {
             packageDict[attrs.xmlName] = [attrs];
         }
-    }
-    console.log(packageDict);
-    
+    }    
 
     return packageDict;
 }
