@@ -355,7 +355,7 @@ export default class MetadataApi {
                         progressDone: false,
                         progressMessage: `Deploy request status: ${checkDeployResult.status}`
                     })
-                ) as CheckRetrieveResult;
+                ) as CheckDeployResult;
             }
 
             resolve(checkDeployResult);
