@@ -177,6 +177,12 @@ export function buildPackageDict(files: string[], ignoreFolder=true) {
             continue;
         }
 
+        // Special logic for metaObjects which inFolder is true
+        let metaObject = metadata.getMetaObject(attrs.xmlName);
+        if (metaObject.inFolder) {
+            attrs.memberName = `${attrs.folder}/${attrs.name}`;
+        }
+
         // Replace meta file with source file
         if (_file.endsWith("-meta.xml")) {
             _file = _file.replace("-meta.xml", "");
@@ -195,6 +201,8 @@ export function buildPackageDict(files: string[], ignoreFolder=true) {
             packageDict[attrs.xmlName] = [attrs];
         }
     }
+    console.log(packageDict);
+    
 
     return packageDict;
 }
