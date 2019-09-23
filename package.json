@@ -96,6 +96,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.refreshFolders",
+				"title": "%extension.haoide.refreshFolders.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.retrieveByManifest",
 				"title": "%extension.haoide.retrieveByManifest.title%",
 				"category": "Haoide"
@@ -277,6 +282,10 @@
 					"when": "haoide.hasOpenProject"
 				},
 				{
+					"command": "extension.haoide.refreshFolders",
+					"when": "haoide.hasOpenProject"
+				},
+				{
 					"command": "extension.haoide.retrieveByManifest",
 					"when": "haoide.hasOpenProject"
 				},
@@ -395,6 +404,11 @@
 			"explorer/context": [
 				{
 					"command": "extension.haoide.createManifestFile",
+					"when": "explorerResourceIsFolder",
+					"group": "navigation"
+				},
+				{
+					"command": "extension.haoide.refreshFolders",
 					"when": "explorerResourceIsFolder",
 					"group": "navigation"
 				}

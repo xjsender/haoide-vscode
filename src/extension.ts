@@ -248,9 +248,17 @@ export function activate(context: ExtensionContext) {
     /**
      * Explorer/context menus
      */
+    // Register createManifestFile command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.createManifestFile", (uri: Uri) => {
             utility.createManifestFile(uri);
+        }
+    ));
+
+    // Register refreshFolders command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.refreshFolders", (uri: Uri, uris: Uri[]) => {
+            main.refreshFolders(uris || uri && [uri]);
         }
     ));
 

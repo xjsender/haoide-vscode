@@ -643,6 +643,60 @@ export function retrieveFilesFromServer(fileNames: string[]) {
     });
 }
 
+export function refreshFolders(uris: vscode.Uri[] | undefined) {
+    if (!uris) {
+        return;
+    }
+
+    // Get metadata folder of chosen folder
+    let metaFolders = _.map(uris, uri => {
+        return path.basename(uri.fsPath);
+    });
+
+    // Build retrieveTypes
+    let retrieveTypes: any = {};
+    for (const metaFolder of metaFolders) {
+        let xmlName = metadata.getXmlName(metaFolder);
+        if (xmlName) {
+            retrieveTypes[xmlName] = ['*'];
+        }
+    }
+
+    // Start to retrieve from server
+    ProgressNotification.showProgress(
+        new MetadataApi(), 'retrieve', {
+            types: retrieveTypes,
+            progressDone: false,
+            progressMessage: "Refresh folders from server"
+        }
+    )
+    .then( (result: CheckRetrieveResult) => {
+        // Show error message as friendly format if have
+        let messages: any = result.messages;
+        if (messages && !_.isArray(messages)) {
+            messages = [messages];
+        }
+
+        if (_.isArray(messages)) {
+            let problem: string = "";
+            for (const msg of messages) {
+                problem += `[sf:retrieve] ${msg.fileName} - ` +
+                    `${util.unescape(msg.problem)}\n`;
+            }
+
+            return vscode.window.showErrorMessage(problem);
+        }
+
+        // Extract retrieved zipFile
+        packages.extractZipFile(result.zipFile, {
+            ignorePackageXml: true
+        });
+        vscode.window.showInformationMessage(
+            "Your folders was successfully refreshed"
+        );
+    });
+}
+
 export function retrieveByManifest() {
     let editor = vscode.window.activeTextEditor;
     if (!editor) {

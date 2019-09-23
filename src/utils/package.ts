@@ -318,9 +318,11 @@ export function getRetrieveTypes(files: string[]) {
  * Extract base64 encoded zipfile to local disk
  * 
  * @param zipFile base64 encoded zipFile to be extracted
- * @param extractedTo path to extract the files in the zip
+ * @param options, options for extract zipfile,
+ *      extractedTo: path to extract the files in the zip,
+ *      ignorePackageXml, boolean
  */
-export function extractZipFile(zipFile: string, extractedTo?: string) {
+export function extractZipFile(zipFile: string, options:any={}) {
     let zipFilePath = path.join(os.homedir(), "haoide.zip");
     fs.writeFileSync(
         zipFilePath, zipFile, "base64"
@@ -331,9 +333,14 @@ export function extractZipFile(zipFile: string, extractedTo?: string) {
         let entryName = zipEntry.entryName.replace("unpackaged", "src");
         let fileName = zipEntry.name;
 
+        // Can't override project package.xml when refresh folders
+        if (options.ignorePackageXml && fileName === "package.xml") {
+            continue;
+        }
+
         // Get file path for every file
         let filePath = path.join(
-            extractedTo || util.getProjectPath(),
+            options.extractedTo || util.getProjectPath(),
             entryName.substr(0, entryName.lastIndexOf(fileName) - 1)
         );
 
