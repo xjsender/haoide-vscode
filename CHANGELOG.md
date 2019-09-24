@@ -2,6 +2,20 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.1.9], 2019-09-24
++ Add new command for converting array to table
++ Add new command for refreshing folders from server
++ Add new command for creating manifest file in the ``explorer/context`` menu
++ Add new command for retrieving manifest from server
++ Add new command for converting json to typescript
++ Add new command for setting new file with apex syntax in the ``editor/title`` menu
++ Add new setting for controlling whether print debug log of extension
++ Enhancement for custom apex class completion
++ Add support for formating rest body in the rest explorer
++ Add support for ``listMetadata`` when retrieve ``CustomObject``, ``DocumentFoler`` and so on
++ 
+
+
 ## [0.1.8]
 
 + Add support for method or properties completion of custom apex class
