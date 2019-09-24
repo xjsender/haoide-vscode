@@ -5,7 +5,7 @@ const localize = nls.config({ messageFormat: nls.MessageFormat.file })();
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { workspace, commands, languages, ExtensionContext, Uri } from 'vscode';
+import { commands, languages, ExtensionContext, Uri } from 'vscode';
 import {
     ltnCompletionProvider,
     vfCompletionProvider,
@@ -179,6 +179,12 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.convertXml2Json",
         utility.convertXml2Json
+    ));
+
+    // Register convertArray2Table command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.convertArray2Table",
+        utility.convertArray2Table
     ));
 
     // Register convertJson2Apex command

@@ -5,6 +5,45 @@
 
 import * as _ from "lodash";
 
+// Used in convertJSON2Table
+let excludeColumns = ["urls", "attributes"];
+
+/**
+ * Convert json array to table
+ * 
+ * @param jsonArray json object array to be converted to table
+ * @returns string format of table content
+ */
+export function convertArrayToTable(jsonArray: any[]) {
+    if (!jsonArray || jsonArray.length === 0) {
+        return 'No Elements';
+    }
+
+    let columns: string[] = [];
+    for (const key of _.keys(jsonArray[0])) {
+        if (!excludeColumns.includes(key)) {
+            columns.push(key);
+        }
+    }
+
+    let tableContent = columns.join(',') + '\n';
+    for (const element of jsonArray) {
+        let values = [];
+        for (const column of columns) {
+            if (element.hasOwnProperty(column)) {
+                values.push(`"${element[column] || ''}"`);
+            }
+            else {
+                values.push('""');
+            }
+        }
+
+        tableContent += values.join(',') + '\n';
+    }
+
+    return tableContent;
+}
+
 export class JSON2Apex {
     private classes: string[];
     public snippet!: string;

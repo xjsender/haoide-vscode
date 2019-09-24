@@ -1,5 +1,6 @@
 {
     "input15Id.text": "请输入15位的ID",
+    "inputJSON.text": "请输入待处理的JSON",
     "inputClassName.text": "请输入Class名称",
     "requiredInput.text": "请输入必填信息",
     "chooseMetadataObject.text": "选择需要订阅的 Metadata 对象",

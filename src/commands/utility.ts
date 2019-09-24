@@ -12,9 +12,10 @@ import * as nls from 'vscode-nls';
 
 import * as util from "../utils/util";
 import * as settingsUtil from "../settings/settingsUtil";
-import { JSON2Apex, JSON2Typescript } from "../utils/json";
+import { JSON2Apex, JSON2Typescript, convertArrayToTable } from "../utils/json";
 import { Session as SessionModel, FileProperty } from "../typings";
 import { settings, _session, metadata } from "../settings";
+import moment = require("moment");
 
 const localize = nls.loadMessageBundle();
 
@@ -295,6 +296,50 @@ export function convertJson2Typescript() {
         let snippet = jsonConverter.convertToTypescript(className, jsonObj).snippet;
         util.openNewUntitledFile(snippet, "typescript");
     });
+}
+
+export function convertArray2Table() {
+    // Get selection in the active editor if no jsonStr param
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return util.showCommandWarning();
+    }
+
+    let jsonStr = editor.document.getText(editor.selection);
+    let jsonArray = [];
+    try {
+        jsonArray = JSON.parse(jsonStr);
+    }
+    catch (err) {
+        return vscode.window.showWarningMessage(err.message);
+    }
+
+    let tableContent = convertArrayToTable(jsonArray);
+    try {
+        // Create output path of csv file
+        let outputPath = path.join(
+            util.getProjectPath(), 'csv'
+        );
+        if (!fs.existsSync(outputPath)) {
+            fs.mkdirSync(outputPath);
+        }
+
+        // Define csv file path
+        let csvFilePath = path.join(
+            outputPath, moment().format('YYYYMMDDhhmmss') + '.csv'
+        );
+
+        // Write table content to csv file
+        fs.writeFileSync(csvFilePath, tableContent);
+
+        // Open csv file with new view
+        vscode.commands.executeCommand(
+            "vscode.open", vscode.Uri.file(csvFilePath)
+        );
+    }
+    catch (err) {
+        vscode.window.showErrorMessage(err.message);
+    }
 }
 
 /**
