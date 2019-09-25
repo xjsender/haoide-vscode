@@ -384,24 +384,29 @@
 			],
 			"editor/context": [
 				{
-					"group": "z_commands",
-					"command": "extension.haoide.retrieveThisFromServer"
+					"group": "haoide@1",
+					"command": "extension.haoide.retrieveByManifest",
+					"when": "resourceExtname == .xml"
 				},
 				{
-					"group": "z_commands",
-					"command": "extension.haoide.retrieveByManifest"
+					"group": "haoide@2",
+					"command": "extension.haoide.retrieveThisFromServer",
+					"when": "resourceFilename != package.xml && resourceScheme == file"
 				},
 				{
-					"group": "z_commands",
-					"command": "extension.haoide.deployThisToServer"
+					"group": "haoide@3",
+					"command": "extension.haoide.deployThisToServer",
+					"when": "resourceFilename != package.xml && resourceScheme == file"
 				},
 				{
-					"group": "z_commands",
-					"command": "extension.haoide.destructThisFromServer"
+					"group": "haoide@4",
+					"command": "extension.haoide.destructThisFromServer",
+					"when": "resourceFilename != package.xml && resourceScheme == file"
 				},
 				{
-					"group": "z_commands",
-					"command": "extension.haoide.locateThisInBrowser"
+					"group": "haoide@5",
+					"command": "extension.haoide.locateThisInBrowser",
+					"when": "resourceFilename != package.xml && resourceScheme == file"
 				}
 			],
 			"editor/title": [
@@ -414,12 +419,12 @@
 				{
 					"command": "extension.haoide.createManifestFile",
 					"when": "explorerResourceIsFolder",
-					"group": "navigation"
+					"group": "haoide@1"
 				},
 				{
 					"command": "extension.haoide.refreshFolders",
 					"when": "explorerResourceIsFolder",
-					"group": "navigation"
+					"group": "haoide@2"
 				}
 			]
 		},
