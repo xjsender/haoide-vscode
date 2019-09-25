@@ -424,7 +424,7 @@ export async function destructFilesFromServer(files: string[]) {
 
                 // Show succeed message
                 vscode.window.showInformationMessage(
-                    localize("fileDestruted.text",
+                    localize("fileDestructed.text",
                         "Files were deleted from server succesfully"
                     )
                 );

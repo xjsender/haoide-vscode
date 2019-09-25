@@ -588,6 +588,7 @@
 		"vscode:prepublish": "npm run compile",
 		"watch": "tsc -b -w",
 		"compile": "tsc -b",
+		"clean": "gulp clean",
 		"test": "node ./out/test/runTests.js"
 	},
 	"devDependencies": {

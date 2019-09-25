@@ -152,7 +152,7 @@ export async function switchProject(projectName?: string) {
     vscode.window.showInformationMessage(
         localize(
             "defaultProjectChanged.text",
-            `Default project is changed to ${projectName}`
+            "Default project was updated"
         )
     );
 }

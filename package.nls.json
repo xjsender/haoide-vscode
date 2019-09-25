@@ -40,6 +40,5 @@
     "extension.haoide.createVisualforceComponent.title": "Create Visualforce Component",
     "extension.haoide.startRestExplorer.title": "Start REST Explorer",
     "extension.haoide.setSyntaxToApex.title": "Set Syntax: Apex",
-    "extension.haoide.createManifestFile.title": "New Manifest File",
-    "extension.haoide.testCmd.title": "Test Haoide"
+    "extension.haoide.createManifestFile.title": "New Manifest File"
 }

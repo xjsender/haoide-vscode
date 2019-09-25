@@ -8,5 +8,5 @@
     "metadataObjectUpdated.text": "您订阅的 Metadata 对象已更新",
     "chooseDefaultProject.text": "请选择要作为默认的项目",
     "defaultProjectPanel.text": "默认项目选择面板",
-    "defaultProjectChanged.text": "当前默认项目已变为：{0}"
+    "defaultProjectChanged.text": "当前默认项目已更改"
 }

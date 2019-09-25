@@ -82,7 +82,7 @@ export function authorizeDefaultProject() {
         if (moment(session.lastUpdatedTime).add(15, 'minutes').isAfter(new Date())) {
             resolve(session);
             return vscode.window.showInformationMessage(
-                localize('sessionNotExpired', "Session is still not expired")
+                localize('sessionNotExpired.text', "Session is still not expired")
             );
         }
 
