@@ -564,12 +564,12 @@ export function refreshThisFromServer() {
 
         // Send get request
         let restApi = new RestApi();
-        ProgressNotification.showProgress(restApi, "query", {
-            serverUrl: `/${filep["id"]}`,
-            progressMessage: "Executing refresh request"
+        ProgressNotification.showProgress(restApi, "get", {
+            serverUrl: `/sobjects/ApexClass/${filep.id}`,
+            progressMessage: "Refreshing file from server"
         })
-        .then( body => {
-            console.log(body);
+        .then( result => {
+            fs.writeFileSync(fileName, result["Body"], "utf-8");
         });
     } 
     else {

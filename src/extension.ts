@@ -51,6 +51,12 @@ export function activate(context: ExtensionContext) {
         "extension.haoide.createNewProject", main.createNewProject
     ));
 
+    // Register refreshThisFromServer command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.refreshThisFromServer",
+        main.refreshThisFromServer
+    ));
+
     // Register retrieveThisFromServer command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.retrieveThisFromServer",

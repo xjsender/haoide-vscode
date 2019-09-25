@@ -14,6 +14,7 @@
     "extension.haoide.createNewProject.title": "Create New Project",
     "extension.haoide.updateProject.title": "Update Project",
     "extension.haoide.updateUserLanguage.title": "Update User Language",
+    "extension.haoide.refreshThisFromServer.title": "Refresh This File From Server",
     "extension.haoide.retrieveThisFromServer.title": "Retrieve This File From Server",
     "extension.haoide.retrieveByManifest.title": "Retrieve Manifest From Server",
     "extension.haoide.refreshFolders.title": "Refresh Folders From Server",
