@@ -6,13 +6,7 @@ const localize = nls.config({ messageFormat: nls.MessageFormat.file })();
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import { commands, languages, ExtensionContext, Uri } from 'vscode';
-import {
-    ltnCompletionProvider,
-    vfCompletionProvider,
-    apexCompletionProvider,
-    customApexCompletionProvider,
-    sobjectCompletionProvider
-} from "./salesforce/completions/provider";
+import * as provider from "./salesforce/completions/provider";
 import * as contextUtil from "./utils/context";
 import { auth, utility, main } from "./commands";
 import { RestWebPanel } from './utils/webview';
@@ -287,24 +281,29 @@ export function activate(context: ExtensionContext) {
      * Completion part
      */
     context.subscriptions.push(languages.registerCompletionItemProvider(
-        'html', ltnCompletionProvider, "<", ":", "-", " ", "="
+        'html', provider.ltnCompletionProvider, "<", ":", "-", " ", "="
     ));
 
     context.subscriptions.push(languages.registerCompletionItemProvider(
-        'visualforce', vfCompletionProvider, "<", ":", "-", " ", "="
+        'visualforce', provider.vfCompletionProvider, "<", ":", "-", " ", "="
     ));
 
     context.subscriptions.push(languages.registerCompletionItemProvider(
-        'apex', apexCompletionProvider, ".", "="
+        'apex', provider.apexCompletionProvider, ".", "="
     ));
 
     context.subscriptions.push(languages.registerCompletionItemProvider(
-        'apex', customApexCompletionProvider, "."
+        'apex', provider.customApexCompletionProvider, "."
     ));
 
     context.subscriptions.push(languages.registerCompletionItemProvider(
-        'apex', sobjectCompletionProvider, ".", "="
+        'apex', provider.sobjectCompletionProvider, ".", "="
     ));
+
+    context.subscriptions.push(languages.registerCompletionItemProvider(
+        'apex', provider.wordCompletionItemProvider, ".", "="
+    ));
+
 
     /**
      * Events part
