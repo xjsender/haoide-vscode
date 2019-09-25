@@ -2,6 +2,12 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.2.0], 2019-09-25
++ Add new command for ```refreshing file from server```
++ Update menu item position and visibility
++ Fix bug for translation of command title and tips
++ 
+
 ## [0.1.9], 2019-09-24
 
 + Add new command for converting array to table

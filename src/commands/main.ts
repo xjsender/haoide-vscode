@@ -570,6 +570,9 @@ export function refreshThisFromServer() {
         })
         .then( result => {
             fs.writeFileSync(fileName, result["Body"], "utf-8");
+        })
+        .catch( err => {
+            vscode.window.showErrorMessage(err.message);
         });
     } 
     else {
