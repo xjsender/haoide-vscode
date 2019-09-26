@@ -257,13 +257,24 @@ export function createCompletionItem(label: string, kind?: any,
 }
 
 /**
+ * Remove comments in the specified text
+ * 
+ * @param text text which comment to be removed
+ * @returns text without comments
+ */
+export function removeComment(text: string) {
+    return text.replace(/(\/\*([^*]|[\r\n]|(\*([^*\/]|[\r\n])))*\*+\/)|(\/\/.*)/gi, '');
+}
+
+/**
  * Get variable type by word at cursor postion
  * 
  * @param pos position information, instance of PositionOption
  * @returns variable type
  */
 export function getVariableType(pos: PositionOption) {
-    let matches = pos.wholeText.match(new RegExp(
+    let uncommentText = removeComment(pos.wholeText);
+    let matches = uncommentText.match(new RegExp(
         "([a-zA-Z_1-9]+[\\[\\]]*|" + 
         "(map|list|set)[^\\n^(]" + 
         "[<,.\\s>a-zA-Z_1-9]+)\\s+" + 
