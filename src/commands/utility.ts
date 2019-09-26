@@ -8,6 +8,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
+import * as moment from "moment";
 import * as nls from 'vscode-nls';
 
 import * as util from "../utils/util";
@@ -15,7 +16,6 @@ import * as settingsUtil from "../settings/settingsUtil";
 import { JSON2Apex, JSON2Typescript, convertArrayToTable } from "../utils/json";
 import { Session as SessionModel, FileProperty } from "../typings";
 import { settings, _session, metadata } from "../settings";
-import moment = require("moment");
 
 const localize = nls.loadMessageBundle();
 
@@ -57,12 +57,19 @@ export function createManifestFile(uri: vscode.Uri) {
     }
 }
 
+/**
+ * Add default project to current workspace
+ */
 export function addDefaultProjectToWorkspace() {
     // Add project to workspace
     let projectName = util.getDefaultProject();
     util.addProjectToWorkspace(projectName);
 }
 
+/**
+ * Used to let user subscribe or unsubscribe meta objects
+ * which will be retrieved from server
+ */
 export function toggleMetadataObjects() {
     // Get all meta objects
     let metadataObjects = metadata.getMetaObjects();
@@ -250,9 +257,7 @@ export function convertJson2Apex() {
     })
     .then( className => {
         if (!className) {
-            return util.showCommandWarning(localize(
-                'requiredInput.text', "Please input required info"
-            ));
+            return;
         }
 
         let jsonConverter = new JSON2Apex();
@@ -287,9 +292,7 @@ export function convertJson2Typescript() {
     })
     .then(className => {
         if (!className) {
-            return util.showCommandWarning(localize(
-                'requiredInput.text', "Please input required info"
-            ));
+            return;
         }
 
         let jsonConverter = new JSON2Typescript();
@@ -353,9 +356,7 @@ export function convert15IdTo18Id() {
     })
     .then( the15Id => {
         if (!the15Id) {
-            return util.showCommandWarning(localize(
-                'requiredInput.text', "Please input required info"
-            ));
+            return;
         }
 
         let the18Id = util.convert15Id218Id(the15Id);

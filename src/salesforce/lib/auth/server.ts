@@ -29,9 +29,14 @@ export function startLogin(url?: string) {
     });
 }
 
-export function startServer(projectName: any, loginUrl: string) {
+export interface LoginOptions {
+    projectName: string;
+    loginUrl: string;
+}
+
+export function startServer(options: LoginOptions) {
     return new Promise(function(resolve, reject) {
-        let oauth = new OAuth(loginUrl);
+        let oauth = new OAuth(options.loginUrl);
 
         let app = express();
         app.get(oauthLoginUrl, function(req: any, res: any) {
@@ -46,7 +51,7 @@ export function startServer(projectName: any, loginUrl: string) {
                 let {userId, organizationId} = util.parseIdUrl(body["id"]);
 
                 // Set the new authorized project as default
-                util.setDefaultProject(projectName);
+                util.setDefaultProject(options.projectName);
 
                 // Write sessionId and refreshToken to local cache
                 let session = {
@@ -55,8 +60,8 @@ export function startServer(projectName: any, loginUrl: string) {
                     "sessionId": body["access_token"],
                     "refreshToken": body["refresh_token"],
                     "instanceUrl": body["instance_url"],
-                    "loginUrl": loginUrl,
-                    "projectName": projectName,
+                    "loginUrl": options.loginUrl,
+                    "projectName": options.projectName,
                     "lastUpdatedTime": moment().format()
                 };
                 _session.setSession(session);
@@ -72,12 +77,14 @@ export function startServer(projectName: any, loginUrl: string) {
                     });
 
                 // Login successful message
-                const msg = localize("successLogin.text", "You have been successfully login.");
-                vscode.window.showInformationMessage(msg);
+                vscode.window.showInformationMessage(localize(
+                    "successLogin.text", 
+                    "You have been successfully login."
+                ));
 
                 // Create new workspace and add this project into it
                 // and then, open this workspace
-                util.createNewWorkspace(projectName);
+                util.createNewWorkspace(options.projectName);
 
                 // Set context key
                 contextUtil.setHasOpenProject();
@@ -93,13 +100,17 @@ export function startServer(projectName: any, loginUrl: string) {
         });
 
         app.listen(config.port, () => {
-            let startMsg = localize("serverStartAt.text", "Server started at {0}", config.entryPoint);
-            // resolve(`Server started at ${config.entryPoint}`);
-            resolve(startMsg);
-        }).on('error', function(err) {
-            let startedMsg = localize("serverStartedAt.text", "Server is already started at {0}", config.entryPoint);
-            resolve(startedMsg);
-            // resolve(`Server is already started at ${config.entryPoint}`);
+            resolve(localize(
+                "serverStartAt.text", 
+                "Server started at {0}", 
+                config.entryPoint
+            ));
+        }).on('error', err => {
+            resolve(localize(
+                "serverStartedAt.text", 
+                "Server is already started at {0}", 
+                config.entryPoint
+            ));
         });
     });
 }

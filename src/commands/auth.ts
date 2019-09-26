@@ -6,12 +6,13 @@
 import * as vscode from "vscode";
 import * as nls from 'vscode-nls';
 import * as moment from 'moment';
+import * as os from 'os';
 
 import * as util from "../utils/util";
 import OAuth from "../salesforce/lib/auth/oauth";
 import ProgressNotification from "../utils/progress";
 import { startLogin, startServer } from "../salesforce/lib/auth/server";
-import { _session } from "../settings";
+import { _session, extensionSettings } from "../settings";
 
 const localize = nls.loadMessageBundle();
 
@@ -22,20 +23,42 @@ const localize = nls.loadMessageBundle();
  * @param loginUrl login url
  */
 export async function authorizeNewProject(projectName?: string, loginUrl?: string) {
+    let workspace = extensionSettings.getConfigValue('workspace', '');
+    if (!workspace) {
+        let workspaceUris = await vscode.window.showOpenDialog({
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            defaultUri: vscode.Uri.file(os.homedir()),
+            openLabel: "Choose the folder as your workspace"
+        });
+        if (!workspaceUris) {
+            return;
+        }
+
+        workspace = workspaceUris[0].fsPath;
+        extensionSettings.setConfigValue('workspace', workspace);
+    }
+
     // Get projectName from user input if not specified
     if (!projectName) {
         projectName = await vscode.window.showInputBox({
-            placeHolder: localize('inputProjectName.text', "Please input your project name...")
+            placeHolder: localize(
+                "inputProjectName.text", 
+                "Please input your project name..."
+            )
         });
         if (!projectName) {
-            const msg = localize("projectNameRequired.text", "Project name is required");
-            return util.showCommandWarning(msg);
+            return;
         }
     }
 
     // If loginUrl is spcified, just start oauth login process
     if (loginUrl) {
-        return startServer(projectName, loginUrl).then( message => {
+        return startServer({
+            projectName, loginUrl
+        })
+        .then( message => {
             startLogin();
         });
     }
@@ -43,10 +66,14 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
     // Get login url from user selection
     let pickItems = [{
             label: "https://login.salesforce.com",
-            description: localize("productionEnv.text", "Production Enviroment")
+            description: localize(
+                "productionEnv.text", "Production Enviroment"
+            )
         }, {
             label: "https://test.salesforce.com",
-            description: localize("sandboxEnv.text", "Sandbox Enviroment")
+            description: localize(
+                "sandboxEnv.text", "Sandbox Enviroment"
+            )
         }
     ];
 
@@ -57,8 +84,9 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
     // Add event listener
     quickPick.onDidChangeSelection(chosenItems => {
         let loginUrl = chosenItems[0].label;
+        projectName = projectName || '';
 
-        startServer(projectName, loginUrl).then( message => {
+        startServer({projectName, loginUrl}).then( message => {
             startLogin();
         });
 
