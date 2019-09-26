@@ -186,7 +186,7 @@ export function getFieldCompletionItem(sobjectNames: string[]): CompletionItem[]
         // Get sobjectDescribeResult
         let sobjectDesc = settingsUtil.getSobjectDesc(sobjectName);
 
-        // Add fields completion
+        // Add fields and parentRelationship completion
         for (const field of sobjectDesc.fields) {
             let detail = undefined;
             if (field.type === "picklist") {
@@ -205,11 +205,19 @@ export function getFieldCompletionItem(sobjectNames: string[]): CompletionItem[]
             if (field.type === "reference") {
                 completionItems.push(createCompletionItem(
                     `${field.relationshipName}(${field.label})`,
-                    CompletionItemKind.Field,
+                    CompletionItemKind.Reference,
                     `${field.type} ${sobjectName}.${field.relationshipName}`,
                     detail, field.relationshipName
                 ));
             }
+        }
+
+        // Add childRelationship completion
+        for (const child of sobjectDesc.childRelationships) {
+            completionItems.push(createCompletionItem(
+                child.relationshipName, CompletionItemKind.Reference,
+                `${child.field} => ${child.childSObject}[]`
+            ));
         }
     }
 
