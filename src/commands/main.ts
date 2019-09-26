@@ -363,15 +363,22 @@ export function executeAnonymous(apexCode?: string) {
  * Describe metadata and kept it to local cache
  */
 export function describeMetadata() {
-    ProgressNotification.showProgress(
-        new MetadataApi(), "describeMetadata", {}
-    )
-    .then( (result: MetadataModel) => {
-        metadata.setMetaObjects(result);
+    return new Promise<any>( (resolve, reject) => {
+        ProgressNotification.showProgress(
+            new MetadataApi(), "describeMetadata", {}
+        )
+        .then( (result: MetadataModel) => {
+            metadata.setMetaObjects(result);
 
-        vscode.window.showInformationMessage(
-            "Metadata describe result has been kept to .config/metadata.json"
-        );
+            vscode.window.showInformationMessage(
+                "Metadata describe result has been kept to .config/metadata.json"
+            );
+
+            resolve(result);
+        })
+        .catch( err => {
+            reject(err);
+        });
     });
 }
 
@@ -785,6 +792,12 @@ export function createNewProject(reloadCache = true) {
 
     // If there is no subscribed metaObjects, so subscribe first
     if (!subscribedMetaObjects || subscribedMetaObjects.length === 0) {
+        if (!metadata.getMetaObjects()) {
+            return describeMetadata().then( () => {
+                createNewProject();
+            });
+        }
+
         return utility.toggleMetadataObjects()
             .then( metaObjects => {
                 if (!metaObjects || metaObjects.length === 0) {
