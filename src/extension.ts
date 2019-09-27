@@ -314,11 +314,6 @@ export function activate(context: ExtensionContext) {
         'apex', provider.sobjectCompletionProvider, ".", "="
     ));
 
-    context.subscriptions.push(languages.registerCompletionItemProvider(
-        'apex', provider.wordCompletionItemProvider, ".", "="
-    ));
-
-
     /**
      * Events part
      */
