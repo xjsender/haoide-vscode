@@ -250,6 +250,20 @@ export function activate(context: ExtensionContext) {
             utility.setSyntax("apex");
         }
     ));
+    
+    // Register setSyntaxToJS command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.setSyntaxToJS", () => {
+            utility.setSyntax("js");
+        }
+    ));
+
+    // Register setSyntaxToHtml command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.setSyntaxToHtml", () => {
+            utility.setSyntax("html");
+        }
+    ));
 
     /**
      * Explorer/context menus

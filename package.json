@@ -228,6 +228,24 @@
 					"dark": "./resources/media/svgs/language.svg"
 				},
 				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.setSyntaxToJS",
+				"title": "%extension.haoide.setSyntaxToJS.title%",
+				"icon": {
+					"light": "./resources/media/svgs/js.svg",
+					"dark": "./resources/media/svgs/js.svg"
+				},
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.setSyntaxToHtml",
+				"title": "%extension.haoide.setSyntaxToHtml.title%",
+				"icon": {
+					"light": "./resources/media/svgs/html.svg",
+					"dark": "./resources/media/svgs/html.svg"
+				},
+				"category": "Haoide"
 			}
 		],
 		"menus": {
@@ -249,7 +267,7 @@
 				},
 				{
 					"command": "extension.haoide.locateThisInBrowser",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.copyLoginUrl",
@@ -293,39 +311,39 @@
 				},
 				{
 					"command": "extension.haoide.refreshFolders",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.retrieveByManifest",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.refreshThisFromServer",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.retrieveThisFromServer",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.retrieveOpenFilesFromServer",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.destructThisFromServer",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.destructOpenFilesFromServer",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.deployThisToServer",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.deployOpenFilesToServer",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.startRestExplorer",
@@ -389,6 +407,21 @@
 				{
 					"command": "extension.haoide.startRestExplorer",
 					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.setSyntaxToApex",
+					"when": "editorIsOpen",
+					"group": "haoide"
+				},
+				{
+					"command": "extension.haoide.setSyntaxToJS",
+					"when": "editorIsOpen",
+					"group": "haoide"
+				},
+				{
+					"command": "extension.haoide.setSyntaxToHtml",
+					"when": "editorIsOpen",
+					"group": "haoide"
 				}
 			],
 			"editor/context": [
