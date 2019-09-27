@@ -16,6 +16,7 @@ import * as settingsUtil from "../settings/settingsUtil";
 import { JSON2Apex, JSON2Typescript, convertArrayToTable } from "../utils/json";
 import { Session as SessionModel, FileProperty } from "../typings";
 import { settings, _session, metadata } from "../settings";
+import { authorizeDefaultProject } from "./auth";
 
 const localize = nls.loadMessageBundle();
 
@@ -203,6 +204,13 @@ export function locateThisInBrowser() {
  * @param startUrl? Redirect url after login 
  */
 export function loginToSFDC(startUrl?: string) {
+    // If session is expired, login again
+    if (_session.getIsSessionExpired()) {
+        return authorizeDefaultProject().then( () => {
+            loginToSFDC(startUrl);
+        });
+    }
+
     let sess: SessionModel = _session.getSession();
 
     let open_url = `${sess.instanceUrl}/secur/frontdoor.jsp` + 
@@ -219,6 +227,13 @@ export function loginToSFDC(startUrl?: string) {
  * Command for copying loginUrl to clipboard
  */
 export function copyLoginUrl() {
+    // If session is expired, login again
+    if (_session.getIsSessionExpired()) {
+        return authorizeDefaultProject().then( () => {
+            loginToSFDC();
+        });
+    }
+
     let sess: SessionModel = _session.getSession();
 
     let loginUrl = `${sess.instanceUrl}/secur/frontdoor.jsp` +

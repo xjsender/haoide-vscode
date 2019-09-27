@@ -52,6 +52,19 @@ export default class Session {
     }
 
     /**
+     * Get flag of isSessionExpired
+     * 
+     * @returns boolean, flag of session expired
+     */
+    public getIsSessionExpired() {
+        let session = this.getSession();
+
+        return moment(session.lastUpdatedTime)
+            .add(15, 'minutes')
+            .isBefore(new Date());
+    }
+
+    /**
      * Get userId in the session cache
      * 
      * @returns userId in the session cache
