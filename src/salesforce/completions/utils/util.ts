@@ -195,10 +195,26 @@ export function getFieldCompletionItem(sobjectNames: string[]): CompletionItem[]
                 }).join("\n");
             }
 
+            // Add formula tip
+            let { type, precision, scale, referenceTo, length } = field;
+            if (field.calculated) {
+                const fieldDict: any = {
+                    'double': `Formula(${type}, ${precision}, ${scale})`,
+                    'currency': `Formula(${type}, ${precision}, ${scale})`,
+                    'date': `Formula(date)`,
+                    'datetime': `Formula(datetime)`,
+                    'boolean': `Formula(boolean)`,
+                    'int': `Formula(integer)`,
+                    'reference': `Reference(${(referenceTo || []).join(',')})`,
+                    'other': `Formula(${type}, ${length})`
+                };
+                type = fieldDict[field.type];
+            }
+
             completionItems.push(createCompletionItem(
                 `${field.name}(${field.label})`,
                 CompletionItemKind.Field,
-                `${field.type} ${sobjectName}.${field.name}`,
+                `${type} ${sobjectName}.${field.name}`,
                 detail, field.name
             ));
 
