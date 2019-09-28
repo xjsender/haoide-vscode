@@ -211,8 +211,21 @@ export function getFieldCompletionItem(sobjectNames: string[]): CompletionItem[]
                 type = fieldDict[field.type];
             }
 
+            // External, unique and required notation
+            let externalUniqueNotation = '';
+            if (field.custom && (
+                    field.externalId || 
+                    field.unique || 
+                    !field.nillable)) {
+                externalUniqueNotation = '[' +
+                    (field.externalId ? 'E' : '') + 
+                    (field.unique ? 'U' : '') +
+                    (!field.nillable ? 'R' : '') + 
+                '] ';
+            }
+
             completionItems.push(createCompletionItem(
-                `${field.name}(${field.label})`,
+                `${externalUniqueNotation}${field.name}(${field.label})`,
                 CompletionItemKind.Field,
                 `${type} ${sobjectName}.${field.name}`,
                 detail, field.name
