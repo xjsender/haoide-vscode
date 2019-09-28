@@ -90,7 +90,10 @@ export function toggleMetadataObjects() {
                 alwaysShow: isPicked
             };
         }), {
-            placeHolder: localize("chooseMetadataObject.text", "Choose the metadata objects to be subscribed"),
+            placeHolder: localize(
+                "chooseMetadataObject.text", 
+                "Choose the metadata objects to be subscribed"
+            ),
             canPickMany: true,
             ignoreFocusOut: true,
             matchOnDescription: true
@@ -101,7 +104,10 @@ export function toggleMetadataObjects() {
                 resolve([]);
 
                 return util.showCommandWarning(
-                    localize("selectOneMetadata.text", "You should select one metaObject at least")
+                    localize(
+                        "selectOneMetadata.text", 
+                        "You should select one metaObject at least"
+                    )
                 );
             }
 
@@ -114,7 +120,9 @@ export function toggleMetadataObjects() {
             });
 
             vscode.window.showInformationMessage(
-                localize("metadataObjectUpdated.text", "Your subscribed metadata objects are updated")
+                localize("metadataObjectUpdated.text", 
+                    "Your subscribed metadata objects are updated"
+                )
             );
 
             resolve(subscribedMetaObjects);

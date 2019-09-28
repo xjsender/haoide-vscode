@@ -144,29 +144,24 @@ export function runSyncTests(testSuites: TestSuite[]) {
 export function executeQuery(isTooling=false) {
     // Get selection in the active editor
     let editor = vscode.window.activeTextEditor;
-    if (!editor) {
-        return util.showCommandWarning();
-    }
+    if (editor) {
+        let soql = editor.document.getText(editor.selection);
 
-    let soql = "";
-    if (editor.selection) {
-        soql = editor.document.getText(editor.selection);
+        let api = isTooling ? new ToolingApi() : new RestApi();
+        ProgressNotification.showProgress(api, "query", {
+            soql: soql,
+            progressMessage: "Executing query request"
+        })
+        .then( result => {
+            util.openNewUntitledFile(
+                JSON.stringify(result, null, 4)
+            );
+        })
+        .catch (err => {
+            console.log(err);
+            vscode.window.showErrorMessage(err.message);
+        });
     }
-
-    let api = isTooling ? new ToolingApi() : new RestApi();
-    ProgressNotification.showProgress(api, "query", {
-        soql: soql,
-        progressMessage: "Executing query request"
-    })
-    .then( result => {
-        util.openNewUntitledFile(
-            JSON.stringify(result, null, 4)
-        );
-    })
-    .catch (err => {
-        console.log(err);
-        vscode.window.showErrorMessage(err.message);
-    });
 }
 
 /**
@@ -436,6 +431,9 @@ export async function destructFilesFromServer(files: string[]) {
                     )
                 );
             }
+        })
+        .catch( err => {
+            vscode.window.showErrorMessage(err.message);
         });
     });
 }

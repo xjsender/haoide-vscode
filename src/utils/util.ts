@@ -216,6 +216,7 @@ export function parseIdUrl(idUrl: string) {
  * Open a new untitled file and display specified content
  * 
  * @param content Content to display in the newUntitile file
+ * @param languageId language id to be set for the new file
  */
 export function openNewUntitledFile(content: string, languageId?: string) {
     let editor = vscode.window.activeTextEditor;
@@ -244,12 +245,8 @@ export function openNewUntitledFile(content: string, languageId?: string) {
  */
 export function getExtensionWorkspace() {
     let _workspace = extensionSettings.getConfigValue(
-        "workspace", ""
+        "workspace", path.join(os.homedir(), "workspace")
     );
-
-    if (!_workspace) {
-        _workspace = path.join(os.homedir(), "workspace");
-    }
 
     if (!fs.existsSync(_workspace)) {
         fs.mkdirSync(_workspace);
