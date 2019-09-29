@@ -1,5 +1,6 @@
 import * as opn from "open";
 import * as fs from "fs";
+import * as shelljs from 'shelljs';
 import * as path from "path";
 import * as os from "os";
 import * as _ from "lodash";
@@ -29,6 +30,33 @@ export function getTriggerCharacters() {
     }
 
     return triggerCharacters;
+}
+
+/**
+ * Copy .gitignore file and .eslintrc to default project 
+ */
+export function copyResourceFiles() {
+    let extension = getExtensionInstance();
+    if (extension) {
+        let resourcesFolder = path.join(
+            extension.extensionPath, "resources"
+        );
+        
+        // Copy .gitignore and .eslintrc to default project
+        for (const resourceFileName of ['.gitignore', '.eslintrc']) {
+            let gitignoreFile = path.join(
+                resourcesFolder, resourceFileName
+            );
+
+            let destFile = path.join(
+                getProjectPath(), resourceFileName
+            );
+            
+            if (!fs.existsSync(destFile)) {
+                shelljs.cp("-f", gitignoreFile, destFile);
+            }
+        }
+    }
 }
 
 /**
@@ -260,9 +288,7 @@ export function openNewUntitledFile(content: string, languageId?: string) {
  * @returns workspace setting
  */
 export function getExtensionWorkspace() {
-    let _workspace = extensionSettings.getConfigValue(
-        "workspace", path.join(os.homedir(), "workspace")
-    );
+    let _workspace = path.join(os.homedir(), "workspace");
 
     if (!fs.existsSync(_workspace)) {
         fs.mkdirSync(_workspace);
@@ -390,7 +416,7 @@ export function createNewWorkspace(projectName: string) {
         workspaceData = JSON.parse(data.toString());
 
         // Add new project to workspace
-        let folders: any[] = workspaceData["folders"];
+        let folders: any[] = workspaceData["folders"] || [];
         folders.push({
             path: getProjectPath(projectName)
         });
