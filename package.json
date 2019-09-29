@@ -224,8 +224,8 @@
 				"command": "extension.haoide.setSyntaxToApex",
 				"title": "%extension.haoide.setSyntaxToApex.title%",
 				"icon": {
-					"light": "./resources/media/svgs/language.svg",
-					"dark": "./resources/media/svgs/language.svg"
+					"light": "./resources/media/svgs/apex.svg",
+					"dark": "./resources/media/svgs/apex.svg"
 				},
 				"category": "Haoide"
 			},
@@ -646,7 +646,7 @@
 	},
 	"dependencies": {
 		"@salesforce/apex-tmlanguage": "^1.1.0",
-		"@salesforce-ux/design-system": "2.10.0",
+		"@salesforce-ux/design-system": "^2.10.0",
 		"@types/adm-zip": "^0.4.32",
 		"@types/express": "^4.16.3",
 		"@types/lodash": "^4.14.136",

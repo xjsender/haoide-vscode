@@ -5,7 +5,7 @@
 
 import * as _ from "lodash";
 import { TextDocument, Position, CompletionItem, CompletionItemKind, Range, SnippetString } from "vscode";
-import { PositionOption } from "../models/completion";
+import { PositionOption } from "../typings/completion";
 import { SymbolTable } from "../../../typings/symbolTable";
 import * as settingsUtil from "../../../settings/settingsUtil";
 
@@ -24,6 +24,31 @@ export function getLastCharOfPosition(document: TextDocument, postition: Positio
     return document.getText(charRange);
 }
 
+export function getMatchedSOQL(pos: PositionOption) {
+    let pattern = /SELECT\s+[^;]+FROM\s+[1-9_a-zA-Z]+/gi;
+    let match, index, matchedText: string = '';
+    console.log(pattern.exec(pos.wholeText));
+    
+    while (match = pattern.exec(pos.wholeText)) {
+        console.log(match, match.index, pos.offset);
+        if (index === match.index 
+                || match.index > pos.offset) {
+            break;
+        }
+
+        index = match.index;
+        matchedText = match[0];
+    }
+
+    console.log(matchedText);
+    
+    let sobjectName = matchedText.substr(
+        matchedText.lastIndexOf(' '), matchedText.length
+    );
+
+    return sobjectName.trim();
+}
+
 /**
  * Get completion items of properties for spcified class
  * 
@@ -37,10 +62,8 @@ export function getPropertyCompletion(className: string, properties: any[]) {
     for (const _property of properties) {
         let propertyName = _property["name"];
         completionItems.push(createCompletionItem(
-            `${propertyName}`,
-            CompletionItemKind.Property,
-            `${className}.${propertyName}`,
-            undefined,
+            `${propertyName}`, CompletionItemKind.Property,
+            `${className}.${propertyName}`, undefined,
             `${propertyName}$0`
         ));
     }
@@ -243,10 +266,12 @@ export function getFieldCompletionItem(sobjectNames: string[]): CompletionItem[]
 
         // Add childRelationship completion
         for (const child of sobjectDesc.childRelationships) {
-            completionItems.push(createCompletionItem(
-                child.relationshipName, CompletionItemKind.Reference,
-                `${child.field} => ${child.childSObject}[]`
-            ));
+            if (child.relationshipName) {
+                completionItems.push(createCompletionItem(
+                    child.relationshipName, CompletionItemKind.Reference,
+                    `${child.field} => ${child.childSObject}[]`
+                ));
+            }
         }
     }
 

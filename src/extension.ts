@@ -10,6 +10,7 @@ import * as provider from "./salesforce/completions/provider";
 import * as contextUtil from "./utils/context";
 import { auth, utility, main } from "./commands";
 import { RestWebPanel } from './utils/webview';
+import { getTriggerCharacters } from "./utils/util";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

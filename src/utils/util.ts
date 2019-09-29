@@ -16,6 +16,22 @@ import {
 } from "../typings";
 
 /**
+ * Get trigger characters for completion
+ * 
+ * @returns Array of trigger characters for completion
+ */
+export function getTriggerCharacters() {
+    let triggerCharacters = [".", "="];
+    for (let i = 97; i < 123; i++) {
+        if (i <= 91 || i >= 97) {
+            triggerCharacters.push(String.fromCharCode(i));
+        }
+    }
+
+    return triggerCharacters;
+}
+
+/**
  * Get extension version of haoide
  * 
  * @param extension instance of vscode.Extension
