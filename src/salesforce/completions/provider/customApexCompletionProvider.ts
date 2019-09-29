@@ -16,7 +16,7 @@ import * as util from "../utils/util";
 import * as settingsUtil from "../../../settings/settingsUtil";
 import { createCompletionItem } from "../utils/util";
 import { extensionSettings } from "../../../settings";
-import { PositionOption } from "../models/completion";
+import { PositionOption } from "../typings/completion";
 
 export class CustomApexCompletionItemProvider implements vscode.CompletionItemProvider {
     public constructor() { }

@@ -646,6 +646,7 @@
 	},
 	"dependencies": {
 		"@salesforce/apex-tmlanguage": "^1.1.0",
+		"@salesforce-ux/design-system": "2.10.0",
 		"@types/adm-zip": "^0.4.32",
 		"@types/express": "^4.16.3",
 		"@types/lodash": "^4.14.136",

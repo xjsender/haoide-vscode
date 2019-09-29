@@ -16,7 +16,7 @@ import * as util from "../utils/util";
 import { createCompletionItem } from "../utils/util";
 import { vfTagDefs } from "../lib";
 import { extensionSettings } from "../../../settings";
-import { PositionOption } from "../models/completion";
+import { PositionOption } from "../typings/completion";
 
 export class VisualforceCompletionItemProvider implements vscode.CompletionItemProvider {
     public constructor() { }

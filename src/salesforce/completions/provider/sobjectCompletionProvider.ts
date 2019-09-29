@@ -11,7 +11,7 @@ import * as util from "../utils/util";
 import { createCompletionItem } from "../utils/util";
 import * as settingsUtil from "../../../settings/settingsUtil";
 import { extensionSettings } from "../../../settings";
-import { PositionOption } from "../models/completion";
+import { PositionOption } from "../typings/completion";
 import { PicklistValue, Field } from "../../../typings/sobject";
 
 export class SobjectCompletionItemProvider implements vscode.CompletionItemProvider {
@@ -19,7 +19,9 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
     public provideCompletionItems(document: TextDocument,
         position: Position, token: vscode.CancellationToken,
         context: vscode.CompletionContext) {
-
+        
+        console.log('start');
+        
         let enableDebugMode = extensionSettings.getConfigValue(
             "enableDebugLog", false
         );
@@ -118,11 +120,16 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
             }
         }
         // Add keyword completion
-        else {
+        else  {
             for (const sobjectName of _.values(sobjects)) {
                 completionItems.push(createCompletionItem(
                     sobjectName, CompletionItemKind.Keyword
                 ));
+            }
+
+            let sobjectName = util.getMatchedSOQL(pos);
+            if (sobjectName) {
+                completionItems.push(...util.getFieldCompletionItem([sobjectName]));
             }
         }
 
