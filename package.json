@@ -433,7 +433,7 @@
 				{
 					"group": "haoide@2",
 					"command": "extension.haoide.refreshThisFromServer",
-					"when": "resourceFilename != package.xml && resourceScheme == file"
+					"when": "resourceFilename != package.xml && resourceExtname == .cls"
 				},
 				{
 					"group": "haoide@2",
