@@ -43,7 +43,7 @@ export function copyResourceFiles() {
         );
         
         // Copy .gitignore and .eslintrc to default project
-        for (const resourceFileName of ['.gitignore', '.eslintrc', 'jsconfig.json']) {
+        for (const resourceFileName of ['.gitignore', 'jsconfig.json']) {
             let gitignoreFile = path.join(
                 resourcesFolder, resourceFileName
             );
