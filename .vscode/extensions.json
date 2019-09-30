@@ -4,6 +4,7 @@
 	"recommendations": [
 		"atishay-jain.all-autocomplete",
 		"ms-vscode.sublime-keybindings",
-		"pkief.material-icon-theme"
+		"pkief.material-icon-theme",
+		"esbenp.prettier-vscode"
 	]
 }
