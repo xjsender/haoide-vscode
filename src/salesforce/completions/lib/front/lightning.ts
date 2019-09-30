@@ -4,7 +4,7 @@
  * @author Mouse Liu <mouse.mliu@gmail.com>
  */
 
-import { getIconNames } from "../util";
+import { getIconNames, getCssNames } from "../util";
 
 // events count: 69
 const std_events = {
@@ -1701,14 +1701,6 @@ const standard_lib = {
     }
 };
 
-// Attributes which type is ApexPages.PageReference
-let page_reference_attrs = [
-    "page",
-    "template",
-    "pageName",
-    "finishLocation"
-];
-
 // interface count: 32
 let component_interfaces = [
     "aura:rootComponent",
@@ -1864,11 +1856,14 @@ export let html_global_methods = [
     "onsuspend", "ontimeupdate", "ontoggle", "onvolumechange", "onwaiting"
 ];
 
+// Parse all classes from salesforce-ux modules
+export let cssNames = getCssNames();
+
 // ["analytics", "aura", "force", "forceChatter", "forceCommunity", "lightning", "ltng", "ui", "wave"]
 // aura + lwc component from Salesforce Lightning Component Library count: 158 + 72 = 232
 // last commit count: 249
 // merged (current) count: 251, with deferent cmps at the last section
-let icon_names = getIconNames();
+let iconNames = getIconNames();
 export let tag_defs: { [key: string]: any } = {
     "aura:component": {
         "attribs": {
@@ -3120,7 +3115,7 @@ export let tag_defs: { [key: string]: any } = {
             "iconName": {
                 "description": "The Lightning Design System name of the icon. ",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false
             },
@@ -3284,7 +3279,7 @@ export let tag_defs: { [key: string]: any } = {
             "iconName": {
                 "description": "The Lightning Design System name of the icon. Names are written in the format '\\utility:down\\' where 'utility' is the category, and 'down' is the specific icon to be displayed. Required.",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": true
             },
@@ -3458,7 +3453,7 @@ export let tag_defs: { [key: string]: any } = {
             "iconName": {
                 "description": "The Lightning Design System name of the icon",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": true
             },
@@ -3603,7 +3598,7 @@ export let tag_defs: { [key: string]: any } = {
             "iconName": {
                 "description": "The Lightning Design System name of the icon. Names are written in the format '\\utility:down\\' where 'utility' is the category, and 'down' is the specific icon to be displayed.",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false
             },
@@ -3766,21 +3761,21 @@ export let tag_defs: { [key: string]: any } = {
             "iconNameWhenOff": {
                 "description": "The name of the icon to be used in the format \\'utility:add\\' when the state is false.",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false
             },
             "iconNameWhenOn": {
                 "description": "The name of the icon to be used in the format \\'utility:check\\' when the state is true.",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false
             },
             "iconNameWhenHover": {
                 "description": "The name of the icon to be used in the format \\'utility:close\\' when the state is true and the button receives focus.",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false
             },
@@ -3827,7 +3822,7 @@ export let tag_defs: { [key: string]: any } = {
             "iconName": {
                 "description": "The Lightning Design System name of the icon. Names are written in the format '\\utility:down\\' where 'utility' is the category, and 'down' is the specific icon to be displayed. The icon is displayed in the header to the left of the title.",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false
             },
@@ -5562,7 +5557,7 @@ export let tag_defs: { [key: string]: any } = {
             "iconName": {
                 "description": "The Lightning Design System name of the icon used as the visible element",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false
             },
@@ -5601,7 +5596,7 @@ export let tag_defs: { [key: string]: any } = {
             "iconName": {
                 "description": "The Lightning Design System name of the icon. Names are written in the format '\\utility:down\\' where 'utility' is the category, and 'down' is the specific icon to be displayed.",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": true
             },
@@ -6928,7 +6923,7 @@ export let tag_defs: { [key: string]: any } = {
             "iconName": {
                 "description": "If provided an icon with the provided name is shown to the right of the menu item.",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false
             },
@@ -8935,7 +8930,7 @@ export let tag_defs: { [key: string]: any } = {
             "iconName": {
                 "description": "The Lightning Design System name of the icon. Names are written in the format '\\utility:down\\' where 'utility' is the category, and 'down' is the specific icon to be displayed.",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false
             }
@@ -9028,7 +9023,7 @@ export let tag_defs: { [key: string]: any } = {
             "iconName": {
                 "description": "The Lightning Design System name of the icon. Only utility icons can be used in this component.",
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false
             },
@@ -13552,7 +13547,7 @@ export let tag_defs: { [key: string]: any } = {
             },
             "fallback-icon-name": {
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false,
                 "default": "",
@@ -13695,7 +13690,7 @@ export let tag_defs: { [key: string]: any } = {
             },
             "icon-name": {
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false,
                 "default": "",
@@ -13770,7 +13765,7 @@ export let tag_defs: { [key: string]: any } = {
             },
             "icon-name": {
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false,
                 "default": "",
@@ -13862,7 +13857,7 @@ export let tag_defs: { [key: string]: any } = {
             },
             "icon-name": {
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false,
                 "default": "",
@@ -13935,7 +13930,7 @@ export let tag_defs: { [key: string]: any } = {
             },
             "icon-name": {
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false,
                 "default": "utility:down",
@@ -14058,7 +14053,7 @@ export let tag_defs: { [key: string]: any } = {
         "attribs": {
             "icon-name-when-on": {
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false,
                 "default": "",
@@ -14066,7 +14061,7 @@ export let tag_defs: { [key: string]: any } = {
             },
             "icon-name-when-off": {
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false,
                 "default": "",
@@ -14074,7 +14069,7 @@ export let tag_defs: { [key: string]: any } = {
             },
             "icon-name-when-hover": {
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false,
                 "default": "",
@@ -14136,7 +14131,7 @@ export let tag_defs: { [key: string]: any } = {
                 "required": false,
                 "default": "",
                 "description": "The Lightning Design System name of the icon.\nNames are written in the format 'utility:down' where 'utility' is the category,\nand 'down' is the specific icon to be displayed.\nThe icon is displayed in the header to the left of the title.",
-                "values": icon_names
+                "values": iconNames
             },
             "variant": {
                 "type": "Picklist",
@@ -15506,7 +15501,7 @@ export let tag_defs: { [key: string]: any } = {
                 "required": false,
                 "default": "",
                 "description": "The Lightning Design System name of the icon used as the visible element.\nNames are written in the format 'utility:info' where 'utility' is the category,\nand 'info' is the specific icon to be displayed.\nThe default is 'utility:info'.",
-                "values": icon_names
+                "values": iconNames
             },
             "icon-variant": {
                 "type": "Picklist",
@@ -15548,7 +15543,7 @@ export let tag_defs: { [key: string]: any } = {
                 "required": true,
                 "default": "",
                 "description": "The Lightning Design System name of the icon.\nNames are written in the format 'utility:down' where 'utility' is the category,\nand 'down' is the specific icon to be displayed.",
-                "values": icon_names
+                "values": iconNames
             },
             "size": {
                 "type": "Picklist",
@@ -16689,7 +16684,7 @@ export let tag_defs: { [key: string]: any } = {
                 "required": false,
                 "default": "",
                 "description": "The name of an icon to display after the text of the menu item.",
-                "values": icon_names
+                "values": iconNames
             },
             "prefix-icon-name": {
                 "type": "Picklist",
@@ -16697,7 +16692,7 @@ export let tag_defs: { [key: string]: any } = {
                 "required": false,
                 "default": "",
                 "description": "The name of an icon to display before the text of the menu item.",
-                "values": icon_names
+                "values": iconNames
             },
             "href": {
                 "type": "String",
@@ -17497,7 +17492,7 @@ export let tag_defs: { [key: string]: any } = {
             },
             "icon-name": {
                 "type": "Picklist",
-                "values": icon_names,
+                "values": iconNames,
                 "access": "global",
                 "required": false,
                 "default": "",
@@ -17988,7 +17983,7 @@ export let tag_defs: { [key: string]: any } = {
                 "required": false,
                 "default": "",
                 "description": "The Lightning Design System name of the icon.\nNames are written in the format 'utility:down' where 'utility' is the category,\nand 'down' is the specific icon to be displayed.",
-                "values": icon_names
+                "values": iconNames
             },
             "href": {
                 "type": "String",

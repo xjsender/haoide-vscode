@@ -6,6 +6,7 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
+import * as _ from "lodash";
 import { publicDeclarations } from "./server/apex";
 import { UiIcon } from "../typings/completion";
 
@@ -22,6 +23,34 @@ export function getExtensionInstance() {
     return extension;
 }
 
+export function getCssNames() {
+    let extension = getExtensionInstance();
+    if (extension) {
+        let cssFilePath = path.join(
+            extension.extensionPath, 'node_modules',
+            '@salesforce-ux', 'design-system', 'assets',
+            'styles', 'salesforce-lightning-design-system.min.css'
+        );
+
+        let data;
+        try {
+            data = fs.readFileSync(cssFilePath, 'utf-8');
+        }
+        catch (err) {
+            return [];
+        }
+
+        return _.uniq(data.match(/slds[-_:\w]+?[\w-]+/gi) || []);
+    }
+
+    return [];
+}
+
+/**
+ * Get icon name array from design-system modules
+ * 
+ * @returns string[], icon name array
+ */
 export function getIconNames() {
     let extension = getExtensionInstance();
     if (extension) {
@@ -35,7 +64,6 @@ export function getIconNames() {
             data = fs.readFileSync(uiIconPath, 'utf-8');
         }
         catch (err) {
-            console.log(err);
             return [];
         }
 

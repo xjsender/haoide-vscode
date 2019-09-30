@@ -14,7 +14,7 @@ import {
 
 import * as util from "../utils/util";
 import { createCompletionItem } from "../utils/util";
-import { ltnTagDefs } from "../lib";
+import { ltnTagDefs, cssNames } from "../lib";
 import { extensionSettings } from "../../../settings";
 import { PositionOption } from "../typings/completion";
 
@@ -143,8 +143,14 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
 
                         // If attr type boolean, add { !} or { } to it according to type
                         let insertText;
-                        if (attr["type"] === "String") {
+                        if (/\w*Class/gi.test(attrName)) {
+                            insertText = attrName;
+                        }
+                        else if (attr["type"] === "String") {
                             insertText = `${attrName}="$1"$0`;
+                        }
+                        else {
+                            insertText = attrName;
                         }
 
                         completionItems.push(createCompletionItem(
@@ -158,7 +164,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
             }
         }
         // Attribute values completion
-        else if (pos.char === "=") {
+        else if (pos.char === '=') {
             let pattern = /<\w+[:-\s]+\w+[\w\W]*?/g;
             let match, matchedText;
 
@@ -189,7 +195,15 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
                     });
                 }
 
-                if (attr && attr["type"] === "Picklist") {
+                if (/\w*Class/gi.test(attrName)) {
+                    for (const cssName of cssNames) {
+                        completionItems.push(createCompletionItem(
+                            cssName, CompletionItemKind.Class,
+                            undefined, undefined, `"${cssName}"`
+                        ));
+                    }
+                }
+                else if (attr && attr["type"] === "Picklist") {
                     for (const _value of (attr["values"] || [])) {
                         completionItems.push(createCompletionItem(
                             _value, CompletionItemKind.Value,
