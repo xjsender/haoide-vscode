@@ -216,6 +216,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.startQueryExplorer",
+				"title": "%extension.haoide.startQueryExplorer.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.createManifestFile",
 				"title": "%extension.haoide.createManifestFile.title%",
 				"category": "Haoide"
@@ -347,6 +352,10 @@
 				},
 				{
 					"command": "extension.haoide.startRestExplorer",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.startQueryExplorer",
 					"when": "haoide.hasOpenProject"
 				},
 				{
@@ -654,6 +663,7 @@
 		"@types/request-promise": "^4.1.44",
 		"@types/shelljs": "^0.8.5",
 		"@types/yazl": "^2.4.1",
+		"bootstrap": "^4.3.1",
 		"eslint": "^5.0.0",
 		"promise-limit": "^2.7.0",
 		"cometd": "^3.1.10",

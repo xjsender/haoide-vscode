@@ -39,6 +39,7 @@
     "extension.haoide.createVisualforcePage.title": "Create Visualforce Page",
     "extension.haoide.createVisualforceComponent.title": "Create Visualforce Component",
     "extension.haoide.startRestExplorer.title": "Start REST Explorer",
+    "extension.haoide.startQueryExplorer.title": "Start Query Explorer",
     "extension.haoide.setSyntaxToApex.title": "Set Syntax: Apex",
     "extension.haoide.setSyntaxToJS.title": "Set Syntax: JS",
     "extension.haoide.setSyntaxToHtml.title": "Set Syntax: Html",

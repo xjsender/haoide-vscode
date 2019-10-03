@@ -13,12 +13,12 @@ export interface PositionOption {
 
 // Used to parse ui icons in salesforce-ux
 export interface Icons {
-	sprite: string;
-	symbol: string;
+    sprite: string;
+    symbol: string;
 }
 
 export interface UiIcon {
-	name: string;
-	description: string;
-	icons: Icons[];
+    name: string;
+    description: string;
+    icons: Icons[];
 }

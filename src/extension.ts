@@ -9,7 +9,7 @@ import { commands, languages, ExtensionContext, Uri } from 'vscode';
 import * as provider from "./salesforce/completions/provider";
 import * as contextUtil from "./utils/context";
 import { auth, utility, main } from "./commands";
-import { RestWebPanel } from './utils/webview';
+import { RestWebPanel, QueryWebPanel } from './utils/webview';
 import { getTriggerCharacters } from "./utils/util";
 
 // this method is called when your extension is activated
@@ -289,6 +289,12 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(
         commands.registerCommand('extension.haoide.startRestExplorer', () => {
             RestWebPanel.showPanel(context.extensionPath);
+        })
+    );
+
+    context.subscriptions.push(
+        commands.registerCommand('extension.haoide.startQueryExplorer', () => {
+            QueryWebPanel.showPanel(context.extensionPath);
         })
     );
 

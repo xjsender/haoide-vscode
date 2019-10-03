@@ -39,6 +39,7 @@
     "extension.haoide.createVisualforcePage.title": "创建Visualforce Page",
     "extension.haoide.createVisualforceComponent.title": "创建Visualforce Component",
     "extension.haoide.startRestExplorer.title": "开启REST Explorer窗口",
+    "extension.haoide.startQueryExplorer.title": "开启Query Explorer窗口",
     "extension.haoide.setSyntaxToApex.title": "Set Syntax: Apex",
     "extension.haoide.setSyntaxToJS.title": "Set Syntax: JS",
     "extension.haoide.setSyntaxToHtml.title": "Set Syntax: HTML",
