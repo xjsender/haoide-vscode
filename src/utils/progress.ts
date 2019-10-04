@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+import * as nls from 'vscode-nls';
+const localize = nls.loadMessageBundle();
 
 export default class ProgressNotification {
     /**
@@ -15,7 +17,11 @@ export default class ProgressNotification {
             cancellable: true
         }, (progress, token) => {
             token.onCancellationRequested(() => {
-                console.log("You canceled the long polling operation");
+                vscode.window.showWarningMessage(
+                    localize('cancelRequest.text',
+                        'Your request was cancelled'
+                    )
+                );
             });
 
             progress.report({ message: methodName });
