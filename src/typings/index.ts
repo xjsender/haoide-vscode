@@ -29,6 +29,13 @@ export enum ConfirmAction {
     OVERRIDE = "Override"
 }
 
+// Enum for login url
+export enum LoginUrlEnum {
+    PRODUCTION = 'https://login.salesforce.com',
+    SANDBOX = 'https://test.salesforce.com',
+    CUSTOM = 'https://custom.salesforce.com'
+}
+
 // Used in rest query response
 export interface QueryResult {
     done: boolean;

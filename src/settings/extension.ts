@@ -28,7 +28,7 @@ export default class ExtensionSettings {
 
     public async setConfigValue(key: string, value: any) {
         await this.getConfiguration().update(key, value, 
-            vscode.ConfigurationTarget.Workspace    
+            vscode.ConfigurationTarget.Global    
         );
     }
 }

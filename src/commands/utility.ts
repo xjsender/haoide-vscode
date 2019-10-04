@@ -102,13 +102,7 @@ export function toggleMetadataObjects() {
         return new Promise<string[]>( (resolve, reject) => {
             if (!selectedItems || selectedItems.length === 0) {
                 resolve([]);
-
-                return util.showCommandWarning(
-                    localize(
-                        "selectOneMetadata.text", 
-                        "You should select one metaObject at least"
-                    )
-                );
+                return;
             }
 
             // Keep subscribedMetaObjects to project settings

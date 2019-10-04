@@ -663,6 +663,7 @@
 		"@types/request-promise": "^4.1.44",
 		"@types/shelljs": "^0.8.5",
 		"@types/yazl": "^2.4.1",
+		"acorn": "^6.0.0",
 		"bootstrap": "^4.3.1",
 		"eslint": "^5.0.0",
 		"promise-limit": "^2.7.0",
