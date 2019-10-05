@@ -7,7 +7,7 @@ import {
     ComponentSuccess, RunTestResult
 } from "./meta";
 import { Session } from "./session";
-import { DescribeSObjectResult, SObjectDesc, Field } from "./sobject";
+import { DescribeGlobal, DescribeSObjectResult, SObjectDesc, Field } from "./sobject";
 import { TestObject, TestSuite, TestResponse } from "./test";
 import { ApexClass } from "./symbolTable";
 
@@ -36,6 +36,14 @@ export enum LoginUrlEnum {
     CUSTOM = 'https://custom.salesforce.com'
 }
 
+// Enum for SObject scope
+export enum SObjectReloadScope {
+    ALL = 'All SObjects',
+    STANDARD = 'Standard SObjects',
+    CUSTOM = 'Custom SObjects',
+    CUSTOMSCOPE = 'Custom Scope'
+}
+
 // Used in rest query response
 export interface QueryResult {
     done: boolean;
@@ -58,7 +66,7 @@ export {
     FileProperty, Message,
     DeployResult, CheckDeployResult, DeployResultDetails, 
     ComponentSuccess, RunTestResult,
-    DescribeSObjectResult, SObjectDesc, Field,
+    DescribeGlobal, DescribeSObjectResult, SObjectDesc, Field,
     TestObject, TestSuite, TestResponse,
     ApexClass, Session
 };

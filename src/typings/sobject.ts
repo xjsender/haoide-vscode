@@ -121,6 +121,10 @@ export interface PicklistValue {
 
 export interface Urls {
     layout: string;
+	rowTemplate: string;
+	defaultValues: string;
+	describe: string;
+	sobject: string;
 }
 
 export interface RecordTypeInfo {
@@ -154,4 +158,34 @@ export interface Urls2 {
 
 export interface DescribeSObjectResult {
     result: SObjectDesc;
+}
+
+export interface Sobjects {
+	deprecatedAndHidden: boolean;
+	searchable: boolean;
+	name: string;
+	deletable: boolean;
+	custom: boolean;
+	undeletable: boolean;
+	label: string;
+	layoutable: boolean;
+	keyPrefix: Object | undefined;
+	labelPlural: string;
+	activateable: boolean;
+	urls: Urls;
+	customSetting: boolean;
+	replicateable: boolean;
+	triggerable: boolean;
+	queryable: boolean;
+	mergeable: boolean;
+	feedEnabled: boolean;
+	updateable: boolean;
+	retrieveable: boolean;
+	createable: boolean;
+}
+
+export interface DescribeGlobal {
+	sobjects: Sobjects[];
+	encoding: string;
+	maxBatchSize: number;
 }

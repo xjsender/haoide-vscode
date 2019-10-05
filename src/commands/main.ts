@@ -29,7 +29,9 @@ import {
     DeployResult,
     Template,
     ConfirmAction,
-    QueryResult
+    QueryResult,
+    SObjectReloadScope,
+    DescribeGlobal
 } from '../typings';
 import { CheckRetrieveResult, CheckDeployResult } from '../typings/meta';
 import { Manifest } from '../typings/manifest';
@@ -212,27 +214,61 @@ export function reloadSymbolTable() {
 export async function reloadSobjectCache(options?: any) {
     let restApi = new RestApi();
 
-    let sobjects = (options && options.sobjects) || [];
+    let sobjects: string[] = (options && options.sobjects) || [];
     if (!sobjects || sobjects.length === 0) {
+        // Get sobjects scope
+        let scope = options.scope || await vscode.window.showQuickPick([
+            SObjectReloadScope.ALL, 
+            SObjectReloadScope.STANDARD, 
+            SObjectReloadScope.CUSTOM,
+            SObjectReloadScope.CUSTOMSCOPE
+        ], {
+            placeHolder: 'Choose the scope for sobject definitions to reload',
+            ignoreFocusOut: true
+        });
+        if (!scope) {
+            return;
+        }
+
         return ProgressNotification.showProgress(
             restApi, "describeGlobal", {
-            progressMessage: "Executing global describe request"
+            progressMessage: "Executing describeGlobal request"
         })
-        .then( async body => {
-            let sobjectsDesc: any[] = body["sobjects"];
-            sobjects = _.map(sobjectsDesc, sobjectDesc => {
-                return sobjectDesc["name"];
-            });
+        .then( async (body: DescribeGlobal) => {
+            let sobjectsDesc = body.sobjects;
+            for (const sobjectDesc of sobjectsDesc) {
+                if (scope === SObjectReloadScope.ALL
+                        || scope === SObjectReloadScope.CUSTOMSCOPE) {
+                    sobjects.push(sobjectDesc.name);
+                }
+                else if (scope === SObjectReloadScope.STANDARD) {
+                    if (!sobjectDesc.custom) {
+                        sobjects.push(sobjectDesc.name);
+                    }
+                }
+                else if (scope === SObjectReloadScope.CUSTOM) {
+                    if (sobjectDesc.custom) {
+                        sobjects.push(sobjectDesc.name);
+                    }
+                }
+            }
 
-            // Reload all sobjects
-            if (options && !options.reloadAll) {
-                sobjects = await vscode.window.showQuickPick(sobjects, {
+            // Customscope means user can manually specify the scope
+            let chosenSobjects;
+            if (scope === SObjectReloadScope.CUSTOMSCOPE) {
+                chosenSobjects = await vscode.window.showQuickPick(sobjects, {
                     canPickMany: true
                 });
+                if (!chosenSobjects) {
+                    return;
+                }
+            }
+            else {
+                chosenSobjects = sobjects;
             }
 
             reloadSobjectCache({
-                sobjects: sobjects
+                sobjects: chosenSobjects
             });
 
             vscode.window.showInformationMessage(
@@ -792,7 +828,7 @@ export function createNewProject(reloadCache = true) {
     if (!subscribedMetaObjects || subscribedMetaObjects.length === 0) {
         if (!metadata.getMetaObjects()) {
             return describeMetadata().then( () => {
-                createNewProject();
+                createNewProject(reloadCache);
             });
         }
 
@@ -806,7 +842,7 @@ export function createNewProject(reloadCache = true) {
                     );
                 }
 
-                createNewProject();
+                createNewProject(reloadCache);
             });
     }
 
@@ -832,7 +868,7 @@ export function createNewProject(reloadCache = true) {
         // Reload sObject cache
         if (reloadCache) {
             reloadSobjectCache({ 
-                reloadAll: true
+                scope: SObjectReloadScope.ALL
             });
         }
 
