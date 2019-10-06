@@ -7,7 +7,7 @@ import {
     ComponentSuccess, RunTestResult
 } from "./meta";
 import { Session } from "./session";
-import { DescribeGlobal, DescribeSObjectResult, SObjectDesc, Field } from "./sobject";
+import { GlobalDescribe, DescribeSObjectResult, SObjectDesc, Field } from "./sobject";
 import { TestObject, TestSuite, TestResponse } from "./test";
 import { ApexClass } from "./symbolTable";
 
@@ -27,6 +27,15 @@ export enum ConfirmAction {
     YES = "Yes",
     NO = "No",
     OVERRIDE = "Override"
+}
+
+// Enum sobject soql
+export enum SObjectSOQL {
+    All = 'All Fields',
+    STANDARD = 'Standard Fields',
+    CUSTOM = 'Custom Fields',
+    CREATEABLE = 'Createable Fields',
+    UPDATEABLE = 'Updateable Fields'
 }
 
 // Enum for login url
@@ -66,7 +75,7 @@ export {
     FileProperty, Message,
     DeployResult, CheckDeployResult, DeployResultDetails, 
     ComponentSuccess, RunTestResult,
-    DescribeGlobal, DescribeSObjectResult, SObjectDesc, Field,
+    GlobalDescribe, DescribeSObjectResult, SObjectDesc, Field,
     TestObject, TestSuite, TestResponse,
     ApexClass, Session
 };

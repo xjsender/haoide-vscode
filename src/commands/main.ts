@@ -31,12 +31,46 @@ import {
     ConfirmAction,
     QueryResult,
     SObjectReloadScope,
-    DescribeGlobal
+    GlobalDescribe
 } from '../typings';
 import { CheckRetrieveResult, CheckDeployResult } from '../typings/meta';
 import { Manifest } from '../typings/manifest';
 
 const localize = nls.loadMessageBundle();
+
+export function describeSobjectSOQL() {
+    
+}
+
+/**
+ * Command for executing globalDescribe REST request
+ * 
+ * @returns Promise<GlobalDescribe>
+ */
+export function executeGlobalDescribe() {
+    return new Promise<GlobalDescribe>((resolve, reject) => {
+        // Get global describe cache
+        let result = settingsUtil.getGlobalDescribe();
+        
+        if (result && result.sobjects) {
+            return resolve(result);
+        }
+
+        // Request from server if there is no global describe cache
+        let restApi = new RestApi();
+        return ProgressNotification.showProgress(
+            restApi, "describeGlobal", {
+            progressMessage: "Executing global describe request"
+        })
+        .then( (result: GlobalDescribe) => {
+            settingsUtil.saveGlobalDescribe(result);
+            resolve(result);
+        })
+        .catch(err => {
+            reject(err);
+        });
+    });
+}
 
 /**
  * Update user language as your chosen
@@ -217,7 +251,7 @@ export async function reloadSobjectCache(options?: any) {
     let sobjects: string[] = (options && options.sobjects) || [];
     if (!sobjects || sobjects.length === 0) {
         // Get sobjects scope
-        let scope = options.scope || await vscode.window.showQuickPick([
+        let scope = (options && options.scope) || await vscode.window.showQuickPick([
             SObjectReloadScope.ALL, 
             SObjectReloadScope.STANDARD, 
             SObjectReloadScope.CUSTOM,
@@ -230,12 +264,8 @@ export async function reloadSobjectCache(options?: any) {
             return;
         }
 
-        return ProgressNotification.showProgress(
-            restApi, "describeGlobal", {
-            progressMessage: "Executing describeGlobal request"
-        })
-        .then( async (body: DescribeGlobal) => {
-            let sobjectsDesc = body.sobjects;
+        return executeGlobalDescribe().then( async result => {
+            let sobjectsDesc = result.sobjects;
             for (const sobjectDesc of sobjectsDesc) {
                 if (scope === SObjectReloadScope.ALL
                         || scope === SObjectReloadScope.CUSTOMSCOPE) {

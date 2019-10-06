@@ -184,7 +184,7 @@ export interface Sobjects {
 	createable: boolean;
 }
 
-export interface DescribeGlobal {
+export interface GlobalDescribe {
 	sobjects: Sobjects[];
 	encoding: string;
 	maxBatchSize: number;

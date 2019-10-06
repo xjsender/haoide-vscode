@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 import * as util from "../utils/util";
-import { SObjectDesc } from "../typings";
+import { SObjectDesc, GlobalDescribe } from "../typings";
 import { SymbolTable } from "../typings/symbolTable";
 
 /**
@@ -65,6 +65,25 @@ export function setConfigValue(fileName: string,
     }
 
     fs.writeFileSync(filePath, JSON.stringify(config, null, 4));
+}
+
+/**
+ * Get local file path, if not exists, just make it
+ * 
+ * @param fileName file Name which contains extension
+ * @returns the full uri of specified config file
+ */
+export function getFilePath(fileName: string, containsPath?: string): string {
+    let projectFolder = util.getProjectPath(); // Get default project
+    let fileFolder = path.join(
+        projectFolder, ".haoide", containsPath || ""
+    );
+
+    if (!fs.existsSync(fileFolder)) {
+        fs.mkdirSync(fileFolder);
+    }
+
+    return path.join(fileFolder, fileName);
 }
 
 /**
@@ -151,7 +170,7 @@ export function saveSobjectDesc(sobjectDesc: any) {
     // Write file to cache
     fs.writeFile(filePath, 
         JSON.stringify(sobjectDesc, null, 4),
-        err => {
+        () => {
             vscode.window.setStatusBarMessage(
                 `${sobjectDesc.name} is saved to ${filePath}`
             );
@@ -201,20 +220,43 @@ export function getSobjectDesc(sobjectName: string): SObjectDesc {
 }
 
 /**
- * Get local file path, if not exists, just make it
+ * Get global describe cache
  * 
- * @param fileName file Name which contains extension
- * @returns the full uri of specified config file
+ * @returns globalDescribe result at local disk
  */
-export function getFilePath(fileName: string, containsPath?: string): string {
-    let projectFolder = util.getProjectPath(); // Get default project
-    let fileFolder = path.join(
-        projectFolder, ".haoide", containsPath || ""
+export function getGlobalDescribe(): GlobalDescribe {
+    // Get file path of {sobjectName}.json
+    let filePath = getFilePath(
+        'globalDescribe.json'
     );
 
-    if (!fs.existsSync(fileFolder)) {
-        fs.mkdirSync(fileFolder);
+    // Read file as GlobalDescribe
+    if (fs.existsSync(filePath)) {
+        let data = fs.readFileSync(filePath, "utf-8");
+        return JSON.parse(data.toString()) as GlobalDescribe;
     }
 
-    return path.join(fileFolder, fileName);
+    return {} as GlobalDescribe;
+}
+
+/**
+ * Save global describe result to local disk
+ * 
+ * @param globalDescribeResult, globalDescribe result to be saved at local disk
+ */
+export function saveGlobalDescribe(globalDescribeResult: GlobalDescribe) {
+    // Get fileName 
+    let filePath = getFilePath(
+        'globalDescribe.json'
+    );
+
+    // Write file to cache
+    fs.writeFile(filePath, 
+        JSON.stringify(globalDescribeResult, null, 4),
+        () => {
+            vscode.window.setStatusBarMessage(
+                `Global describe result is saved to ${filePath}`
+            );
+        }
+    );
 }

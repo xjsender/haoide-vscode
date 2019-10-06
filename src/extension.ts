@@ -137,12 +137,17 @@ export function activate(context: ExtensionContext) {
         main.runSyncTest
     ));
 
+    // Register executeGlobalDescribe command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.executeGlobalDescribe", () => {
+            main.executeGlobalDescribe();
+        }
+    ));
+
     // Register reloadSobjectCache command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.reloadSobjectCache", () => {
-            main.reloadSobjectCache({
-                reloadAll: false
-            });
+            main.reloadSobjectCache();
         }
     ));
 

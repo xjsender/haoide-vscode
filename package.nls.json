@@ -24,6 +24,7 @@
     "extension.haoide.deployThisToServer.title": "Deploy This Files to Server",
     "extension.haoide.deployOpenFilesToServer.title": "Deploy Open Files to Server",
     "extension.haoide.reloadSobjectCache.title": "Reload sObject Cache",
+    "extension.haoide.executeGlobalDescribe.title": "Execute Global Describe",
     "extension.haoide.reloadSymbolTable.title": "Reload Symbol Table",
     "extension.haoide.runSyncTest.title": "Run Sync Test",
     "extension.haoide.formatJson.title": "Format JSON",

@@ -141,6 +141,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.executeGlobalDescribe",
+				"title": "%extension.haoide.executeGlobalDescribe.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.reloadSobjectCache",
 				"title": "%extension.haoide.reloadSobjectCache.title%",
 				"category": "Haoide"
