@@ -31,15 +31,76 @@ import {
     ConfirmAction,
     QueryResult,
     SObjectReloadScope,
-    GlobalDescribe
+    GlobalDescribe,
+    SObjectSOQL
 } from '../typings';
 import { CheckRetrieveResult, CheckDeployResult } from '../typings/meta';
 import { Manifest } from '../typings/manifest';
 
 const localize = nls.loadMessageBundle();
 
-export function describeSobjectSOQL() {
-    
+/**
+ * Build sobject soql by specified condition
+ */
+export function buildSobjectSOQL() {
+    executeGlobalDescribe().then( async result => {
+        // Choose sobject to generate soql
+        let items = [];
+        for (const sobject of result.sobjects) {
+            if (sobject.queryable) {
+                items.push({
+                    label: sobject.name,
+                    description: sobject.label
+                });
+            }
+        }
+        let chosenItem = await vscode.window.showQuickPick(items);
+        if (!chosenItem) {
+            return;
+        }
+        let sobjectName = chosenItem.label;
+
+        // Get sobjects condition
+        let condition = await vscode.window.showQuickPick([
+            SObjectSOQL.ALL, 
+            SObjectSOQL.CUSTOM,
+            SObjectSOQL.UPDATEABLE,
+            SObjectSOQL.CREATEABLE
+        ], {
+            placeHolder: 'Choose the condition for sobject SOQL to reload',
+            ignoreFocusOut: true
+        }) as string;
+        if (!condition) {
+            return;
+        }
+
+        // Start to describe sobject
+        let restApi = new RestApi();
+        return ProgressNotification.showProgress(
+            restApi, "describeSobject", {
+                sobject: sobjectName,
+                progressMessage: "Excecuting describe request for " + sobjectName
+            }
+        )
+        .then( (sobjectDesc: SObjectDesc) => {
+            let fieldNames = [];
+            for (const field of sobjectDesc.fields) {
+                if (condition === SObjectSOQL.ALL) {
+                    fieldNames.push(field.name);
+                }
+                else if (_.get(field, condition)) {
+                    fieldNames.push(field.name);
+                }
+            }
+
+            // Start to build soql and display it in a new view
+            let soql = `SELECT ${fieldNames.join(', ')} FROM ${sobjectName}`;
+            util.openNewUntitledFile(soql, 'sql');
+        })
+        .catch( err => {
+            vscode.window.showErrorMessage(err.message);
+        });
+    });
 }
 
 /**

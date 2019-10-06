@@ -137,6 +137,13 @@ export function activate(context: ExtensionContext) {
         main.runSyncTest
     ));
 
+    // Register buildSobjectSOQL command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.buildSobjectSOQL", () => {
+            main.buildSobjectSOQL();
+        }
+    ));
+
     // Register executeGlobalDescribe command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.executeGlobalDescribe", () => {

@@ -141,6 +141,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.buildSobjectSOQL",
+				"title": "%extension.haoide.buildSobjectSOQL.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.executeGlobalDescribe",
 				"title": "%extension.haoide.executeGlobalDescribe.title%",
 				"category": "Haoide"
@@ -361,6 +366,14 @@
 				},
 				{
 					"command": "extension.haoide.startQueryExplorer",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.executeGlobalDescribe",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.buildSobjectSOQL",
 					"when": "haoide.hasOpenProject"
 				},
 				{

@@ -31,11 +31,10 @@ export enum ConfirmAction {
 
 // Enum sobject soql
 export enum SObjectSOQL {
-    All = 'All Fields',
-    STANDARD = 'Standard Fields',
-    CUSTOM = 'Custom Fields',
-    CREATEABLE = 'Createable Fields',
-    UPDATEABLE = 'Updateable Fields'
+    ALL = 'All',
+    CUSTOM = 'custom',
+    CREATEABLE = 'createable',
+    UPDATEABLE = 'updateable'
 }
 
 // Enum for login url
