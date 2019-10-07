@@ -328,6 +328,11 @@ export async function reloadSobjectCache(options?: any) {
         return executeGlobalDescribe().then( async result => {
             let sobjectsDesc = result.sobjects;
             for (const sobjectDesc of sobjectsDesc) {
+                // Ignore not queryable sobject
+                if (!sobjectDesc.queryable) {
+                    continue;
+                }
+                
                 if (scope === SObjectReloadScope.ALL
                         || scope === SObjectReloadScope.CUSTOMSCOPE) {
                     sobjects.push(sobjectDesc.name);
@@ -972,6 +977,13 @@ export function createNewProject(reloadCache = true) {
     });
 }
 
+/**
+ * Create specified new metadata object, it supports creating
+ * ApexClass, ApexTrigger, VisualforcePage, Visualforce Component,
+ * lwc and aura
+ * 
+ * @param metaType metadata type to be created
+ */
 export async function createMetaObject(metaType: string) {
     // Get metaObject name from user input
     let metaObjectName = await vscode.window.showInputBox({
@@ -1031,8 +1043,22 @@ export async function createMetaObject(metaType: string) {
     // Get sobject name from user input
     let sObjectName;
     if (metaType === "ApexTrigger") {
-        sObjectName = await vscode.window.showInputBox({
-            placeHolder: "Input your sObject name"
+        await executeGlobalDescribe().then( async result => {
+            // Choose sobject to generate soql
+            let quickItems = [];
+            for (const sobject of result.sobjects) {
+                if (sobject.triggerable) {
+                    quickItems.push({
+                        label: sobject.name,
+                        description: sobject.label
+                    });
+                }
+            }
+            let chosenItem = await vscode.window.showQuickPick(quickItems);
+            if (!chosenItem) {
+                return;
+            }
+            sObjectName = chosenItem.label;
         });
 
         if (!sObjectName) {
