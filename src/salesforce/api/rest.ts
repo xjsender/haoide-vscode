@@ -133,7 +133,12 @@ export default class RestApi {
     /**
      * REST Get Request
      * 
-     * @param options, options, {serverUrl: "", progress?, timeout?: 120000}
+     * @param options, options for get request, {
+     *   serverUrl: "", 
+     *   progress?: vscode.Progress<any>, 
+     *   progressMessage?: "",
+     *   timeout?: 120000
+     * }
      * @returns Promise<any>
      */
     public get(options: any) {
@@ -145,9 +150,13 @@ export default class RestApi {
     /**
      * REST Post Request
      * 
-     * @param serverUrl rest url, which can be relative or absolute
-     * @param data request post body
-     * @param timeout request timeout seconds
+     * @param options, options for post request, {
+     *   serverUrl: "", 
+     *   data: any,
+     *   progress?: vscode.Progress<any>, 
+     *   progressMessage?: "",
+     *   timeout?: 120000
+     * }
      * @returns Promise<any>
      */
     public post(options: any) {
@@ -159,7 +168,13 @@ export default class RestApi {
     /**
      * REST Patch Request
      * 
-     * @param options, options, {serverUrl: "", data: "", progress?, timeout?: 120000}
+     * @param options, options for patch request, {
+     *   serverUrl: "", 
+     *   data: any,
+     *   progress?: vscode.Progress<any>, 
+     *   progressMessage?: "",
+     *   timeout?: 120000
+     * }
      * @returns Promise<any>
      */
     public patch(options: any) {
@@ -171,7 +186,13 @@ export default class RestApi {
     /**
      * REST put request
      * 
-     * @param options, options, {serverUrl: "", data: "", progress?, timeout?: 120000}
+     * @param options, options for put request, {
+     *   serverUrl: "", 
+     *   data: any,
+     *   progress?: vscode.Progress<any>, 
+     *   progressMessage?: "",
+     *   timeout?: 120000
+     * }
      * @returns Promise<any>
      */
     public put(options: any) {
@@ -183,7 +204,12 @@ export default class RestApi {
     /**
      * REST delete request
      * 
-     * @param options, options, {serverUrl: "", progress?, timeout?: 120000}
+     * @param options, options for delete request, {
+     *   serverUrl: "", 
+     *   progress?: vscode.Progress<any>, 
+     *   progressMessage?: "",
+     *   timeout?: 120000
+     * }
      * @returns Promise<any>
      */
     public delete(options: any) {
@@ -195,8 +221,13 @@ export default class RestApi {
     /**
      * REST query request
      * 
-    * @param options, options, {soql: "", progress?, timeout?: 120000}
-    * @returns Promise<any>
+    * @param options, options for query request, {
+     *   soql: "", 
+     *   progress?: vscode.Progress<any>, 
+     *   progressMessage?: "",
+     *   timeout?: 120000
+     * }
+     * @returns Promise<any>
      */
     public query(options: any) {
         let pattern = /select\s+\*\s+from[\s\t]+\w+/i;
@@ -241,7 +272,12 @@ export default class RestApi {
     /**
     * REST queryMore request
     * 
-    * @param options, options, {nextRecordUrl: "", progress?, timeout?: 120000}
+    * @param options, options for queryMore request, {
+    *   nextRecordUrl: "", 
+    *   progress?: vscode.Progress<any>, 
+    *   progressMessage?: "",
+    *   timeout?: 120000
+    * }
     * @returns Promise<any>
     */
     public queryMore(options: any) {
@@ -253,7 +289,12 @@ export default class RestApi {
     /**
      * REST search request
      * 
-     * @param options options, {sosl: ""}
+     * @param options, options for search request, {
+     *   sosl: "", 
+     *   progress?: vscode.Progress<any>, 
+     *   progressMessage?: "",
+     *   timeout?: 120000
+     * }
      * @returns Promise<any>
      */
     public search(options: any) {
@@ -264,6 +305,17 @@ export default class RestApi {
         }));
     }
 
+    /**
+     * REST retrieveApexLog request
+     * 
+     * @param options, options for retrieveApexLog request, {
+     *   logId: "", 
+     *   progress?: vscode.Progress<any>, 
+     *   progressMessage?: "",
+     *   timeout?: 120000
+     * }
+     * @returns Promise<any>
+     */
     public retrieveApexLog(options: any) {
         return this.get(_.extend(options, {
             serverUrl: `/ApexLog/${options.logId}/Body`,
@@ -273,9 +325,14 @@ export default class RestApi {
     /**
     * REST queryAll request
     * 
-    * @param options, options, {soql: "", progress?, timeout?: 120000}
-    * @returns Promise<any>
-    */
+    * @param options, options for queryAll request, {
+     *   soql: "", 
+     *   progress?: vscode.Progress<any>, 
+     *   progressMessage?: "",
+     *   timeout?: 120000
+     * }
+     * @returns Promise<any>
+     */
     public queryAll(options: any) {
         return this.get(_.extend(options, {
             serverUrl: "/queryAll?" + querystring.stringify({
@@ -287,7 +344,11 @@ export default class RestApi {
     /**
      * REST getLimits request
      *
-     * @param options, options, {progress?, timeout?: 120000}
+     * @param options, options for queryAll request, {
+     *   progress?: vscode.Progress<any>, 
+     *   progressMessage?: "",
+     *   timeout?: 120000
+     * }
      * @returns Promise<any>
      */
     public getLimits(options: any) {
@@ -305,7 +366,7 @@ export default class RestApi {
      *      end: "",
      *      progressMessage?,
      *      progress?,
-     *      timeout?
+     *      timeout?: 120000
      * }
      * @returns Promise<any>
      */
@@ -322,13 +383,13 @@ export default class RestApi {
     /**
      * Get updated records during speicfied date time range
      * 
-     * @param options options, {
+     * @param options options for query updated records request, {
      *      sobject: "", 
      *      start: "", 
      *      end: "", 
      *      progressMessage?,
      *      progress?, 
-     *      timeout?
+     *      timeout?: 120000
      * }
      * @returns Promise<any>
      */
@@ -343,9 +404,13 @@ export default class RestApi {
     }
 
     /**
-     * REST describe global request
+     * REST global describe request
      * 
-     * @param options, options, {progress?, timeout?: 120000}
+     * @param options options for global describe request, {
+     *      progressMessage :"", 
+     *      progress?, 
+     *      timout?: 120000
+     * }
      * @returns Promise<any>
      */
     public describeGlobal(options: any) {
@@ -357,36 +422,17 @@ export default class RestApi {
     /**
      * REST describeSobject request
      * 
-     * @param options options, 
-     *  {
+     * @param options options for describeSobject request, {
      *      sobject: "", 
-     *      progressMessage: "", 
+     *      progressMessage :"", 
      *      progress?, 
-     *      timout?
+     *      timout?: 120000
      * }
      * @returns Promise<any>
      */
     public describeSobject(options: any) {
         return this.get(_.extend(options, {
             serverUrl: `/sobjects/${options.sobject}/describe`
-        }));
-    }
-
-    /**
-     * Get array of sobjects describe result
-     * 
-     * @param options options, {sobjects: [], progress?, timeout?: 120000}
-     * @returns  any[], describe result array
-     */
-    public describeSobjects(options: any) {
-        let self = this;
-        return Promise.all(_.map(options.sobjects, sobject => {
-            return self.describeSobject({
-                sobject: sobject,
-                progress: options.progress,
-                timeout: options.timeout || 120000,
-                ignoreError: true
-            });
         }));
     }
 }
