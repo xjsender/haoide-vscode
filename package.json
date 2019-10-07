@@ -31,6 +31,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.logoutDefaultProject",
+				"title": "%extension.haoide.logoutDefaultProject.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.addDefaultProjectToWorkspace",
 				"title": "%extension.haoide.addDefaultProjectToWorkspace.title%",
 				"category": "Haoide"
@@ -273,6 +278,10 @@
 					"when": "haoide.hasOpenProject"
 				},
 				{
+					"command": "extension.haoide.logoutDefaultProject",
+					"when": "haoide.hasOpenProject"
+				},
+				{
 					"command": "extension.haoide.addDefaultProjectToWorkspace",
 					"when": "haoide.hasOpenProject"
 				},
@@ -325,8 +334,12 @@
 					"when": "haoide.hasOpenProject"
 				},
 				{
+					"command": "extension.haoide.createManifestFile",
+					"when": "haoide.hasOpenProject && explorerResourceIsFolder"
+				},
+				{
 					"command": "extension.haoide.refreshFolders",
-					"when": "haoide.hasOpenProject && editorIsOpen"
+					"when": "haoide.hasOpenProject && explorerResourceIsFolder"
 				},
 				{
 					"command": "extension.haoide.retrieveByManifest",

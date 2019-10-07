@@ -79,7 +79,7 @@ export default class RestApi {
                 }),
                 uri: self.buildFullUrl(options.serverUrl),
                 body: options.data,
-                timeout: options.timeout || 120000000,
+                timeout: options.timeout || 25000,
                 json: options.json || true
             };
             console.log(requestOptions);

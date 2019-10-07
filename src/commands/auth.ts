@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import * as os from 'os';
 
 import * as util from "../utils/util";
+import * as contextUtil from "../utils/context";
 import OAuth from "../salesforce/lib/auth/oauth";
 import ProgressNotification from "../utils/progress";
 import { startLogin, startServer } from "../salesforce/lib/auth/server";
@@ -100,7 +101,7 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
 }
 
 /**
- * Authorize default project with kept projectName and loginUrl
+ * Authorize default project again
  * 
  * @returns Promise<any>
  */
@@ -110,7 +111,7 @@ export function authorizeDefaultProject() {
     return new Promise<any>( (resolve, reject) => {
         // Check whether session is refreshed n minutes before,
         // if not, don't need to refresh it again
-        if (moment(session.lastUpdatedTime).add(15, 'minutes').isAfter(new Date())) {
+        if (!session || moment(session.lastUpdatedTime).add(15, 'minutes').isAfter(new Date())) {
             resolve(session);
             return vscode.window.showInformationMessage(
                 localize('sessionNotExpired.text', "Session is still not expired")
@@ -153,5 +154,31 @@ export function authorizeDefaultProject() {
 
             reject(err);
         });
+    });
+}
+
+/**
+ * Logout from server for the default project
+ */
+export function logoutDefaultProject() {
+    let session = _session.getSession();
+    let oauth = new OAuth(session.instanceUrl);
+    ProgressNotification.showProgress(
+        oauth, "revokeToken", {
+            token: session.refreshToken
+        }
+    )
+    .then( result => {
+        // After logout, remove local sessoin file from local disk
+        // and then, refresh context key
+        _session.clearSession().then( result => {
+            contextUtil.setHasOpenProject();
+        })
+        .catch( err => {
+            vscode.window.showErrorMessage(err.message);
+        });
+    })
+    .catch( err => {
+        vscode.window.showErrorMessage(err.message);
     });
 }

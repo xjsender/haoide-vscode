@@ -1,6 +1,7 @@
 {
     "extension.haoide.authorize.new.title": "授权新的项目",
     "extension.haoide.authorize.default.title": "授权默认项目",
+    "extension.haoide.logoutDefaultProject.title": "注销默认项目",
     "extension.haoide.addDefaultProjectToWorkspace.title": "将默认项目添加至工作台",
     "extension.haoide.loginToSFDC.title": "打开默认Org",
     "extension.haoide.locateThisInBrowser.title": "在服务器打开该文件",

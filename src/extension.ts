@@ -16,13 +16,19 @@ import { getTriggerCharacters } from "./utils/util";
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
 
-    // The command has been defined in the package.json file
+    // Register extension.haoide.authorize.new command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.authorize.new", auth.authorizeNewProject
     ));
 
+    // Register extension.haoide.authorize.default command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.authorize.default", auth.authorizeDefaultProject
+    ));
+
+    // Register extension.haoide.logoutDefaultProject command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.logoutDefaultProject", auth.logoutDefaultProject
     ));
 
     // Register createProject command

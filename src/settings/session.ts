@@ -4,6 +4,8 @@
  */
 
 import * as moment from "moment";
+import * as fs from 'fs';
+
 import * as settingsUtil from "./settingsUtil";
 import { Session as SessionModel } from "../typings";
 
@@ -71,5 +73,29 @@ export default class Session {
      */
     public getUserId() {
         return this.getSession().userId;
+    }
+
+    /**
+     * Remove session file from local disk
+     * 
+     * @returns Promise<string>
+     */
+    public clearSession() {
+        let self = this;
+
+        return new Promise<string>( (resolve, reject) => {
+            try {
+                let sessionFilePath = settingsUtil.getFilePath(
+                    self.sessionFileName
+                );
+                if (fs.existsSync(sessionFilePath)) {
+                    fs.unlinkSync(sessionFilePath);
+                }
+                resolve('Succeed');
+            }
+            catch (err) {
+                reject(err.message);
+            }
+        });
     }
 }
