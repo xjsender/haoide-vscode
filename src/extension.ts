@@ -8,7 +8,7 @@ const localize = nls.config({ messageFormat: nls.MessageFormat.file })();
 import { commands, languages, ExtensionContext, Uri } from 'vscode';
 import * as provider from "./salesforce/completions/provider";
 import * as contextUtil from "./utils/context";
-import { auth, utility, main } from "./commands";
+import { auth, utility, main, packages } from "./commands";
 import { RestWebPanel, QueryWebPanel } from './utils/webview';
 import { getTriggerCharacters } from "./utils/util";
 
@@ -67,7 +67,7 @@ export function activate(context: ExtensionContext) {
     // Register retrieveByManifest command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.retrieveByManifest",
-        main.retrieveByManifest
+        packages.retrieveByManifest
     ));
 
     // Register destructThisFromServer command
