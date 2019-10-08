@@ -2,6 +2,38 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+
+## [0.2.1], 2019-10-08
++ Add new command ```logoutDefaultProject``` for logout from default project
++ Add new command ```buildSobjectSOQL``` for building sobject soql
++ Add new command ```executeGlobalDescribe``` for keeping global describe result to local cache
++ Add new commands ```setSyntaxToHtml``` and ```setSyntaxToJS``` for quickly setting sytax as html or js
++ Add new command ```startQueryExplorer``` for display query result as sortable and searchable table
++ Add new ```recommendations``` for better using vscode
+---
++ Allow user to choose workspace when ```authorize new org```
++ Add support for choosing sobject when create new  ```ApexTrigger```
++ Add support for custom login url when authorize new project
++ Add ```.jsconfig``` for disable ```experimentalDecorators``` warning in lwc js file
++ Add chinese translation for part of commands
++ Add ```metadata describe``` check before create new project
++ Add session validation check before execute ```copyLoginUrl``` and ```openDefaultOrg```
++ Hide ```refreshThisFromServer``` command for others except for ```ApexClass```
++ Update svg icon for ```setSyntaxToApex``` command in the ```editor/title``` menu item
++ Add warning message for manually progress terminated
++ Update comment for some missing modules
+---
++ Completion Enhancement:
+    - Add support for specified condition for sobject definition reloading
+    - Add ```external``` and ```unique``` notation for sobject field completion
+    - Add ```Formula Tip``` for sobject field completion
+    - Add ```childRelationship``` completion for sobject
+    - Add missing trigger standard lib for apex completion
+    - Remove comments when locate variable type for completion
+    - Read ```icon names``` from latest version of dependency ```@salesforce-ux/design-system```
+    - Add ```slds classes``` support for any attributes which ends with class from latest version of dependency ```@salesforce-ux/design-system```
+
+
 ## [0.2.0], 2019-09-25
 + Add new command for ```refreshing file from server```
 + Update menu item position and visibility

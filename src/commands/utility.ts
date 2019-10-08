@@ -115,7 +115,7 @@ export function toggleMetadataObjects() {
 
             vscode.window.showInformationMessage(
                 localize("metadataObjectUpdated.text", 
-                    "Your subscribed metadata objects are updated"
+                    "Your subscribed metadata objects was updated"
                 )
             );
 
