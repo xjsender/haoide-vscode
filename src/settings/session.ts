@@ -58,12 +58,12 @@ export default class Session {
      * 
      * @returns boolean, flag of session expired
      */
-    public getIsSessionExpired() {
+    public isSessionValid() {
         let session = this.getSession();
 
         return moment(session.lastUpdatedTime)
             .add(15, 'minutes')
-            .isBefore(new Date());
+            .isAfter(new Date());
     }
 
     /**

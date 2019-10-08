@@ -207,14 +207,13 @@ export function locateThisInBrowser() {
  */
 export function loginToSFDC(startUrl?: string) {
     // If session is expired, login again
-    if (_session.getIsSessionExpired()) {
+    if (!_session.isSessionValid()) {
         return authorizeDefaultProject().then( () => {
             loginToSFDC(startUrl);
         });
     }
 
-    let sess: SessionModel = _session.getSession();
-
+    let sess = _session.getSession();
     let open_url = `${sess.instanceUrl}/secur/frontdoor.jsp` + 
         `?sid=${sess.sessionId}`;
 
@@ -230,22 +229,23 @@ export function loginToSFDC(startUrl?: string) {
  */
 export function copyLoginUrl() {
     // If session is expired, login again
-    if (_session.getIsSessionExpired()) {
+    if (!_session.isSessionValid()) {
         return authorizeDefaultProject().then( () => {
             loginToSFDC();
         });
     }
 
-    let sess: SessionModel = _session.getSession();
-
+    let sess = _session.getSession();
     let loginUrl = `${sess.instanceUrl}/secur/frontdoor.jsp` +
         `?sid=${sess.sessionId}`;
 
     // Write loginUrl to clipboard
     vscode.env.clipboard.writeText(loginUrl);
 
-    // Show information
-    vscode.window.showInformationMessage("Login url has been copied to clipboard");
+    // Show succeed information
+    vscode.window.showInformationMessage(
+        "Login url has been copied to clipboard"
+    );
 }
 
 /**

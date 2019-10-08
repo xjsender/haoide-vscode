@@ -106,18 +106,17 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
  * @returns Promise<any>
  */
 export function authorizeDefaultProject() {
-    let session = _session.getSession();
-
     return new Promise<any>( (resolve, reject) => {
         // Check whether session is refreshed n minutes before,
         // if not, don't need to refresh it again
-        if (!session || moment(session.lastUpdatedTime).add(15, 'minutes').isAfter(new Date())) {
-            resolve(session);
+        if (_session.isSessionValid()) {
+            resolve(_session.getSession());
             return vscode.window.showInformationMessage(
                 localize('sessionNotExpired.text', "Session is still not expired")
             );
         }
 
+        let session = _session.getSession();
         let oauth = new OAuth(session.instanceUrl);
         ProgressNotification.showProgress(
             oauth, "refreshToken", {
