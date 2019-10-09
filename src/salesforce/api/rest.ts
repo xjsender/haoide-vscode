@@ -133,12 +133,12 @@ export default class RestApi {
     /**
      * REST Get Request
      * 
-     * @param options, options for get request, {
-     *   serverUrl: "", 
-     *   progress?: vscode.Progress<any>, 
-     *   progressMessage?: "",
-     *   timeout?: 120000
-     * }
+     * @param options, options for get request
+     * @param options.serverUrl rest request endpoint, it can be relative, such as /sobjects
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public get(options: any) {
@@ -150,13 +150,13 @@ export default class RestApi {
     /**
      * REST Post Request
      * 
-     * @param options, options for post request, {
-     *   serverUrl: "", 
-     *   data: any,
-     *   progress?: vscode.Progress<any>, 
-     *   progressMessage?: "",
-     *   timeout?: 120000
-     * }
+     * @param options, options for post request
+     * @param options.serverUrl rest request endpoint
+     * @param options.data rest request body
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public post(options: any) {
@@ -168,13 +168,13 @@ export default class RestApi {
     /**
      * REST Patch Request
      * 
-     * @param options, options for patch request, {
-     *   serverUrl: "", 
-     *   data: any,
-     *   progress?: vscode.Progress<any>, 
-     *   progressMessage?: "",
-     *   timeout?: 120000
-     * }
+     * @param options, options for patch request
+     * @param options.serverUrl rest request endpoint
+     * @param options.data rest request body
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public patch(options: any) {
@@ -186,13 +186,13 @@ export default class RestApi {
     /**
      * REST put request
      * 
-     * @param options, options for put request, {
-     *   serverUrl: "", 
-     *   data: any,
-     *   progress?: vscode.Progress<any>, 
-     *   progressMessage?: "",
-     *   timeout?: 120000
-     * }
+     * @param options, options for put request
+     * @param options.serverUrl rest request endpoint
+     * @param options.data rest request body
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public put(options: any) {
@@ -204,12 +204,12 @@ export default class RestApi {
     /**
      * REST delete request
      * 
-     * @param options, options for delete request, {
-     *   serverUrl: "", 
-     *   progress?: vscode.Progress<any>, 
-     *   progressMessage?: "",
-     *   timeout?: 120000
-     * }
+     * @param options, options for delete request
+     * @param options.serverUrl rest request endpoint
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public delete(options: any) {
@@ -221,12 +221,12 @@ export default class RestApi {
     /**
      * REST query request
      * 
-    * @param options, options for query request, {
-     *   soql: "", 
-     *   progress?: vscode.Progress<any>, 
-     *   progressMessage?: "",
-     *   timeout?: 120000
-     * }
+     * @param options, options for query request
+     * @param options.soql soql string
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public query(options: any) {
@@ -270,16 +270,16 @@ export default class RestApi {
     }
 
     /**
-    * REST queryMore request
-    * 
-    * @param options, options for queryMore request, {
-    *   nextRecordUrl: "", 
-    *   progress?: vscode.Progress<any>, 
-    *   progressMessage?: "",
-    *   timeout?: 120000
-    * }
-    * @returns Promise<any>
-    */
+     * REST queryMore request
+     * 
+     * @param options, options for queryMore request
+     * @param options.nextRecordUrl nextRecordUrl returned by query
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
+     * @returns Promise<any>
+     */
     public queryMore(options: any) {
         return this.get(_.extend(options, {
             serverUrl: options.nextRecordUrl
@@ -289,12 +289,12 @@ export default class RestApi {
     /**
      * REST search request
      * 
-     * @param options, options for search request, {
-     *   sosl: "", 
-     *   progress?: vscode.Progress<any>, 
-     *   progressMessage?: "",
-     *   timeout?: 120000
-     * }
+     * @param options, options for search request
+     * @param options.sosl sosl string
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public search(options: any) {
@@ -308,12 +308,12 @@ export default class RestApi {
     /**
      * REST retrieveApexLog request
      * 
-     * @param options, options for retrieveApexLog request, {
-     *   logId: "", 
-     *   progress?: vscode.Progress<any>, 
-     *   progressMessage?: "",
-     *   timeout?: 120000
-     * }
+     * @param options, options for retrieveApexLog request
+     * @param options.logId ApexLog Id
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public retrieveApexLog(options: any) {
@@ -323,14 +323,14 @@ export default class RestApi {
     }
 
     /**
-    * REST queryAll request
-    * 
-    * @param options, options for queryAll request, {
-     *   soql: "", 
-     *   progress?: vscode.Progress<any>, 
-     *   progressMessage?: "",
-     *   timeout?: 120000
-     * }
+     * REST queryAll request
+     * 
+     * @param options, options for queryAll request
+     * @param options.soql soql string
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public queryAll(options: any) {
@@ -344,11 +344,11 @@ export default class RestApi {
     /**
      * REST getLimits request
      *
-     * @param options, options for queryAll request, {
-     *   progress?: vscode.Progress<any>, 
-     *   progressMessage?: "",
-     *   timeout?: 120000
-     * }
+     * @param options, options for getLimits request
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public getLimits(options: any) {
@@ -360,14 +360,14 @@ export default class RestApi {
     /**
      * Get deleted records during spcified date time range
      * 
-     * @param options options, {
-     *      sobject: "",
-     *      start: "",
-     *      end: "",
-     *      progressMessage?,
-     *      progress?,
-     *      timeout?: 120000
-     * }
+     * @param options, options for getDeletedRecords request
+     * @param options.sobject sobject name
+     * @param options.start start date
+     * @param options.end end date
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public getDeletedRecords(options: any) {
@@ -383,14 +383,14 @@ export default class RestApi {
     /**
      * Get updated records during speicfied date time range
      * 
-     * @param options options for query updated records request, {
-     *      sobject: "", 
-     *      start: "", 
-     *      end: "", 
-     *      progressMessage?,
-     *      progress?, 
-     *      timeout?: 120000
-     * }
+     * @param options, options for getUpdatedRecords request
+     * @param options.sobject sobject name
+     * @param options.start start date
+     * @param options.end end date
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public getUpdatedRecords(options: any) {
@@ -406,11 +406,11 @@ export default class RestApi {
     /**
      * REST global describe request
      * 
-     * @param options options for global describe request, {
-     *      progressMessage :"", 
-     *      progress?, 
-     *      timout?: 120000
-     * }
+     * @param options, options for describeGlobal request
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public describeGlobal(options: any) {
@@ -422,12 +422,12 @@ export default class RestApi {
     /**
      * REST describeSobject request
      * 
-     * @param options options for describeSobject request, {
-     *      sobject: "", 
-     *      progressMessage :"", 
-     *      progress?, 
-     *      timout?: 120000
-     * }
+     * @param options, options for describeSobject request
+     * @param options.sobject sobject to be described
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout request timeout miliseconds, default is 120000
+     * 
      * @returns Promise<any>
      */
     public describeSobject(options: any) {
