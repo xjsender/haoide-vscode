@@ -9,7 +9,6 @@ import * as xmlParser from "fast-xml-parser";
 
 import * as packageUtil from "../utils/package";
 import * as settingsUtil from "../settings/settingsUtil";
-import { extensionSettings } from "../settings";
 import { 
     FileProperty, FileAttributes, 
     ComponentSuccess, ApexClass, 
@@ -228,22 +227,6 @@ export function parseResult(body: string, requestType: string) {
     let result = soapenvBody[`${_.lowerFirst(requestType)}Response`]["result"];
 
     return result;
-}
-
-/**
- * Create status bar item
- * 
- * @param text text to show in the status bar
- * @param tooltip text to display when hove on it
- */
-export function setStatusBarItem(text: string, tooltip?: string) {
-    let haoideStatusBarItem = vscode.window.createStatusBarItem(
-        vscode.StatusBarAlignment.Left, 9999
-    );
-
-    haoideStatusBarItem.text = text;
-    haoideStatusBarItem.tooltip = tooltip || "";
-    haoideStatusBarItem.show();
 }
 
 /**

@@ -17,6 +17,7 @@ import { JSON2Apex, JSON2Typescript, convertArrayToTable } from "../utils/json";
 import { Session as SessionModel, FileProperty } from "../typings";
 import { settings, _session, metadata } from "../settings";
 import { authorizeDefaultProject } from "./auth";
+import { StatusBarItem } from "../utils/statusbar";
 
 const localize = nls.loadMessageBundle();
 
@@ -129,6 +130,7 @@ export function toggleMetadataObjects() {
  * 
  * @param projectName project name to be default
  */
+let statusBar = new StatusBarItem();
 export async function switchProject(projectName?: string) {
     if (!projectName) {
         let chosenItem: any = await vscode.window.showQuickPick(
@@ -153,10 +155,11 @@ export async function switchProject(projectName?: string) {
     util.setDefaultProject(projectName);
 
     // Show default project at the status bar
-    util.setStatusBarItem(
-        `Haoide: ${projectName}`,
-        `This is haoide default project`
-    );
+    statusBar.updateText({
+        text: `Haoide: ${projectName}`,
+        tooltip: 'This is haoide default project',
+        command: 'extension.haoide.switchProject'
+    });
 
     // Show success message
     vscode.window.showInformationMessage(
