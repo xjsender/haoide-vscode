@@ -133,7 +133,8 @@ export function authorizeDefaultProject() {
 
             // Show success information
             vscode.window.setStatusBarMessage(
-                localize("sessionRefreshed.text","Session information is refreshed")
+                localize("sessionRefreshed.text","Session information is refreshed"),
+                5000
             );
 
             resolve(_session.getSession());

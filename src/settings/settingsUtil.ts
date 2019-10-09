@@ -149,7 +149,8 @@ export function saveSymbolTable(symbolTable: any) {
         JSON.stringify(symbolTable, null, 4),
         err => {
             vscode.window.setStatusBarMessage(
-                `${symbolTable.name} is saved to ${filePath}`
+                `${symbolTable.name} is saved to ${filePath}`,
+                5000
             );
         }
     );
@@ -172,7 +173,8 @@ export function saveSobjectDesc(sobjectDesc: any) {
         JSON.stringify(sobjectDesc, null, 4),
         () => {
             vscode.window.setStatusBarMessage(
-                `${sobjectDesc.name} is saved to ${filePath}`
+                `${sobjectDesc.name} is saved to ${filePath}`,
+                5000
             );
         }
     );
@@ -255,7 +257,8 @@ export function saveGlobalDescribe(globalDescribeResult: GlobalDescribe) {
         JSON.stringify(globalDescribeResult, null, 4),
         () => {
             vscode.window.setStatusBarMessage(
-                `Global describe result is saved to ${filePath}`
+                `Global describe result is saved to ${filePath}`,
+                5000
             );
         }
     );

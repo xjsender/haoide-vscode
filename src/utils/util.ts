@@ -246,6 +246,12 @@ export function setStatusBarItem(text: string, tooltip?: string) {
     haoideStatusBarItem.show();
 }
 
+/**
+ * Parse userId and organizationId from idUrl in rest login response
+ * 
+ * @param idUrl idUrl from rest login response
+ * @returns userId and organizationId
+ */
 export function parseIdUrl(idUrl: string) {
     var idUrls = idUrl.split("/");
     var userId = idUrls.pop(), orgId = idUrls.pop();
