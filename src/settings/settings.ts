@@ -13,6 +13,7 @@ export default class Settings {
         if (!Settings.instance) {
             Settings.instance = new Settings();
         }
+        
         return Settings.instance;
     }
 
@@ -26,9 +27,10 @@ export default class Settings {
     }
 
     /**
-     * Get settings of default project
+     * Get specified settings of default project
      * 
-     * @returns settings of project
+     * @param key setting name
+     * @returns the value of specified setting
      */
     public getSettingValue(key: string): any {
         return settingsUtil.getConfigValue(
@@ -66,9 +68,7 @@ export default class Settings {
      * @returns Metadata Deployment options
      */
     public getDeployOptions() {
-        let deployOptions = settingsUtil.getConfigValue(
-            this.settingsFileName, "deployOptions"
-        );
+        let deployOptions = this.getSettingValue('deployOptions');
 
         if (!deployOptions) {
             deployOptions = {
@@ -83,6 +83,9 @@ export default class Settings {
                 "singlePackage": true,
                 "testLevel": "NoTestRun"
             };
+            settingsUtil.setConfigValue(
+                this.settingsFileName, { deployOptions }
+            );
         }
 
         return deployOptions;
@@ -95,42 +98,40 @@ export default class Settings {
      */
     public getApiVersion() {
         let apiVersion = this.getSettingValue('apiVersion');
+        if (!apiVersion) {
+            apiVersion = 46;
+            settingsUtil.setConfigValue(
+                this.settingsFileName, { apiVersion }
+            );
+        }
         
-        return apiVersion || 46;
+        return apiVersion;
     }
 
     /**
      * Get user language list
      * 
-     * @returns Object, {"languageLabel", "LanguageLocaleKey"}
+     * @returns Object, {"languageLabel": "LanguageLocaleKey"}
      */
     public getUserLanguages() {
-        let userLanguages = settingsUtil.getConfigValue(
-            this.settingsFileName, "userLanguages"
-        );
-
-        if (!userLanguages) {
-            userLanguages = {
-                "Chinese (Simplified)": "zh_CN",
-                "Chinese (Traditional)": "zh_TW",
-                "Danish": "da",
-                "Dutch": "nl_NL",
-                "English": "en_US",
-                "Finnish": "fi",
-                "French": "fr",
-                "German": "de",
-                "Italian": "it",
-                "Japanese": "ja",
-                "Korean": "ko",
-                "Portuguese (Brazil)": "pt_BR",
-                "Russian": "ru",
-                "Spanish": "es",
-                "Spanish (Mexico)": "es_MX",
-                "Swedish": "sv",
-                "Thai": "th"
-            };
-        }
-
-        return userLanguages;
+        return {
+            "Chinese (Simplified)": "zh_CN",
+            "Chinese (Traditional)": "zh_TW",
+            "Danish": "da",
+            "Dutch": "nl_NL",
+            "English": "en_US",
+            "Finnish": "fi",
+            "French": "fr",
+            "German": "de",
+            "Italian": "it",
+            "Japanese": "ja",
+            "Korean": "ko",
+            "Portuguese (Brazil)": "pt_BR",
+            "Russian": "ru",
+            "Spanish": "es",
+            "Spanish (Mexico)": "es_MX",
+            "Swedish": "sv",
+            "Thai": "th"
+        };
     }
 }
