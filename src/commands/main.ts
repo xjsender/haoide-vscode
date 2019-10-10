@@ -34,8 +34,82 @@ import {
     SObjectSOQL
 } from '../typings';
 import { CheckRetrieveResult, CheckDeployResult } from '../typings/meta';
+import { convertArrayToTable } from '../utils/json';
 
 const localize = nls.loadMessageBundle();
+
+export async function queryToCSV() {
+    // Get soql input from user
+    let soql = await vscode.window.showInputBox({
+        placeHolder: 'Input your soql to be exported'
+    });
+    if (!soql) {
+        return;
+    }
+
+    // Check the validity of soql
+    let pattern = /[\n\s]*SELECT\s+[*\w\n,.:_\s()]+?\s+FROM\s+[1-9_a-zA-Z]+/gi;
+    let matches = soql.match(pattern);
+    if (!matches || matches.length === 0) {
+        let yesOrNo = await vscode.window.showWarningMessage(
+            `Your input soql is not valid, want to try again?`,
+            ConfirmAction.OVERRIDE, ConfirmAction.NO
+        );
+        if (yesOrNo === ConfirmAction.YES) {
+            queryToCSV();
+        }
+
+        return;
+    }
+
+    let matchedStr = matches[0];
+    let sobjectName = matchedStr.substr(
+        matchedStr.lastIndexOf(' ') + 1, matchedStr.length
+    );
+
+    let csvName = await vscode.window.showInputBox({
+        prompt: 'Input your csv name',
+        value: sobjectName
+    });
+    if (!csvName) {
+        return;
+    }
+
+    // Execute query request and write result to local file
+    let restApi = new RestApi();
+    ProgressNotification.showProgress(
+        restApi, 'query', {
+            soql: soql,
+            progressMessage: 'Executing query request'
+        }
+    )
+    .then( result => {
+        // Parse queried records as table content
+        let tableContent = convertArrayToTable(result.records);
+
+        // Makedir for outputPath
+        let outputPath = path.join(
+            util.getProjectPath(), '.output'
+        );
+        if (!fs.existsSync(outputPath)) {
+            fs.mkdirSync(outputPath);
+        }
+        
+        // Write table content to csv file
+        let csvFileName = path.join(
+            outputPath, csvName + '.csv'
+        );
+        fs.writeFileSync(csvFileName, tableContent);
+
+        // Open output csv file
+        vscode.commands.executeCommand(
+            "vscode.open", vscode.Uri.file(csvFileName)
+        );
+    })
+    .catch( err => {
+        vscode.window.showErrorMessage(err.message);
+    });
+}
 
 /**
  * Build sobject soql by specified condition

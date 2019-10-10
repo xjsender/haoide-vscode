@@ -66,6 +66,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.queryToCSV",
+				"title": "%extension.haoide.queryToCSV.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.executeToolingQuery",
 				"title": "%extension.haoide.executeToolingQuery.title%",
 				"category": "Haoide"
@@ -299,6 +304,10 @@
 				},
 				{
 					"command": "extension.haoide.executeAnonymous",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.queryToCSV",
 					"when": "haoide.hasOpenProject"
 				},
 				{

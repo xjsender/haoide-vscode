@@ -247,20 +247,20 @@ export default class RestApi {
             return this.describeSobject({
                 sobject: sObject
             })
-                .then(result => {
-                    let fieldNames = _.map(result["fields"], field => {
-                        return field["name"];
-                    });
-
-                    // Replace * with all fields of this sobject
-                    options.serverUrl = "/query?" + querystring.stringify({
-                        "q": options.soql.replace(
-                            "*", fieldNames.join(",")
-                        )
-                    });
-
-                    return this.get(options);
+            .then(result => {
+                let fieldNames = _.map(result["fields"], field => {
+                    return field["name"];
                 });
+
+                // Replace * with all fields of this sobject
+                options.serverUrl = "/query?" + querystring.stringify({
+                    "q": options.soql.replace(
+                        "*", fieldNames.join(",")
+                    )
+                });
+
+                return this.get(options);
+            });
         }
 
         options.serverUrl = "/query?" + querystring.stringify({

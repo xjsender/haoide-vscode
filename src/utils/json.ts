@@ -21,6 +21,7 @@ export function convertArrayToTable(jsonArray: any[]) {
 
     let columns: string[] = [];
     for (const key of _.keys(jsonArray[0])) {
+        // Ignore excluded columns
         if (!excludeColumns.includes(key)) {
             columns.push(key);
         }
@@ -31,7 +32,11 @@ export function convertArrayToTable(jsonArray: any[]) {
         let values = [];
         for (const column of columns) {
             if (element.hasOwnProperty(column)) {
-                values.push(`"${element[column] || ''}"`);
+                let value = element[column] || '';
+                if (_.isObject(value)) {
+                    value = JSON.stringify(value);
+                }
+                values.push(`"${value}"`);
             }
             else {
                 values.push('""');

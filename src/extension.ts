@@ -123,6 +123,13 @@ export function activate(context: ExtensionContext) {
         main.executeAnonymous
     ));
 
+    // Register queryToCSV command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.queryToCSV", () => {
+            main.queryToCSV();
+        }
+    ));
+
     // Register executeQuery command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.executeQuery", () => {

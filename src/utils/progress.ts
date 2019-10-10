@@ -8,7 +8,9 @@ export default class ProgressNotification {
      * 
      * @param self the context of invoker
      * @param methodName the method name of the invoker
-     * @param options any
+     * @param options options for sepcified request
+     * @param options.progressMessage progress message of request
+     * @param options.timeout request timeout miliseconds, default is 120000
      */
     public static showProgress(self: any, methodName: string, options: any) {
         return vscode.window.withProgress({
