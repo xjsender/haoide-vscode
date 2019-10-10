@@ -2,7 +2,6 @@
 	// See http://go.microsoft.com/fwlink/?LinkId=827846
 	// for the documentation about the extensions.json format
 	"recommendations": [
-		"atishay-jain.all-autocomplete",
 		"ms-vscode.sublime-keybindings",
 		"pkief.material-icon-theme",
 		"esbenp.prettier-vscode"
