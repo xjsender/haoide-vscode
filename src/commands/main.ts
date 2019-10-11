@@ -1020,16 +1020,23 @@ export async function createMetaObject(metaType: string) {
 
     // Get specified template by metaType
     let template: any = templates[metaType];
-    let chosenItem: any = await vscode.window.showQuickPick(
-        _.map(template, (v, k) => {
-            return {
-                label: k,
-                description: v.description || v.directory
-            };
-        })
-    );
-    if (!chosenItem) {
-        return;
+    let templatePickItems = _.map(template, (v, k) => {
+        return {
+            label: k,
+            description: v.description || v.directory
+        };
+    });
+
+    // If there is only one template, just choose it as default
+    let chosenItem: any;
+    if (templatePickItems.length === 1) {
+        chosenItem = templatePickItems[0];
+    }
+    else {
+        chosenItem = await vscode.window.showQuickPick(templatePickItems);
+        if (!chosenItem) {
+            return;
+        }
     }
 
     // Get template attribute of chosen template
