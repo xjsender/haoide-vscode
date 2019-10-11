@@ -384,7 +384,7 @@ export function setDefaultProject(projectName: string) {
  * 
  * @returns Default projectName
  */
-export function getDefaultProject(): string {
+export function getDefaultProject() {
     let configFile = path.join(os.homedir(), ".haoide", "config.json");
     try {
         let data = fs.readFileSync(configFile, "utf-8");
@@ -397,13 +397,12 @@ export function getDefaultProject(): string {
                 }
             }
         }
-
-        return "";
     } 
     catch (error) {
         console.log('Exception at getDefaultProject: ' + error);
-        throw new Error(`Not found config.json at ${configFile}`);
     }
+
+    return "";
 }
 
 /**

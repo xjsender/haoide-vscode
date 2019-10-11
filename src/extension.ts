@@ -10,7 +10,8 @@ import * as provider from "./salesforce/completions/provider";
 import * as contextUtil from "./utils/context";
 import { auth, utility, main, packages } from "./commands";
 import { RestWebPanel, QueryWebPanel } from './utils/webview';
-import { getTriggerCharacters } from "./utils/util";
+import { statusBar } from "./utils/statusbar";
+import { getDefaultProject } from "./utils/util";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -358,6 +359,16 @@ export function activate(context: ExtensionContext) {
      * Context part
      */
     contextUtil.setHasOpenProject();
+
+    /**
+     * Status bar item
+     */
+    let projectName = getDefaultProject();
+    statusBar.updateText({
+        text: `Haoide: ${projectName}`,
+        tooltip: 'This is haoide default project',
+        command: 'extension.haoide.switchProject'
+    });
 }
 
 // this method is called when your extension is deactivated

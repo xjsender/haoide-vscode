@@ -32,3 +32,5 @@ export class StatusBarItem implements vscode.Disposable {
         this.statusBarItem.dispose();
     }
 }
+
+export let statusBar = new StatusBarItem();

@@ -8,16 +8,16 @@ import * as path from "path";
 import * as fs from "fs";
 import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
-import * as moment from "moment";
 import * as nls from 'vscode-nls';
 
 import * as util from "../utils/util";
+import * as contextUtil from "../utils/context";
 import * as settingsUtil from "../settings/settingsUtil";
 import { JSON2Apex, JSON2Typescript, convertArrayToTable } from "../utils/json";
 import { Session as SessionModel, FileProperty } from "../typings";
 import { settings, _session, metadata } from "../settings";
 import { authorizeDefaultProject } from "./auth";
-import { StatusBarItem } from "../utils/statusbar";
+import { statusBar } from "../utils/statusbar";
 
 const localize = nls.loadMessageBundle();
 
@@ -130,7 +130,6 @@ export function toggleMetadataObjects() {
  * 
  * @param projectName project name to be default
  */
-let statusBar = new StatusBarItem();
 export async function switchProject(projectName?: string) {
     if (!projectName) {
         let chosenItem: any = await vscode.window.showQuickPick(
@@ -152,6 +151,7 @@ export async function switchProject(projectName?: string) {
         return;
     }
 
+    // Set default project
     util.setDefaultProject(projectName);
 
     // Show default project at the status bar
@@ -160,6 +160,9 @@ export async function switchProject(projectName?: string) {
         tooltip: 'This is haoide default project',
         command: 'extension.haoide.switchProject'
     });
+
+    // Update context key: hasOpenProject
+    contextUtil.setHasOpenProject();
 
     // Show success message
     vscode.window.showInformationMessage(

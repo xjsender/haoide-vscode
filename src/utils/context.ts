@@ -4,19 +4,31 @@
  */
 
 import * as vscode from "vscode";
+import * as os from "os";
 import * as fs from "fs";
+import * as path from "path";
+import * as util from './util';
 
 /**
  * Register context key: 'haoide.hasOpenProject'
  */
 export function setHasOpenProject() {
-    vscode.workspace.findFiles('**/session.json')
-        .then( files => {
-            vscode.commands.executeCommand(
-                'setContext', 'haoide.hasOpenProject',
-                files && files.length > 0
-            );
-        });
+    let defaultProject = util.getProjectPath();
+    vscode.commands.executeCommand(
+        'setContext', 'haoide.hasOpenProject',
+        fs.existsSync(path.join(
+            defaultProject, '.haoide', 'session.json'
+        ))
+    );
+}
+
+export function setEnableSwitchProject() {
+    vscode.commands.executeCommand(
+        'setContext', 'haoide.enableSwitchProject',
+        fs.existsSync(path.join(
+            os.homedir(), '.haoide', 'config.json'
+        ))
+    );
 }
 
 /**

@@ -315,7 +315,7 @@
 				},
 				{
 					"command": "extension.haoide.switchProject",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.enableSwitchProject"
 				},
 				{
 					"command": "extension.haoide.toggleMetadataObjects",
