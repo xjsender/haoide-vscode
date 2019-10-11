@@ -7,6 +7,12 @@ import ToolingApi from "../salesforce/api/tooling";
 import RestApi from "../salesforce/api/rest";
 import ProgressNotification from "./progress";
 
+export interface QueryMessage {
+    soql: string;
+    isTooling: boolean;
+    isExport: boolean;
+}
+
 export class RestWebPanel {
     public static currentPanel: RestWebPanel | undefined;
 
@@ -140,31 +146,38 @@ export class QueryWebPanel {
 
         // Handle messages from the webview
         this._panel.webview.onDidReceiveMessage(
-            message => {
-                // Parse data from webview to object
+            (message: QueryMessage) => {
+                // Check the validity of soql
                 if (message && message.soql) {
                     let pattern = /SELECT\s+[^;]+FROM\s+[1-9_a-zA-Z]+/gi;
                     if (!pattern.test(message.soql)) {
                         return vscode.window.showErrorMessage(
-                            'Invliad SOQL input'
+                            'Your input soql is not valid'
                         );
                     }
                 }
 
-                let api = message.isTooling ? new ToolingApi() : new RestApi();
-                ProgressNotification.showProgress(api, "query", {
-                    soql: message.soql,
-                    progressMessage: "Executing query request"
-                })
-                .then( result => {
-                    this._panel.webview.postMessage({
-                        cmd: 'vscodeCallback', 
-                        data: result
+                // Process scenario of query to csv
+                if (message.isExport) {
+                    main.exportQueryToCSV(message.soql, message.isTooling);
+                }
+                // Process scenario of query to table
+                else {
+                    let api = message.isTooling ? new ToolingApi() : new RestApi();
+                    ProgressNotification.showProgress(api, "queryAll", {
+                        soql: message.soql,
+                        progressMessage: "Executing query request"
+                    })
+                    .then( result => {
+                        this._panel.webview.postMessage({
+                            cmd: 'vscodeCallback', 
+                            data: result
+                        });
+                    })
+                    .catch(err => {
+                        vscode.window.showErrorMessage(err.message);
                     });
-                })
-                .catch(err => {
-                    vscode.window.showErrorMessage(err.message);
-                });
+                }
             },
             null,
             this._disposables

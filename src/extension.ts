@@ -126,7 +126,7 @@ export function activate(context: ExtensionContext) {
     // Register queryToCSV command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.queryToCSV", () => {
-            main.queryToCSV();
+            main.exportQueryToCSV();
         }
     ));
 
@@ -205,12 +205,6 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.convertXml2Json",
         utility.convertXml2Json
-    ));
-
-    // Register convertArray2Table command
-    context.subscriptions.push(commands.registerCommand(
-        "extension.haoide.convertArray2Table",
-        utility.convertArray2Table
     ));
 
     // Register convertJson2Apex command

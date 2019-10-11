@@ -4,6 +4,7 @@
  */
 
 import * as _ from "lodash";
+import * as util from "./util";
 
 // Used in convertJSON2Table
 let excludeColumns = ["urls", "attributes"];
@@ -14,33 +15,44 @@ let excludeColumns = ["urls", "attributes"];
  * @param jsonArray json object array to be converted to table
  * @returns string format of table content
  */
-export function convertArrayToTable(jsonArray: any[]) {
+export function convertArrayToTable(jsonArray: any[], soql: string) {
     if (!jsonArray || jsonArray.length === 0) {
         return 'No Elements';
     }
 
     let columns: string[] = [];
-    for (const key of _.keys(jsonArray[0])) {
-        // Ignore excluded columns
-        if (!excludeColumns.includes(key)) {
-            columns.push(key);
+    if (/select\s+\*\s+from[\s\t]+\w+/gi.test(soql)) {
+        for (const key of _.keys(jsonArray[0])) {
+            // Ignore excluded columns
+            if (!excludeColumns.includes(key)) {
+                columns.push(key);
+            }
         }
+    }
+    else {
+        columns = util.getSOQLFields(soql);
     }
 
     let tableContent = columns.join(',') + '\n';
     for (const element of jsonArray) {
         let values = [];
         for (const column of columns) {
-            if (element.hasOwnProperty(column)) {
-                let value = element[column] || '';
-                if (_.isObject(value)) {
-                    value = JSON.stringify(value);
+            let rowValue = element;
+            for (const _column of column.split('.')) {
+                let fieldCaseMapping: any = {};
+                for (const k of _.keys(rowValue)) {
+                    fieldCaseMapping[k.toLowerCase()] = k;
                 }
-                values.push(`"${value}"`);
+
+                rowValue = rowValue[fieldCaseMapping[_column.toLowerCase()]];
+                if (!_.isObject(rowValue)) {
+                    break;
+                }
             }
-            else {
-                values.push('""');
-            }
+
+            let value: string = rowValue || '';
+            value = value.replace('"', '""');
+            values.push(`"${value}"`);
         }
 
         tableContent += values.join(',') + '\n';

@@ -15,6 +15,50 @@ import {
     CheckDeployResult
 } from "../typings";
 
+
+/**
+ * Parse field list from soql statement
+ * 
+ * @param soql soql to be prased
+ * @returns field list parsed from soql
+ */
+export function getSOQLFields(soql: string) {
+    let pattern = /[\n\s]*SELECT\s+[*\w\n,.:_\s()]+?\s+FROM/gi;
+    let matches = soql.match(pattern);
+    if (!matches || matches.length === 0) {
+        return [];
+    }
+
+    // Parse field string from soql
+    let match = matches[0];
+    let fieldStr = match.substring(6, match.length - 4);
+    fieldStr = fieldStr.replace(/\s|\n/g, '');
+
+    // Parse field string as field list
+    let fields = [], exprFields = [];
+    for (let field of fieldStr.split(',')) {
+        field = field.trim();
+        if (field.indexOf(' ') !== -1) {
+            field = field.split(' ')[1];
+        }
+        // Aggregate fields
+        else if (field.indexOf('(') !== -1) {
+            exprFields.push(field);
+        }
+        else {
+            fields.push(field);
+        }
+    }
+
+    // Avoid duplicate expr field
+    for (let idx = 0; idx < exprFields.length; idx++) {
+        const exprField = exprFields[idx];
+        fields.push(`expr&{idx}`);
+    }
+
+    return fields;
+}
+
 /**
  * Get trigger characters for completion
  * 

@@ -191,11 +191,6 @@
 				"category": "Haoide"
 			},
 			{
-				"command": "extension.haoide.convertArray2Table",
-				"title": "%extension.haoide.convertArray2Table.title%",
-				"category": "Haoide"
-			},
-			{
 				"command": "extension.haoide.convertXml2Json",
 				"title": "%extension.haoide.convertXml2Json.title%",
 				"category": "Haoide"
@@ -412,10 +407,6 @@
 				},
 				{
 					"command": "extension.haoide.convertXml2Json",
-					"when": "editorHasSelection"
-				},
-				{
-					"command": "extension.haoide.convertArray2Table",
 					"when": "editorHasSelection"
 				},
 				{

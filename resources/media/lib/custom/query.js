@@ -138,8 +138,16 @@ let app = new Vue({
         executeQuery() {
             callVscode({
                 soql: this.soql, 
-                isTooling: this.isTooling
+                isTooling: this.isTooling,
+                isExport: false
             });
+        },
+        exportToCSV() {
+            callVscode({
+                soql: this.soql, 
+                isTooling: this.isTooling,
+                isExport: true
+            })
         }
     }
 });

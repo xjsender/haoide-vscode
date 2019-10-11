@@ -38,13 +38,15 @@ import { convertArrayToTable } from '../utils/json';
 
 const localize = nls.loadMessageBundle();
 
-export async function queryToCSV() {
+export async function exportQueryToCSV(soql?: string, isTooling?: boolean) {
     // Get soql input from user
-    let soql = await vscode.window.showInputBox({
-        placeHolder: 'Input your soql to be exported'
-    });
     if (!soql) {
-        return;
+        soql = await vscode.window.showInputBox({
+            placeHolder: 'Input your soql to be exported'
+        });
+        if (!soql) {
+            return;
+        }
     }
 
     // Check the validity of soql
@@ -56,7 +58,7 @@ export async function queryToCSV() {
             ConfirmAction.OVERRIDE, ConfirmAction.NO
         );
         if (yesOrNo === ConfirmAction.YES) {
-            queryToCSV();
+            exportQueryToCSV(soql, isTooling);
         }
 
         return;
@@ -76,16 +78,17 @@ export async function queryToCSV() {
     }
 
     // Execute query request and write result to local file
-    let restApi = new RestApi();
+    let api = isTooling ? new ToolingApi() : new RestApi();
     ProgressNotification.showProgress(
-        restApi, 'query', {
+        api, 'queryAll', {
             soql: soql,
             progressMessage: 'Executing query request'
         }
     )
     .then( result => {
         // Parse queried records as table content
-        let tableContent = convertArrayToTable(result.records);
+        soql = soql || '';
+        let tableContent = convertArrayToTable(result.records, soql);
 
         // Makedir for outputPath
         let outputPath = path.join(

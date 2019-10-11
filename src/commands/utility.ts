@@ -321,50 +321,6 @@ export function convertJson2Typescript() {
     });
 }
 
-export function convertArray2Table() {
-    // Get selection in the active editor if no jsonStr param
-    let editor = vscode.window.activeTextEditor;
-    if (!editor) {
-        return util.showCommandWarning();
-    }
-
-    let jsonStr = editor.document.getText(editor.selection);
-    let jsonArray = [];
-    try {
-        jsonArray = JSON.parse(jsonStr);
-    }
-    catch (err) {
-        return vscode.window.showWarningMessage(err.message);
-    }
-
-    let tableContent = convertArrayToTable(jsonArray);
-    try {
-        // Create output path of csv file
-        let outputPath = path.join(
-            util.getProjectPath(), 'csv'
-        );
-        if (!fs.existsSync(outputPath)) {
-            fs.mkdirSync(outputPath);
-        }
-
-        // Define csv file path
-        let csvFilePath = path.join(
-            outputPath, moment().format('YYYYMMDDhhmmss') + '.csv'
-        );
-
-        // Write table content to csv file
-        fs.writeFileSync(csvFilePath, tableContent);
-
-        // Open csv file with new view
-        vscode.commands.executeCommand(
-            "vscode.open", vscode.Uri.file(csvFilePath)
-        );
-    }
-    catch (err) {
-        vscode.window.showErrorMessage(err.message);
-    }
-}
-
 /**
  * Convert your input 15Id to 18Id
  */
