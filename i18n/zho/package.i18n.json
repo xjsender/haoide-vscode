@@ -16,6 +16,7 @@
     "extension.haoide.deployThisToServer.title": "将该文件部署至服务器",
     "extension.haoide.formatJson.title": "格式化JSON",
     "extension.haoide.convertXml2Json.title": "转换XML格式为JSON格式",
+    "extension.haoide.exportQueryToCSV.title": "将查询结果导出为CSV",
     "extension.haoide.executeQuery.title": "对选中的SOQL执行查询操作",
     "extension.haoide.executeToolingQuery.title": "对选中的SOQL执行Tooling查询操作",
     "extension.haoide.describeMetadata.title": "Describe Metadata",

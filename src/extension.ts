@@ -125,9 +125,9 @@ export function activate(context: ExtensionContext) {
         main.executeAnonymous
     ));
 
-    // Register queryToCSV command
+    // Register exportQueryToCSV command
     context.subscriptions.push(commands.registerCommand(
-        "extension.haoide.queryToCSV", () => {
+        "extension.haoide.exportQueryToCSV", () => {
             main.exportQueryToCSV();
         }
     ));

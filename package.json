@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"repository": "https://github.com/xjsender/haoide-vscode",
 	"description": "haoide is a vscode extension for salesforce development",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"engines": {
 		"vscode": "^1.35.0"
 	},
@@ -66,8 +66,8 @@
 				"category": "Haoide"
 			},
 			{
-				"command": "extension.haoide.queryToCSV",
-				"title": "%extension.haoide.queryToCSV.title%",
+				"command": "extension.haoide.exportQueryToCSV",
+				"title": "%extension.haoide.exportQueryToCSV.title%",
 				"category": "Haoide"
 			},
 			{
@@ -302,7 +302,7 @@
 					"when": "haoide.hasOpenProject"
 				},
 				{
-					"command": "extension.haoide.queryToCSV",
+					"command": "extension.haoide.exportQueryToCSV",
 					"when": "haoide.hasOpenProject"
 				},
 				{
