@@ -913,13 +913,6 @@ export function refreshFolders(uris: vscode.Uri[] | undefined) {
 }
 
 /**
- * Update project according to subscribed meta objects
- */
-export function updateProject() {
-    return createNewProject(false);
-}
-
-/**
  * Create new project based on subscribed metadata objects
  */
 export function createNewProject(reloadCache = true) {

@@ -38,7 +38,9 @@ export function activate(context: ExtensionContext) {
 
     // Register updateProject command
     context.subscriptions.push(commands.registerCommand(
-        "extension.haoide.updateProject", main.updateProject
+        "extension.haoide.updateProject", () => {
+            main.createNewProject(false);
+        }
     ));
 
     // Register updateUserLanguage command
