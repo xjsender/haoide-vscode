@@ -3,6 +3,22 @@
 All notable changes to the "haoide" extension will be documented in this file.
 
 
+## [0.2.2], 2019-10-13
++ Add new command ```exportQueryToCSV``` for exporting soql result to csv
++ Add new command ```generateWorkbooks``` for generating sobject workbooks
++ Add new command ```deleteThisFromServer``` for deleting apex class by tooling API
++ Add new recommendations: ```grapecity.gc-excelviewer``` for previewing excel
++ Add queryToCSV support for query result in ``startQueryExplorer```
++ Add support for customizing ```apiVersion``` and ```deployOptions```
++ Add ```.output``` to ```.gitignore```
++ Remove recommendation ```atishay-jain.all-autocomplete``` due to performance issue
++ when create new MetaObject, if there is only one template, just choose it as default one
++ Hide status bar message after 5 seconds
++ Enable word wrap for new untitled file
+
++ Fix bug for duplicate status bar item when switch project
+
+
 ## [0.2.1], 2019-10-08
 + Add new command ```logoutDefaultProject``` for logout from default project
 + Add new command ```buildSobjectSOQL``` for building sobject soql
