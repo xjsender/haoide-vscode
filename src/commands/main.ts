@@ -379,138 +379,123 @@ export function reloadSymbolTable() {
 /**
  * Describe sobjects and keep it to local disk
  * 
- * @param sobjects sobjects array, if not spcified, just describe global
+ * @param options options for this function
+ * @param options.scope scope for choosing, defined in ```SObjectReloadScope``` enum
  */
 export async function reloadSobjectCache(options?: any) {
-    let restApi = new RestApi();
-
-    let sobjects: string[] = (options && options.sobjects) || [];
-    if (!sobjects || sobjects.length === 0) {
-        // Get sobjects scope
-        let scope = (options && options.scope) || await vscode.window.showQuickPick([
-            SObjectReloadScope.ALL, 
-            SObjectReloadScope.STANDARD, 
-            SObjectReloadScope.CUSTOM,
-            SObjectReloadScope.CUSTOMSCOPE
-        ], {
-            placeHolder: 'Choose the scope for sobject definitions to reload',
-            ignoreFocusOut: true
-        });
-        if (!scope) {
+    // Sobjects from 
+    utility.chooseSobjects(options).then( sobjects => {
+        if (!sobjects) {
             return;
         }
 
-        return executeGlobalDescribe().then( async result => {
-            let sobjectsDesc = result.sobjects;
+        vscode.window.showInformationMessage(
+            "There is long time process to " + 
+            "load sobjects cache, please wait..."
+        );
+    
+        let restApi = new RestApi();
+        var limit = promiseLimit(30);
+        Promise.all(_.map(sobjects, sobject => {
+            return limit(() => restApi.describeSobject({ 
+                sobject: sobject,
+                ignoreError: true
+            }));
+        }))
+        .then( (sobjectsDesc : any) => {
+            sobjectsDesc = sobjectsDesc as SObjectDesc[];
+    
+            let { sobjects = {},  parentRelationships = {} } = 
+                settingsUtil.getSobjects();
+    
+            // Collect parentRelationships
             for (const sobjectDesc of sobjectsDesc) {
-                // Ignore not queryable sobject
-                if (!sobjectDesc.queryable) {
+                // If no name, skip
+                if (!sobjectDesc.name) {
                     continue;
                 }
-                
-                if (scope === SObjectReloadScope.ALL
-                        || scope === SObjectReloadScope.CUSTOMSCOPE) {
-                    sobjects.push(sobjectDesc.name);
-                }
-                else if (scope === SObjectReloadScope.STANDARD) {
-                    if (!sobjectDesc.custom) {
-                        sobjects.push(sobjectDesc.name);
+    
+                // Collect sobjects
+                sobjects[sobjectDesc.name.toLowerCase()] =
+                    sobjectDesc.name;
+    
+                // Write different sobject describe result 
+                // to different json file at local disk
+                settingsUtil.saveSobjectDesc(sobjectDesc);
+    
+                for (const field of sobjectDesc.fields) {
+                    if (field.referenceTo.length !== 1) {
+                        continue;
+                    }
+    
+                    let rsName = field.relationshipName;
+                    let referenceTo = field.referenceTo[0];
+                    if (parentRelationships[rsName]) {
+                        let referenceTos: string[] = parentRelationships[rsName];
+                        referenceTos.push(referenceTo);
+                        parentRelationships[rsName] = _.uniq(referenceTos);
+                    }
+                    else {
+                        parentRelationships[rsName] = [referenceTo];
                     }
                 }
-                else if (scope === SObjectReloadScope.CUSTOM) {
-                    if (sobjectDesc.custom) {
-                        sobjects.push(sobjectDesc.name);
-                    }
-                }
             }
-
-            // Customscope means user can manually specify the scope
-            let chosenSobjects;
-            if (scope === SObjectReloadScope.CUSTOMSCOPE) {
-                chosenSobjects = await vscode.window.showQuickPick(sobjects, {
-                    canPickMany: true
-                });
-                if (!chosenSobjects) {
-                    return;
-                }
-            }
-            else {
-                chosenSobjects = sobjects;
-            }
-
-            reloadSobjectCache({
-                sobjects: chosenSobjects
+    
+            settingsUtil.setConfigValue("sobjects.json", {
+                "sobjects": sobjects,
+                "parentRelationships": parentRelationships
             });
-
+    
+            // Succeed message after finished
             vscode.window.showInformationMessage(
-                "There is long time process to " + 
-                "load sobjects cache, please wait..."
+                "Your sobjects cache were saved at '.haoide'"
             );
         })
         .catch( err => {
-            return vscode.window.showErrorMessage(err.message);
+            vscode.window.showErrorMessage(err.message);
         });
-    }
-
-    var limit = promiseLimit(30);
-    Promise.all(_.map(sobjects, sobject => {
-        return limit(() => restApi.describeSobject({ 
-            sobject: sobject,
-            ignoreError: true
-        }));
-    }))
-    .then( (sobjectsDesc : any) => {
-        sobjectsDesc = sobjectsDesc as SObjectDesc[];
-
-        let { sobjects = {},  parentRelationships = {} } = 
-            settingsUtil.getSobjects();
-
-        // Collect parentRelationships
-        for (const sobjectDesc of sobjectsDesc) {
-            // If no name, skip
-            if (!sobjectDesc.name) {
-                continue;
-            }
-
-            // Collect sobjects
-            sobjects[sobjectDesc.name.toLowerCase()] =
-                sobjectDesc.name;
-
-            // Write different sobject describe result 
-            // to different json file at local disk
-            settingsUtil.saveSobjectDesc(sobjectDesc);
-
-            for (const field of sobjectDesc.fields) {
-                if (field.referenceTo.length !== 1) {
-                    continue;
-                }
-
-                let rsName = field.relationshipName;
-                let referenceTo = field.referenceTo[0];
-                if (parentRelationships[rsName]) {
-                    let referenceTos: string[] = parentRelationships[rsName];
-                    referenceTos.push(referenceTo);
-                    parentRelationships[rsName] = _.uniq(referenceTos);
-                }
-                else {
-                    parentRelationships[rsName] = [referenceTo];
-                }
-            }
-        }
-
-        settingsUtil.setConfigValue("sobjects.json", {
-            "sobjects": sobjects,
-            "parentRelationships": parentRelationships
-        });
-
-        // Succeed message after finished
-        vscode.window.showInformationMessage(
-            "Your sobjects cache were saved at '.haoide'"
-        );
     })
     .catch( err => {
-        console.log(err);
         vscode.window.showErrorMessage(err.message);
+    });
+}
+
+/**
+ * Generate sobject workbooks as a seprated csv
+ */
+export function generateWorkbooks() {
+    utility.chooseSobjects().then( sobjects => {
+        if (!sobjects) {
+            return;
+        }
+
+        vscode.window.showInformationMessage(
+            "There is long time process to " + 
+            "load sobjects cache, please wait..."
+        );
+    
+        let restApi = new RestApi();
+        var limit = promiseLimit(30);
+        Promise.all(_.map(sobjects, sobject => {
+            return limit(() => restApi.describeSobject({ 
+                sobject: sobject,
+                ignoreError: true
+            }));
+        }))
+        .then( (sobjectsDesc : any) => {
+            sobjectsDesc = sobjectsDesc as SObjectDesc[];
+            for (const sd of sobjectsDesc) {
+                util.generateWorkbook(sd);
+            }
+
+            // Succeed message after finished
+            vscode.window.showInformationMessage(
+                "Your workbooks were generated at '.haoide/output/workbooks'"
+            );
+        })
+        .catch( err => {
+            vscode.window.showErrorMessage(err.message);
+        });
     });
 }
 

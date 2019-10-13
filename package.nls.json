@@ -28,6 +28,7 @@
     "extension.haoide.deployThisToServer.title": "Deploy This Files to Server",
     "extension.haoide.deployOpenFilesToServer.title": "Deploy Open Files to Server",
     "extension.haoide.buildSobjectSOQL.title": "Build sObject SOQL",
+    "extension.haoide.generateWorkbooks.title": "Generate Workbooks",
     "extension.haoide.reloadSobjectCache.title": "Reload sObject Cache",
     "extension.haoide.executeGlobalDescribe.title": "Execute Global Describe",
     "extension.haoide.reloadSymbolTable.title": "Reload Symbol Table",

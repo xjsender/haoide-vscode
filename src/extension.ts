@@ -180,6 +180,13 @@ export function activate(context: ExtensionContext) {
         }
     ));
 
+    // Register generateWorkbooks command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.generateWorkbooks", () => {
+            main.generateWorkbooks();
+        }
+    ));
+
     // Register reloadSobjectCache command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.reloadSobjectCache", () => {

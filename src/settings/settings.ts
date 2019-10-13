@@ -110,6 +110,29 @@ export default class Settings {
     }
 
     /**
+     * Get workbook columns for exporting workbook
+     * 
+     * @returns array of workbook column
+     */
+    public getWorkbookColumns() {
+        let workbookColumns: string[] = this.getSettingValue('workbookColumns');
+        if (!workbookColumns) {
+            workbookColumns = [
+                "label", "name", "type", "length", "unique", "externalId", "precision",
+                "picklistValues", "calculatedFormula", "defaultValue", "controllerName",
+                "relationshipName", "referenceTo", "inlineHelpText", "nillable",
+                "createable", "custom", "dependentPicklist"
+            ];
+
+            settingsUtil.setConfigValue(
+                this.settingsFileName, { workbookColumns}
+            );
+        }
+
+        return workbookColumns;
+    }
+
+    /**
      * Get user language list
      * 
      * @returns Object, {"languageLabel": "LanguageLocaleKey"}

@@ -31,6 +31,7 @@
     "extension.haoide.deployOpenFilesToServer.title": "将所有打开的文件部署至服务器",
     "extension.haoide.executeGlobalDescribe.title": "执行GlobalDescribe命令",
     "extension.haoide.buildSobjectSOQL.title": "生成Sobject SOQL",
+    "extension.haoide.generateWorkbooks.title": "生成对象的Workbook",
     "extension.haoide.reloadSobjectCache.title": "重新加载对象的缓存",
     "extension.haoide.reloadSymbolTable.title": "重新加载SymbolTable",
     "extension.haoide.runSyncTest.title": "Run Sync Test",

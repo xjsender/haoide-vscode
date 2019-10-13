@@ -12,10 +12,12 @@ import * as util from "../utils/util";
 import * as contextUtil from "../utils/context";
 import * as settingsUtil from "../settings/settingsUtil";
 import { JSON2Apex, JSON2Typescript, convertArrayToTable } from "../utils/json";
-import { Session as SessionModel, FileProperty } from "../typings";
+import { Session as SessionModel, FileProperty, SObjectReloadScope } from "../typings";
 import { settings, _session, metadata } from "../settings";
 import { authorizeDefaultProject } from "./auth";
 import { statusBar } from "../utils/statusbar";
+import { executeGlobalDescribe } from "./main";
+import { reject } from "bluebird";
 
 const localize = nls.loadMessageBundle();
 
@@ -332,4 +334,78 @@ export function convertXml2Json(xmlStr="") {
     
     // Open a new file to display the json
     util.openNewUntitledFile(JSON.stringify(result, null, 4));
+}
+
+/**
+ * 
+ * @param options options for chooseSobjects function
+ * @param options.scope scope for choosing, its value is ```SObjectReloadScope``` enum
+ * 
+ * @returns Promise<string[]>, array of sobjects
+ */
+export function chooseSobjects(options?: any) {
+    return new Promise<string[]>( async (resolve, reject) => {
+        let sobjects: string[] = [];
+        if (!sobjects || sobjects.length === 0) {
+            // Get sobjects scope
+            let scope = (options && options.scope) || await vscode.window.showQuickPick([
+                SObjectReloadScope.ALL, 
+                SObjectReloadScope.STANDARD, 
+                SObjectReloadScope.CUSTOM,
+                SObjectReloadScope.CUSTOMSCOPE
+            ], {
+                placeHolder: 'Choose the scope for sobject definitions to reload',
+                ignoreFocusOut: true
+            });
+            if (!scope) {
+                resolve();
+                return;
+            }
+
+            return executeGlobalDescribe().then( async result => {
+                let sobjectsDesc = result.sobjects;
+                for (const sobjectDesc of sobjectsDesc) {
+                    // Ignore not queryable sobject
+                    if (!sobjectDesc.queryable) {
+                        continue;
+                    }
+                    
+                    if (scope === SObjectReloadScope.ALL
+                            || scope === SObjectReloadScope.CUSTOMSCOPE) {
+                        sobjects.push(sobjectDesc.name);
+                    }
+                    else if (scope === SObjectReloadScope.STANDARD) {
+                        if (!sobjectDesc.custom) {
+                            sobjects.push(sobjectDesc.name);
+                        }
+                    }
+                    else if (scope === SObjectReloadScope.CUSTOM) {
+                        if (sobjectDesc.custom) {
+                            sobjects.push(sobjectDesc.name);
+                        }
+                    }
+                }
+
+                // Customscope means user can manually specify the scope
+                let chosenSobjects;
+                if (scope === SObjectReloadScope.CUSTOMSCOPE) {
+                    chosenSobjects = await vscode.window.showQuickPick(sobjects, {
+                        canPickMany: true
+                    });
+                    if (!chosenSobjects) {
+                        resolve();
+                        return;
+                    }
+                }
+                else {
+                    chosenSobjects = sobjects;
+                }
+
+                resolve(chosenSobjects);
+            })
+            .catch( err => {
+                reject(err);
+            });
+        }
+    });
 }

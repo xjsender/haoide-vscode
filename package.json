@@ -171,6 +171,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.generateWorkbooks",
+				"title": "%extension.haoide.generateWorkbooks.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.reloadSobjectCache",
 				"title": "%extension.haoide.reloadSobjectCache.title%",
 				"category": "Haoide"
@@ -409,6 +414,10 @@
 				},
 				{
 					"command": "extension.haoide.buildSobjectSOQL",
+					"when": "haoide.hasOpenProject"
+				},
+				{
+					"command": "extension.haoide.generateWorkbooks",
 					"when": "haoide.hasOpenProject"
 				},
 				{

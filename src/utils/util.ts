@@ -12,9 +12,80 @@ import * as settingsUtil from "../settings/settingsUtil";
 import { 
     FileProperty, FileAttributes, 
     ComponentSuccess, ApexClass, 
-    CheckDeployResult
+    CheckDeployResult,
+    SObjectDesc
 } from "../typings";
+import { settings } from "../settings";
 
+
+export function generateWorkbook(sobjectDesc: SObjectDesc) {
+    let columns = settings.getWorkbookColumns();
+    let sobjectName = sobjectDesc.name;
+
+    // Sort fields by field label
+    let fields = _.sortBy(sobjectDesc.fields, f => f.label);
+    let allRows = [];
+    for (const field of fields) {
+        let fieldType = field.calculated
+            ? `Formula(${field.type})`
+            : field.type;
+
+        let rowValues = [];
+        for (const column of columns) {
+            let cellValue: string = '';
+            let value = (field as any)[column];
+            if (_.isArray(value)) {
+                if (column === 'picklistValues') {
+                    if (value.length > 0) {
+                        let lovs = [];
+                        for (const item of value) {
+                            lovs.push((item as any)['value']);
+                        }
+                        cellValue = lovs.join('\n');
+                    }
+                    else {
+                        cellValue = '';
+                    }
+                }
+                else if (column === 'referenceTo') {
+                    cellValue = value.length > 0 
+                        ? value[0] : '';
+                }
+            }
+            else {
+                cellValue = column === "type" 
+                    ? fieldType : `${value}` || '';
+            }
+            
+            if (cellValue.indexOf('"') !== -1) {
+                cellValue = cellValue.replace(/"/gi, '""');
+            }
+
+            // Wrap value with double quote
+            rowValues.push(`"${cellValue}"`);
+        }
+
+        allRows.push(rowValues.join(','));
+    }
+    let tableContent = columns.join(',') + allRows.join('\n');
+
+    let workbookFileOuputPath = path.join(
+        getProjectPath(), '.output', 'workbooks'
+    );
+    if (!fs.existsSync(workbookFileOuputPath)) {
+        shelljs.mkdir("-p", workbookFileOuputPath);
+    }
+
+    let workbookFile = path.join(
+        workbookFileOuputPath, `${sobjectName}.csv`
+    );
+    fs.writeFileSync(workbookFile, tableContent, 'utf-8');
+
+    vscode.window.setStatusBarMessage(
+        `Workbook of ${sobjectName} is generated successfully`,
+        5000
+    );
+}
 
 /**
  * Parse field list from soql statement
