@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"repository": "https://github.com/xjsender/haoide-vscode",
 	"description": "haoide is a vscode extension for salesforce development",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"engines": {
 		"vscode": "^1.35.0"
 	},

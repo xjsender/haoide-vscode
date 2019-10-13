@@ -13,13 +13,18 @@ import * as util from './util';
  * Register context key: 'haoide.hasOpenProject'
  */
 export function setHasOpenProject() {
-    let defaultProject = util.getProjectPath();
-    vscode.commands.executeCommand(
-        'setContext', 'haoide.hasOpenProject',
-        fs.existsSync(path.join(
-            defaultProject, '.haoide', 'session.json'
-        ))
-    );
+    vscode.workspace.findFiles('**/session.json')
+        .then( files => {
+            if (files && files.length > 0) {
+                let defaultProject = util.getProjectPath();
+                vscode.commands.executeCommand(
+                    'setContext', 'haoide.hasOpenProject',
+                    fs.existsSync(path.join(
+                        defaultProject, '.haoide', 'session.json'
+                    ))
+                );
+            }
+        });
 }
 
 export function setEnableSwitchProject() {

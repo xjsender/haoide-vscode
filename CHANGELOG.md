@@ -3,6 +3,10 @@
 All notable changes to the "haoide" extension will be documented in this file.
 
 
+## [0.2.3], 2019-10-13
++ Fix context key problem, hide commands which should be hidden
+
+
 ## [0.2.2], 2019-10-13
 + Add new command ```exportQueryToCSV``` for exporting soql result to csv
 + Add new command ```generateWorkbooks``` for generating sobject workbooks
