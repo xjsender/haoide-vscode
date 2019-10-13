@@ -310,6 +310,11 @@ export function openNewUntitledFile(content: string, languageId?: string) {
                 // Insert content to new open file from start
                 editor.edit(editBuilder => {
                     editBuilder.insert(new vscode.Position(0, 0), content);
+                    
+                    // Toggle word wrap by std command
+                    vscode.commands.executeCommand(
+                        'editor.action.toggleWordWrap', true
+                    );
                 });
             }
         });
