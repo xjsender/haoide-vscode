@@ -126,6 +126,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.deleteThisFromServer",
+				"title": "%extension.haoide.deleteThisFromServer.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.retrieveThisFromServer",
 				"title": "%extension.haoide.retrieveThisFromServer.title%",
 				"category": "Haoide"
@@ -363,6 +368,10 @@
 					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
+					"command": "extension.haoide.deleteThisFromServer",
+					"when": "haoide.hasOpenProject && editorIsOpen"
+				},
+				{
 					"command": "extension.haoide.retrieveThisFromServer",
 					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
@@ -485,27 +494,32 @@
 					"when": "resourceFilename != package.xml && resourceExtname == .cls"
 				},
 				{
-					"group": "haoide@2",
+					"group": "haoide@3",
+					"command": "extension.haoide.deleteThisFromServer",
+					"when": "resourceFilename != package.xml && resourceExtname == .cls"
+				},
+				{
+					"group": "haoide@4",
 					"command": "extension.haoide.retrieveThisFromServer",
 					"when": "resourceFilename != package.xml && resourceScheme == file"
 				},
 				{
-					"group": "haoide@3",
-					"command": "extension.haoide.deployThisToServer",
-					"when": "resourceFilename != package.xml && resourceScheme == file"
-				},
-				{
-					"group": "haoide@4",
+					"group": "haoide@5",
 					"command": "extension.haoide.destructThisFromServer",
 					"when": "resourceFilename != package.xml && resourceScheme == file"
 				},
 				{
-					"group": "haoide@5",
+					"group": "haoide@6",
+					"command": "extension.haoide.deployThisToServer",
+					"when": "resourceFilename != package.xml && resourceScheme == file"
+				},
+				{
+					"group": "haoide@7",
 					"command": "extension.haoide.locateThisInBrowser",
 					"when": "resourceFilename != package.xml && resourceScheme == file"
 				},
 				{
-					"group": "haoide@6",
+					"group": "haoide@8",
 					"command": "extension.haoide.viewFileProperty",
 					"when": "resourceFilename != package.xml"
 				}
@@ -564,6 +578,13 @@
 				"mac": "ctrl+shift+r",
 				"win": "ctrl+alt+r",
 				"linux": "ctrl+alt+r"
+			},
+			{
+				"command": "extension.haoide.destructThisFromServer",
+				"key": "ctrl+alt+d",
+				"mac": "ctrl+shift+d",
+				"win": "ctrl+alt+d",
+				"linux": "ctrl+alt+d"
 			},
 			{
 				"command": "extension.haoide.deployThisToServer",
