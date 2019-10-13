@@ -3,6 +3,7 @@
  * @author Mouse Liu <mouse.mliu@gmail.com>
  */
 
+import { extensionSettings } from ".";
 import * as settingsUtil from "./settingsUtil";
 
 export default class Settings {
@@ -99,7 +100,7 @@ export default class Settings {
     public getApiVersion() {
         let apiVersion = this.getSettingValue('apiVersion');
         if (!apiVersion) {
-            apiVersion = 46;
+            apiVersion = extensionSettings.getConfigValue('apiVersion', 46);
             settingsUtil.setConfigValue(
                 this.settingsFileName, { apiVersion }
             );

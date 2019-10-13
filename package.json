@@ -653,6 +653,11 @@
 					"type": "string",
 					"default": "",
 					"description": "Indicate where to put projects"
+				},
+				"haoide.apiVersion": {
+					"type": "number",
+					"default": 46,
+					"description": "Default API version, it can be overrided by project"
 				}
 			}
 		}

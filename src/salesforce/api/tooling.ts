@@ -10,7 +10,7 @@ import * as querystring from "querystring";
 import * as auth from "../../commands/auth";
 import ProgressNotification from "../../utils/progress";
 import { TestObject } from "../../typings/test";
-import { _session } from "../../settings";
+import { _session, settings } from "../../settings";
 
 export default class ToolingApi {
     private session: any;
@@ -32,7 +32,7 @@ export default class ToolingApi {
         this.session = session || _session.getSession();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
-        this.apiVersion = this.session["apiVersion"] || 46;
+        this.apiVersion = settings.getApiVersion();
         this.baseUrl = `${this.instanceUrl}/services/data/v${this.apiVersion}.0/tooling`;
         this.headers = {
             "Accept": "application/json",
