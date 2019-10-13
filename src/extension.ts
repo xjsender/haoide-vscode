@@ -73,6 +73,12 @@ export function activate(context: ExtensionContext) {
         main.retrieveOpenFilesFromServer
     ));
 
+    // Register viewFileProperty command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.viewFileProperty",
+        packages.viewFileProperty
+    ));
+
     // Register retrieveByManifest command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.retrieveByManifest",
@@ -294,7 +300,7 @@ export function activate(context: ExtensionContext) {
     // Register createManifestFile command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.createManifestFile", (uri: Uri) => {
-            utility.createManifestFile(uri);
+            packages.createManifestFile(uri);
         }
     ));
 

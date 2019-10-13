@@ -104,9 +104,13 @@ export default class MetadataApi {
     }
 
     /**
-     * Dist package for specified metaObject or folders
+     * Describe metadata of speicifed Api version
      * 
-     * @param options {"progress": vscode.Progress}
+     * @param options options for describeMetadata request
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout optional, request timeout ```miliseconds```, default is ```120000```
+     * 
      * @returns Promise<any>
      */
     public describeMetadata(options: any) {
@@ -118,8 +122,14 @@ export default class MetadataApi {
     /**
      * List package for speicifed metaObject or folders
      * 
-     * @param options {"types": {"Folder": []}}
-     * @returns Promise<any>{ body }
+     * @param options options for listMetadata request
+     * @param options.types types to need listMetadata
+     * @param options.progress optional, progress instance of vscode
+     * @param options.progressDone optional
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout optional, request timeout ```miliseconds```, default is ```120000```
+     * 
+     * @returns Promise<any>
      */
     public listMetadata(options: any) {
         let typesLiteral = _.keys(options.types).join(', ');
@@ -133,12 +143,14 @@ export default class MetadataApi {
     /**
      * List metadata for specified meta objects
      * 
-     * @param options, for example, {
-     *      "types": {
-     *          "ApexClass": ["*"], "ApexTrigger": ["A", "B"]
-     *      },
-     *      "retrieveAll": true | false
-     * }
+     * @param options options for listMetadata request
+     * @param options.types {"ApexClass": ["*"], "ApexTrigger": ["A", "B"]}
+     * @param options.retrieveAll  true means retrieve all metadata
+     * @param options.progress optional, progress instance of vscode
+     * @param options.progressDone optional, true means progress done after this request is finished
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout optional, request timeout ```miliseconds```, default is ```120000```
+     * 
      * @returns wrapped options with listMetadata result
      */
     private async prepareMembers(options: any) {
@@ -242,7 +254,13 @@ export default class MetadataApi {
     /**
      * Check retrieve status
      * 
-     * @param options {"asyncProcessId": ""}s
+     * @param options options for checkRetrieveStatus request
+     * @param options.asyncProcessId async process Id from retrieve request response
+     * @param options.progress optional, progress instance of vscode
+     * @param options.progressDone optional, true means progress done after this request is finished
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout optional, request timeout ```miliseconds```, default is ```120000```
+     * 
      * @returns Promise<CheckRetrieveResult>
      */
     private checkRetrieveStatus(options: any) {
@@ -252,18 +270,23 @@ export default class MetadataApi {
     }
 
     /**
-     * Retrieve files from server
-     * 1. Issue a retrieve request to get asyncProcessId
-     * 2. Issue a resursive checkRetrieveStatus util done
-     * 3. After that, you will get the zipFile(base64)
+     * Execute Retrieve request, following steps will be executed
+     * + Issue a retrieve request to get asyncProcessId
+     * + Issue a resursive checkRetrieveStatus util done
+     * + After that, you will get the zipFile(base64)
      * 
-     * @param options {
-     *      "types" : {"ApexClass": ["*"], "ApexTrigger": ["A", "B"]}, 
-     *      "packageNames": Array<string>,
-     *      "retrieveAll": true | false
-     * }
-     * @returns Promise<any>{ CheckRetrieveStatus }
-     */
+     * @param options options for checkDeployStatus request
+     * @param options.zipFile zipped components to be deployed
+     * @param options.packageNames array of package name 
+     *   in the ```outbound changeset``` or ```package manager```
+     * @param options.retrieveAll optional, true means retrieve all metadata from org.
+     * @param options.progress optional, progress instance of vscode
+     * @param options.progressDone optional, true means progress done after this request is finished
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout optional, request timeout ```miliseconds```, default is ```120000```
+     * 
+     * @returns Promise<CheckRetrieveStatus>
+    */
     public retrieve(options: any = {}) {
         let self = this;
 
@@ -309,8 +332,14 @@ export default class MetadataApi {
     /**
      * Check deploy status
      * 
-     * @param options for example, {"asyncProcessId": ""}
-     * @returns Promise<any>
+     * @param options options for checkDeployStatus request
+     * @param options.asyncProcessId async process Id from deploy request response
+     * @param options.progress optional, progress instance of vscode
+     * @param options.progressDone optional, true means progress done after this request is finished
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout optional, request timeout ```miliseconds```, default is ```120000```
+     * 
+     * @returns Promise<CheckDeployResult>
      */
     private checkDeployStatus(options: any) {
         return this._invoke_method(_.extend(options, {
@@ -319,12 +348,20 @@ export default class MetadataApi {
     }
     
     /**
-    *  1. Issue a deploy request to get the asyncProcessId
-    *  2. Issue a resursive checkDeployStatus util done
-    *  3. After that, you will get the deployment result
-    * @param options params for deploy, 
-    * i.e., {"zipFile", "based64String", "testClasses": [TestClassArray]}
-    * @returns new Promise<any>{ CheckDeployResult }
+     * Execute deploy request, following steps will be executed
+     * + Issue a deploy request to get the asyncProcessId
+     * + Issue a resursive checkDeployStatus util done
+     * + After that, you will get the deployment result
+     * 
+     * @param options options for checkDeployStatus request
+     * @param options.zipFile zipped components to be deployed
+     * @param options.testClasses test classes to be execute if test level is ```runSpecifiedTest```
+     * @param options.progress optional, progress instance of vscode
+     * @param options.progressDone optional, true means progress done after this request is finished
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout optional, request timeout ```miliseconds```, default is ```120000```
+     * 
+     * @returns Promise<CheckDeployResult>
     */
     public deploy(options: any) {
         let self = this;

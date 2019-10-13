@@ -92,6 +92,18 @@ export default class ApexApi {
         });
     }
 
+    /**
+     * Get deleted records during spcified date time range
+     * 
+     * @param options options for getDeletedRecords request
+     * @param options.logLevels apex log level
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *   default is ```120000```
+     * 
+     * @returns Promise<any>
+     */
     public executeAnonymous(options: any) {
         let self = this;
         options["requestType"] = "ExecuteAnonymous";

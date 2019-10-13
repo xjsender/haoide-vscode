@@ -22,6 +22,7 @@
     "extension.haoide.describeMetadata.title": "Describe Metadata",
     "extension.haoide.updateProject.title": "更新您的项目内容",
     "extension.haoide.updateUserLanguage.title": "更新授权用户的语言",
+    "extension.haoide.viewFileProperty.title": "查看文件属性",
     "extension.haoide.retrieveByManifest.title": "Retrieve Manifest From Server",
     "extension.haoide.retrieveOpenFilesFromServer.title": "从服务器中刷新所有打开的文件",
     "extension.haoide.destructThisFromServer.title": "将该文件从服务器中删除",

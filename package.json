@@ -111,6 +111,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.viewFileProperty",
+				"title": "%extension.haoide.viewFileProperty.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.retrieveByManifest",
 				"title": "%extension.haoide.retrieveByManifest.title%",
 				"category": "Haoide"
@@ -350,6 +355,10 @@
 					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
+					"command": "extension.haoide.viewFileProperty",
+					"when": "haoide.hasOpenProject && editorIsOpen"
+				},
+				{
 					"command": "extension.haoide.refreshThisFromServer",
 					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
@@ -494,6 +503,11 @@
 					"group": "haoide@5",
 					"command": "extension.haoide.locateThisInBrowser",
 					"when": "resourceFilename != package.xml && resourceScheme == file"
+				},
+				{
+					"group": "haoide@6",
+					"command": "extension.haoide.viewFileProperty",
+					"when": "resourceFilename != package.xml"
 				}
 			],
 			"editor/title": [

@@ -17,7 +17,67 @@ import MetadataApi from '../salesforce/api/metadata';
 import ProgressNotification from '../utils/progress';
 import { Manifest } from '../typings/manifest';
 import { CheckRetrieveResult } from '../typings';
+import { settings, _session } from "../settings";
 
+
+/**
+ * View file property of active file
+ */
+export function viewFileProperty() {
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
+
+    // Read data from active file
+    let fileName = editor.document.fileName;
+    let fileProperty = util.getFilePropertyByFileName(fileName);
+    util.openNewUntitledFile(JSON.stringify(fileProperty, null, 4));
+}
+
+/**
+ * Create package.xml in the specified folder
+ * 
+ * @param uri system path to locate manifest file
+ */
+export function createManifestFile(uri: vscode.Uri) {
+    // Get extension instance
+    const extension = util.getExtensionInstance();
+    if (!extension) {
+        return;
+    }
+
+    // Get path of templates folder of extension
+    const packageXmlFile = path.join(
+        extension.extensionPath,
+        'resources', 'templates', 'package.xml'
+    );
+
+    try {
+        let packageXmlContent = fs.readFileSync(packageXmlFile, "utf-8");
+        packageXmlContent = util.replaceAll(packageXmlContent, [{
+            from: '{API_Version__c}', 
+            to: settings.getApiVersion()
+        }]);
+
+        // Write template content to target file
+        let manifestFile = path.join(uri.fsPath, 'package.xml');
+        fs.writeFileSync(manifestFile, 
+            packageXmlContent, "utf-8"
+        );
+
+        vscode.commands.executeCommand(
+            "vscode.open", vscode.Uri.file(manifestFile)
+        );
+    }
+    catch (err) {
+        return vscode.window.showErrorMessage(err.message);
+    }
+}
+
+/**
+ * Retrieve project by package.xml
+ */
 export function retrieveByManifest() {
     let editor = vscode.window.activeTextEditor;
     if (!editor) {

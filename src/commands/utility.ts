@@ -4,8 +4,6 @@
  */
 
 import * as vscode from "vscode";
-import * as path from "path";
-import * as fs from "fs";
 import * as xmlParser from "fast-xml-parser";
 import * as _ from "lodash";
 import * as nls from 'vscode-nls';
@@ -20,44 +18,6 @@ import { authorizeDefaultProject } from "./auth";
 import { statusBar } from "../utils/statusbar";
 
 const localize = nls.loadMessageBundle();
-
-/**
- * Create package.xml in the specified folder
- */
-export function createManifestFile(uri: vscode.Uri) {
-    // Get extension instance
-    const extension = util.getExtensionInstance();
-    if (!extension) {
-        return;
-    }
-
-    // Get path of templates folder of extension
-    const packageXmlFile = path.join(
-        extension.extensionPath,
-        'resources', 'templates', 'package.xml'
-    );
-
-    try {
-        let packageXmlContent = fs.readFileSync(packageXmlFile, "utf-8");
-        packageXmlContent = util.replaceAll(packageXmlContent, [{
-            from: '{API_Version__c}', 
-            to: settings.getApiVersion()
-        }]);
-
-        // Write template content to target file
-        let manifestFile = path.join(uri.fsPath, 'package.xml');
-        fs.writeFileSync(manifestFile, 
-            packageXmlContent, "utf-8"
-        );
-
-        vscode.commands.executeCommand(
-            "vscode.open", vscode.Uri.file(manifestFile)
-        );
-    }
-    catch (err) {
-        return vscode.window.showErrorMessage(err.message);
-    }
-}
 
 /**
  * Add default project to current workspace

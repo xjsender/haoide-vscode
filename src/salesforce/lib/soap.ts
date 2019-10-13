@@ -141,8 +141,7 @@ export default class SOAP {
     /**
      * Build soap body for listPackage request
      * 
-     * @param options {"asyncProcessId": string}
-     * @param includeDetails true means including deploy details in the deployment result
+     * @param options {"types": any}
      * @returns Soap body for ```listMetadata`` request
      */
     private createListMetadataRequest(options: any) {

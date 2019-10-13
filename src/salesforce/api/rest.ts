@@ -133,11 +133,12 @@ export default class RestApi {
     /**
      * REST Get Request
      * 
-     * @param options, options for get request
+     * @param options options for get request
      * @param options.serverUrl rest request endpoint, it can be relative, such as /sobjects
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -150,12 +151,13 @@ export default class RestApi {
     /**
      * REST Post Request
      * 
-     * @param options, options for post request
+     * @param options options for post request
      * @param options.serverUrl rest request endpoint
      * @param options.data rest request body
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -168,12 +170,13 @@ export default class RestApi {
     /**
      * REST Patch Request
      * 
-     * @param options, options for patch request
+     * @param options options for patch request
      * @param options.serverUrl rest request endpoint
      * @param options.data rest request body
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -186,12 +189,13 @@ export default class RestApi {
     /**
      * REST put request
      * 
-     * @param options, options for put request
+     * @param options options for put request
      * @param options.serverUrl rest request endpoint
      * @param options.data rest request body
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -204,11 +208,12 @@ export default class RestApi {
     /**
      * REST delete request
      * 
-     * @param options, options for delete request
+     * @param options options for delete request
      * @param options.serverUrl rest request endpoint
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -221,11 +226,12 @@ export default class RestApi {
     /**
      * REST query request
      * 
-     * @param options, options for query request
+     * @param options options for query request
      * @param options.soql soql string
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -272,11 +278,12 @@ export default class RestApi {
     /**
      * REST queryMore request
      * 
-     * @param options, options for queryMore request
+     * @param options options for queryMore request
      * @param options.nextRecordUrl nextRecordUrl returned by query
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -289,11 +296,12 @@ export default class RestApi {
     /**
      * REST search request
      * 
-     * @param options, options for search request
+     * @param options options for search request
      * @param options.sosl sosl string
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -306,30 +314,14 @@ export default class RestApi {
     }
 
     /**
-     * REST retrieveApexLog request
-     * 
-     * @param options, options for retrieveApexLog request
-     * @param options.logId ApexLog Id
-     * @param options.progress optional, progress instance of vscode 
-     * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
-     * 
-     * @returns Promise<any>
-     */
-    public retrieveApexLog(options: any) {
-        return this.get(_.extend(options, {
-            serverUrl: `/ApexLog/${options.logId}/Body`,
-        }));
-    }
-
-    /**
      * REST queryAll request
      * 
-     * @param options, options for queryAll request
+     * @param options options for queryAll request
      * @param options.soql soql string
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -344,10 +336,11 @@ export default class RestApi {
     /**
      * REST getLimits request
      *
-     * @param options, options for getLimits request
+     * @param options options for getLimits request
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -360,13 +353,14 @@ export default class RestApi {
     /**
      * Get deleted records during spcified date time range
      * 
-     * @param options, options for getDeletedRecords request
+     * @param options options for getDeletedRecords request
      * @param options.sobject sobject name
      * @param options.start start date
      * @param options.end end date
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -383,13 +377,14 @@ export default class RestApi {
     /**
      * Get updated records during speicfied date time range
      * 
-     * @param options, options for getUpdatedRecords request
+     * @param options options for getUpdatedRecords request
      * @param options.sobject sobject name
      * @param options.start start date
      * @param options.end end date
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -406,10 +401,11 @@ export default class RestApi {
     /**
      * REST global describe request
      * 
-     * @param options, options for describeGlobal request
+     * @param options options for describeGlobal request
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
@@ -422,11 +418,12 @@ export default class RestApi {
     /**
      * REST describeSobject request
      * 
-     * @param options, options for describeSobject request
+     * @param options options for describeSobject request
      * @param options.sobject sobject to be described
      * @param options.progress optional, progress instance of vscode 
      * @param options.progressMessage optional, progress message
-     * @param options.timeout request timeout miliseconds, default is 120000
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *  default is ```120000```
      * 
      * @returns Promise<any>
      */
