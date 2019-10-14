@@ -37,6 +37,20 @@ export function setEnableSwitchProject() {
 }
 
 /**
+ * Register context key: haoide.hasIdSelected
+ */
+export function setHasIdSelected() {
+    vscode.window.onDidChangeTextEditorSelection((e: vscode.TextEditorSelectionChangeEvent) => {
+        let editor = e.textEditor;
+        let selection = editor.document.getText(editor.selection);
+        vscode.commands.executeCommand(
+            'setContext', 'haoide.hasIdSelected',
+            /[0-9a-zA-Z]{15}|[0-9a-zA-Z]{18}/.test(selection)
+        );
+    });
+}
+
+/**
  * Register context key: haoide.isTestClass
  * 
  * @param document vscode text document instance

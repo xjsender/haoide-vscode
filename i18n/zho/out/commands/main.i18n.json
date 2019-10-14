@@ -3,5 +3,5 @@
     "fileDeployed.text": "代码已经部署成功",
     "fileDestructed.text": "代码已经删除成功",
     "noSubscribedMetadata.text": "没有订阅的MetadataObjects",
-    "deleteConfirm.text": "请再次确认是否从服务器中删除该文件？"
+    "deleteConfirmation.text": "请再次确认是否从服务器中删除该文件？"
 }

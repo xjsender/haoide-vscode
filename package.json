@@ -41,6 +41,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.viewIdInBrowser",
+				"title": "%extension.haoide.viewIdInBrowser.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.loginToSFDC",
 				"title": "%extension.haoide.loginToSFDC.title%",
 				"category": "Haoide"
@@ -305,6 +310,10 @@
 					"when": "haoide.hasOpenProject"
 				},
 				{
+					"command": "extension.haoide.viewIdInBrowser",
+					"when": "haoide.hasOpenProject && haoide.hasIdSelected"
+				},
+				{
 					"command": "extension.haoide.locateThisInBrowser",
 					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
@@ -477,18 +486,15 @@
 				},
 				{
 					"command": "extension.haoide.setSyntaxToApex",
-					"when": "editorIsOpen",
-					"group": "haoide"
+					"when": "editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.setSyntaxToJS",
-					"when": "editorIsOpen",
-					"group": "haoide"
+					"when": "editorIsOpen"
 				},
 				{
 					"command": "extension.haoide.setSyntaxToHtml",
-					"when": "editorIsOpen",
-					"group": "haoide"
+					"when": "editorIsOpen"
 				}
 			],
 			"editor/context": [
@@ -505,32 +511,37 @@
 				{
 					"group": "haoide@3",
 					"command": "extension.haoide.deleteThisFromServer",
-					"when": "resourceFilename != package.xml && resourceExtname == .cls"
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceExtname == .cls"
 				},
 				{
 					"group": "haoide@4",
 					"command": "extension.haoide.retrieveThisFromServer",
-					"when": "resourceFilename != package.xml && resourceScheme == file"
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file"
 				},
 				{
 					"group": "haoide@5",
 					"command": "extension.haoide.destructThisFromServer",
-					"when": "resourceFilename != package.xml && resourceScheme == file"
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file"
 				},
 				{
 					"group": "haoide@6",
 					"command": "extension.haoide.deployThisToServer",
-					"when": "resourceFilename != package.xml && resourceScheme == file"
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file"
 				},
 				{
 					"group": "haoide@7",
 					"command": "extension.haoide.locateThisInBrowser",
-					"when": "resourceFilename != package.xml && resourceScheme == file"
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file"
 				},
 				{
 					"group": "haoide@8",
 					"command": "extension.haoide.viewFileProperty",
-					"when": "resourceFilename != package.xml"
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml"
+				},
+				{
+					"group": "haoide@9",
+					"command": "extension.haoide.viewIdInBrowser",
+					"when": "haoide.hasOpenProject && haoide.hasIdSelected"
 				}
 			],
 			"editor/title": [

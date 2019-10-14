@@ -782,7 +782,7 @@ export function refreshThisFromServer() {
  */
 export async function deleteThisFromServer() {
     let yesOrNo = await vscode.window.showWarningMessage(
-        localize('deletConfirmation.text',
+        localize('deleteConfirmation.text',
             "Are you sure you really want to remove this file from server"
         ),
         ConfirmAction.YES, ConfirmAction.NO

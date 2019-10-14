@@ -31,6 +31,30 @@ export function addDefaultProjectToWorkspace() {
 }
 
 /**
+ * View salesforce record Id in the browser
+ */
+export function viewIdInBrowser() {
+    // Get id from the selection
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
+    let recordId = editor.document.getText(editor.selection);
+
+    // Prase startUrl by Id keyPrefix
+    let startUrl = '/' + recordId;
+    if (recordId.startsWith("012")) {
+        startUrl = "/setup/ui/recordtypefields.jsp?id=" + recordId;
+    }
+    else if (recordId.startsWith("07L")) {
+        startUrl = "/p/setup/layout/ApexDebugLogDetailEdit/d?apex_log_id=" + recordId;
+    }
+
+    // Open browser with the start url
+    loginToSFDC(startUrl);
+}
+
+/**
  * Used to let user subscribe or unsubscribe meta objects
  * which will be retrieved from server
  */

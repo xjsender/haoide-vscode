@@ -201,6 +201,11 @@ export function activate(context: ExtensionContext) {
         }
     ));
 
+    // Register viewIdInBrowser command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.viewIdInBrowser", utility.viewIdInBrowser
+    ));
+
     // Register loginToSFDC command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.loginToSFDC", utility.loginToSFDC
@@ -379,6 +384,7 @@ export function activate(context: ExtensionContext) {
      * Context part
      */
     contextUtil.setHasOpenProject();
+    contextUtil.setHasIdSelected();
 
     /**
      * Status bar item
