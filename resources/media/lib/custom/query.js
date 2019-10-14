@@ -22,42 +22,45 @@ window.addEventListener('message', event => {
 
 var records = [];
 function buildTable(records) {
-    records = records;
     schema = [];
-    Object.keys(records[0]).forEach(function(key) {
-        schema.push({
-            "header": key, 
-            "key": key,
-            "hide": key === "attributes",
-            "template": function(row, key) {
-                value = row[key];
-                id = parseId(row.attributes.url);
-
-                // Null value
-                if (_.isNull(value)) {
-                    return "";
-                }
-                // Child to Parent
-                else if (_.isObject(value) && !value.records) {
-                    return ('<a style="cursor: pointer;" id="{0}" type="{1}" ' + 
-                            'onclick="showRow(this);">{1}</a>').format(
-                        id, key
-                    );
-                }
-                // Parent to Children
-                else if (_.isObject(value) && value.records) {
-                    return ('<a style="cursor: pointer;" id="{0}" type="{1}" ' + 
-                            'onclick="showRow(this);">{1}({2})</a>').format(
-                        id, key, value.records.length
-                    );
-                }
-                // Other
-                else {
-                    return value;
-                }
+    if (records && records.length > 0) {
+        for (const key in records[0]) {
+            if (records[0].hasOwnProperty(key)) {
+                schema.push({
+                    "header": key, 
+                    "key": key,
+                    "hide": key === "attributes",
+                    "template": function(row, key) {
+                        value = row[key];
+                        id = parseId(row.attributes.url);
+        
+                        // Null value
+                        if (_.isNull(value)) {
+                            return "";
+                        }
+                        // Child to Parent
+                        else if (_.isObject(value) && !value.records) {
+                            return ('<a style="cursor: pointer;" id="{0}" type="{1}" ' + 
+                                    'onclick="showRow(this);">{1}</a>').format(
+                                id, key
+                            );
+                        }
+                        // Parent to Children
+                        else if (_.isObject(value) && value.records) {
+                            return ('<a style="cursor: pointer;" id="{0}" type="{1}" ' + 
+                                    'onclick="showRow(this);">{1}({2})</a>').format(
+                                id, key, value.records.length
+                            );
+                        }
+                        // Other
+                        else {
+                            return value;
+                        }
+                    }
+                });
             }
-        });
-    });
+        }
+    }
 
     // Before draw table, destroy it firstly
     $('#queryResult').data('columns', null);
