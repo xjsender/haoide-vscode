@@ -384,8 +384,9 @@ export function activate(context: ExtensionContext) {
      * Context part
      */
     contextUtil.setHasOpenProject();
+    contextUtil.setHasDefaultProject();
     contextUtil.setHasIdSelected();
-
+    
     /**
      * Status bar item
      */

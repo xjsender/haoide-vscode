@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"repository": "https://github.com/xjsender/haoide-vscode",
 	"description": "haoide is a vscode extension for salesforce development",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"engines": {
 		"vscode": "^1.35.0"
 	},
@@ -303,7 +303,7 @@
 				},
 				{
 					"command": "extension.haoide.addDefaultProjectToWorkspace",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasDefaultProject"
 				},
 				{
 					"command": "extension.haoide.loginToSFDC",
@@ -339,7 +339,7 @@
 				},
 				{
 					"command": "extension.haoide.switchProject",
-					"when": "haoide.enableSwitchProject"
+					"when": "haoide.hasDefaultProject"
 				},
 				{
 					"command": "extension.haoide.toggleMetadataObjects",

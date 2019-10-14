@@ -24,12 +24,17 @@ export function setHasOpenProject() {
                     ))
                 );
             }
+            else {
+                vscode.commands.executeCommand(
+                    'setContext', 'haoide.hasOpenProject', false
+                );
+            }
         });
 }
 
-export function setEnableSwitchProject() {
+export function setHasDefaultProject() {
     vscode.commands.executeCommand(
-        'setContext', 'haoide.enableSwitchProject',
+        'setContext', 'haoide.hasDefaultProject',
         fs.existsSync(path.join(
             os.homedir(), '.haoide', 'config.json'
         ))
