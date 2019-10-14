@@ -67,7 +67,7 @@ export function generateWorkbook(sobjectDesc: SObjectDesc) {
 
         allRows.push(rowValues.join(','));
     }
-    let tableContent = columns.join(',') + allRows.join('\n');
+    let tableContent = columns.join(',') + '\n' + allRows.join('\n');
 
     let workbookFileOuputPath = path.join(
         getProjectPath(), '.output', 'workbooks'
