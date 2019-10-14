@@ -2,6 +2,13 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.2.4], 2019-10-14
++ **Add** new command to view selected id in the browser
++ **Enhancement** for the visiblity of ```addDefaultProjectToWorkspace``` command
++ **Fix** bug for ```exportQueryToCSV`` command
++ **Fix** bug for ``Query Explorer`` when there is no matched records
++ **Fix** bug for command visibility when all projects are removed from workspace
+
 
 ## [0.2.3], 2019-10-13
 + Fix context key problem, hide commands which should be hidden
