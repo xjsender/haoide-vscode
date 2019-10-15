@@ -18,6 +18,7 @@ import { authorizeDefaultProject } from "./auth";
 import { statusBar } from "../utils/statusbar";
 import { executeGlobalDescribe } from "./main";
 import { reject } from "bluebird";
+import { auth } from ".";
 
 const localize = nls.loadMessageBundle();
 
@@ -118,18 +119,30 @@ export function toggleMetadataObjects() {
  */
 export async function switchProject(projectName?: string) {
     if (!projectName) {
-        let chosenItem: any = await vscode.window.showQuickPick(
-            _.map(util.getProjects(), (v, k) => {
-                return {
-                    label: k, 
-                    description: v ? 'Default' : ''
-                };
-            })
-        );
+        // Get collection of authorized projects
+        let authorizeNewOrgLabel = '$(plus) Authorize new Org';
+        let pickItems = [{
+            label: authorizeNewOrgLabel,
+            description: ''
+        }];
+        _.map(util.getProjects(), (v, k) => {
+            pickItems.push({
+                label: k, 
+                description: v ? 'Default' : ''
+            });
+        });
+
+        // Get input from user
+        let chosenItem: any = await vscode.window.showQuickPick(pickItems);
 
         // When user cancel request
-        if (chosenItem) {
-            projectName = chosenItem.label;
+        if (!chosenItem) {
+            return;
+        }
+
+        projectName = chosenItem.label;
+        if (projectName === authorizeNewOrgLabel) {
+            return auth.authorizeNewProject();
         }
     }
     
