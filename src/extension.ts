@@ -68,6 +68,12 @@ export function activate(context: ExtensionContext) {
         main.refreshThisFromServer
     ));
 
+    // Register diffThisWithServer command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.diffThisWithServer",
+        main.diffThisWithServer
+    ));
+
     // Register retrieveThisFromServer command
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.retrieveThisFromServer",

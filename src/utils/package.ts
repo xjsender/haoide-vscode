@@ -10,6 +10,7 @@ import * as yazl from "yazl";
 import * as _ from "lodash";
 import * as AdmZip from "adm-zip";
 import * as shelljs from "shelljs";
+import * as moment from 'moment';
 import { Buffer } from "buffer";
 
 import * as util from "../utils/util";
@@ -312,6 +313,42 @@ export function getRetrieveTypes(files: string[]) {
     }
 
     return retrieveTypes;
+}
+
+/**
+ * Get source of the active file from server and then write it to lcoal file
+ * 
+ * @param zipFile base64 encoded string
+ * @param cmpName file name of active file
+ */
+export function getExtractedFile(zipFile: string, cmpName: string) {
+    let zipFilePath = path.join(os.homedir(), 
+        moment().format('YYYYMMDDHHMMSS') + ".zip"
+    );
+    fs.writeFileSync(
+        zipFilePath, zipFile, "base64"
+    );
+
+    let remoteFilePath = path.join(
+        util.getProjectPath(), '.diff'
+    );
+    if (!fs.existsSync(remoteFilePath)) {
+        shelljs.mkdir('-p', remoteFilePath);
+    }
+
+    let remoteFile;
+    let zip = new AdmZip(zipFilePath);
+    for (const zipEntry of zip.getEntries()) {
+        let fileName = zipEntry.name;
+        if (fileName === cmpName) {
+            remoteFile = path.join(remoteFilePath, fileName);
+            fs.writeFileSync(
+                remoteFile, zipEntry.getData()
+            );
+        }
+    }
+
+    return remoteFile;
 }
 
 /**

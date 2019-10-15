@@ -38,6 +38,38 @@ import { convertArrayToTable } from '../utils/json';
 
 const localize = nls.loadMessageBundle();
 
+/**
+ * Diff active file with server
+ */
+export function diffThisWithServer() {
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
+
+    let localFile = editor.document.fileName;
+    let retrieveTypes = packages.getRetrieveTypes([localFile]);
+    ProgressNotification.showProgress(
+        new MetadataApi(), 'retrieve', {
+            types: retrieveTypes,
+            progressDone: false,
+            progressMessage: "Retrieving this file from server"
+        }
+    )
+    .then( (result: CheckRetrieveResult) => {
+        let cmpName = path.basename(localFile);
+        
+        let remoteFile = packages.getExtractedFile(
+            result.zipFile, cmpName
+        );
+        vscode.commands.executeCommand(
+            'vscode.diff', 
+            vscode.Uri.file(localFile), 
+            vscode.Uri.file(remoteFile || '')
+        );
+    });
+}
+
 export async function exportQueryToCSV(soql?: string, isTooling?: boolean) {
     // Get soql input from user
     if (!soql) {

@@ -141,6 +141,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.diffThisWithServer",
+				"title": "%extension.haoide.diffThisWithServer.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.retrieveOpenFilesFromServer",
 				"title": "%extension.haoide.retrieveOpenFilesFromServer.title%",
 				"category": "Haoide"
