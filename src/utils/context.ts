@@ -42,6 +42,15 @@ export function setHasDefaultProject() {
 }
 
 /**
+ * Watch the change of workspace folders and set context key
+ */
+export function watchWorkspaceChange() {
+    vscode.workspace.onDidChangeWorkspaceFolders( (e: vscode.WorkspaceFoldersChangeEvent) => {
+        setHasOpenProject();
+    });
+}
+
+/**
  * Register context key: haoide.hasIdSelected
  */
 export function setHasIdSelected() {

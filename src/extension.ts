@@ -392,6 +392,7 @@ export function activate(context: ExtensionContext) {
     contextUtil.setHasOpenProject();
     contextUtil.setHasDefaultProject();
     contextUtil.setHasIdSelected();
+    contextUtil.watchWorkspaceChange();
     
     /**
      * Status bar item
