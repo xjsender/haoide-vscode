@@ -2,6 +2,15 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+
+## [0.2.5], 2019-10-16
++ **Add** new command ```diffThisWithServer``` for diff active file with server
++ **Add** support for deploy ```conflict check``` and diff with server if has conflict
++ **Add** new setting ```enableConflictCheck``` for controlling whether check deloyment conflict
++ Allow authorizing new org when switch project
++ Add watcher for workspace folders to monitor open project
+
+
 ## [0.2.4], 2019-10-14
 + **Add** new command to view selected id in the browser
 + **Enhancement** for the visiblity of ```addDefaultProjectToWorkspace``` command

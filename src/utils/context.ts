@@ -69,16 +69,25 @@ export function setHasIdSelected() {
  * 
  * @param document vscode text document instance
  */
-export function setIsTestClass(document: vscode.TextDocument) {
-    // Get content of document
-    let data = fs.readFileSync(
-        document.fileName, "utf-8"
-    ).toString();
-    
-    // Register context key
-    vscode.commands.executeCommand(
-        'setContext', 'haoide.isTestClass',
-        data.indexOf(" testMethod ") !== -1
-            || data.indexOf("@isTest") !== -1
+export function watchActiveEditorChange() {
+    vscode.window.onDidChangeActiveTextEditor( 
+        (editor: vscode.TextEditor | undefined) => {
+            let isTestClass = false;
+
+            if (editor) {
+                let data = fs.readFileSync(
+                    editor.document.fileName, "utf-8"
+                ).toString();
+                if (data.indexOf(" testMethod ") !== -1
+                        || data.indexOf("@isTest") !== -1) {
+                    isTestClass = true;
+                }
+            }
+
+            // Register context key: isTestClass
+            vscode.commands.executeCommand(
+                'setContext', 'haoide.isTestClass', isTestClass
+            );
+        }
     );
 }
