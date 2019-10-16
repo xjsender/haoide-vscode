@@ -9,6 +9,7 @@ import * as nls from 'vscode-nls';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as shelljs from 'shelljs';
+import * as moment from 'moment';
 import * as promiseLimit from 'promise-limit';
 
 import * as util from '../utils/util';
@@ -33,7 +34,7 @@ import {
     GlobalDescribe,
     SObjectSOQL
 } from '../typings';
-import { CheckRetrieveResult, CheckDeployResult } from '../typings/meta';
+import { CheckRetrieveResult, CheckDeployResult, FileProperty } from '../typings/meta';
 import { convertArrayToTable } from '../utils/json';
 
 const localize = nls.loadMessageBundle();
@@ -702,6 +703,54 @@ export function deployThisToServer() {
         // Save dirty file
         let fileName = editor.document.fileName;
         editor.document.save().then( () => {
+            let localFileP = util.getFilePropertyByFileName(fileName);
+            if (!localFileP) {
+                vscode.window.showErrorMessage(
+                    'Not found the property of this file'
+                );
+                return;
+            }
+
+            // If this is dev metaObject, check conflict before deploy to server
+            let devMetafolders = settings.getDevMetaFolders();
+            if (devMetafolders.includes(localFileP.metaFolder || '')) {
+                return ProgressNotification.showProgress(
+                    new ToolingApi(), 'query', {
+                        soql: `SELECT Id, LastModifiedBy.Id, LastModifiedBy.Name, ` +
+                            `LastModifiedDate FROM ${localFileP.type} ` + 
+                            `WHERE Id = '${localFileP.id}'`,
+                        progressMessage: 'Retrieve file property from server'
+                    }
+                )
+                .then( async (result: QueryResult) => {
+                    if (result.totalSize === 0) {
+                        return vscode.window.showWarningMessage(
+                            'Not found file property in the server'
+                        );
+                    }
+
+                    let remoteFileP = result.records[0];
+                    let lastModifiedBy = remoteFileP.LastModifiedBy;
+                    if (moment(localFileP.lastModifiedDate)
+                            .isBefore(remoteFileP.LastModifiedDate)) {
+                        let yesOrNo = await vscode.window.showWarningMessage(
+                            `Already modified by ${lastModifiedBy.Name} at ` + 
+                                `${remoteFileP.LastModifiedDate}, continue?`,
+                            ConfirmAction.YES, ConfirmAction.NO
+                        );
+                        if (yesOrNo !== ConfirmAction.YES) {
+                            return diffThisWithServer();
+                        }
+                    }
+
+                    deployFilesToServer([fileName]);
+                })
+                .catch( err => {
+                    vscode.window.showErrorMessage(err.message);
+                });
+            }
+
+            // If not dev metaObject, just deploy
             deployFilesToServer([fileName]);
         });
     }

@@ -133,6 +133,18 @@ export default class Settings {
     }
 
     /**
+     * Get metaFolders for developement
+     * 
+     * @returns array of meta folders
+     */
+    public getDevMetaFolders() {
+        return [
+            'lwc', 'aura', 'classes', 
+            'triggers', 'components', 'pages'
+        ];
+    }
+
+    /**
      * Get user language list
      * 
      * @returns Object, {"languageLabel": "LanguageLocaleKey"}

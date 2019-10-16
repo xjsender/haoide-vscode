@@ -672,6 +672,9 @@ export function updateFilePropertyAfterDeploy(deployResult: CheckDeployResult) {
                     lastModifiedDate: deployResult.lastModifiedDate
                 };
             }
+            else {
+                attrs.lastModifiedDate = deployResult.lastModifiedDate;
+            }
 
             componentMetadata[metaFolder][cmpName] = attrs;
         }
