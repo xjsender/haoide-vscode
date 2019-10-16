@@ -23,6 +23,7 @@
     "extension.haoide.updateUserLanguage.title": "更新授权用户的语言",
     "extension.haoide.viewFileProperty.title": "查看文件属性",
     "extension.haoide.retrieveByManifest.title": "Retrieve Manifest From Server",
+    "extension.haoide.diffThisWithServer.title": "和服务器比较差异",
     "extension.haoide.refreshThisFromServer.title": "从服务器刷新该文件（Tooling Api）",
     "extension.haoide.deleteThisFromServer.title": "从服务器删除该文件（Tooling Api）",
     "extension.haoide.retrieveThisFromServer.title": "从服务器获取该文件（Metadata Api）",

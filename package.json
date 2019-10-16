@@ -395,6 +395,10 @@
 					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
 				{
+					"command": "extension.haoide.diffThisWithServer",
+					"when": "haoide.hasOpenProject && editorIsOpen"
+				},
+				{
 					"command": "extension.haoide.retrieveOpenFilesFromServer",
 					"when": "haoide.hasOpenProject && editorIsOpen"
 				},
@@ -507,6 +511,11 @@
 					"group": "haoide@1",
 					"command": "extension.haoide.retrieveByManifest",
 					"when": "resourceExtname == .xml"
+				},
+				{
+					"group": "haoide@2",
+					"command": "extension.haoide.diffThisWithServer",
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml"
 				},
 				{
 					"group": "haoide@2",
