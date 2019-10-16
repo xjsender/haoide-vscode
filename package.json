@@ -727,6 +727,11 @@
 					"type": "number",
 					"default": 46,
 					"description": "Default API version, it can be overrided by project"
+				},
+				"haoide.enableConflictCheck": {
+					"type": "boolean",
+					"default": true,
+					"description": "True means check confict with server when deploy file to server"
 				}
 			}
 		}

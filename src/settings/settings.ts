@@ -110,6 +110,13 @@ export default class Settings {
     }
 
     /**
+     * Get enableConflictCheck flag of extension
+     */
+    public getEnableConflictCheck() {
+        return extensionSettings.getConfigValue('enableConflictCheck', true);
+    }
+
+    /**
      * Get workbook columns for exporting workbook
      * 
      * @returns array of workbook column

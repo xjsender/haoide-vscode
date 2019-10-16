@@ -21,7 +21,7 @@ import ApexApi from '../salesforce/api/apex';
 import RestApi from '../salesforce/api/rest';
 import ToolingApi from '../salesforce/api/tooling';
 import ProgressNotification from '../utils/progress';
-import { _session, settings, metadata } from '../settings';
+import { _session, settings, metadata, extensionSettings } from '../settings';
 import { 
     SObjectDesc, 
     MetadataModel, 
@@ -699,10 +699,14 @@ export function destructOpenFilesFromServer() {
  */
 export function deployThisToServer() {
     let editor = vscode.window.activeTextEditor;
-    if (editor) {
-        // Save dirty file
-        let fileName = editor.document.fileName;
-        editor.document.save().then( () => {
+    if (!editor) {
+        return;
+    }
+
+    // Save dirty file
+    let fileName = editor.document.fileName;
+    editor.document.save().then( () => {
+        if (settings.getEnableConflictCheck()) {
             let localFileP = util.getFilePropertyByFileName(fileName);
             if (!localFileP) {
                 vscode.window.showErrorMessage(
@@ -710,7 +714,7 @@ export function deployThisToServer() {
                 );
                 return;
             }
-
+            
             // If this is dev metaObject, check conflict before deploy to server
             let devMetafolders = settings.getDevMetaFolders();
             if (devMetafolders.includes(localFileP.metaFolder || '')) {
@@ -719,7 +723,7 @@ export function deployThisToServer() {
                         soql: `SELECT Id, LastModifiedBy.Id, LastModifiedBy.Name, ` +
                             `LastModifiedDate FROM ${localFileP.type} ` + 
                             `WHERE Id = '${localFileP.id}'`,
-                        progressMessage: 'Retrieve file property from server'
+                        progressMessage: 'Retrieving file property from server'
                     }
                 )
                 .then( async (result: QueryResult) => {
@@ -749,14 +753,11 @@ export function deployThisToServer() {
                     vscode.window.showErrorMessage(err.message);
                 });
             }
+        }
 
-            // If not dev metaObject, just deploy
-            deployFilesToServer([fileName]);
-        });
-    }
-    else {
-        util.showCommandWarning();
-    }
+        // Execute deployFilesToServer command after passed check
+        deployFilesToServer([fileName]);
+    });
 }
 
 /**
