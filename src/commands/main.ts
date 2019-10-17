@@ -718,10 +718,12 @@ export function deployThisToServer() {
             // If this is dev metaObject, check conflict before deploy to server
             let devMetafolders = settings.getDevMetaFolders();
             if (devMetafolders.includes(localFileP.metaFolder || '')) {
+                let xmlName = localFileP.metaFolder === 'aura'
+                    ? 'AuraDefinition' : localFileP.type;
                 return ProgressNotification.showProgress(
                     new ToolingApi(), 'query', {
                         soql: `SELECT Id, LastModifiedBy.Id, LastModifiedBy.Name, ` +
-                            `LastModifiedDate FROM ${localFileP.type} ` + 
+                            `LastModifiedDate FROM ${xmlName} ` + 
                             `WHERE Id = '${localFileP.id}'`,
                         progressMessage: 'Retrieving file property from server'
                     }
