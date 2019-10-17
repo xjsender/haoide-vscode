@@ -34,7 +34,7 @@ import {
     GlobalDescribe,
     SObjectSOQL
 } from '../typings';
-import { CheckRetrieveResult, CheckDeployResult, FileProperty } from '../typings/meta';
+import { CheckRetrieveResult, CheckDeployResult } from '../typings/meta';
 import { convertArrayToTable } from '../utils/json';
 
 const localize = nls.loadMessageBundle();
@@ -608,7 +608,7 @@ export function describeMetadata() {
  * @param files files to be destructed
  */
 export async function destructFilesFromServer(files: string[]) {
-    let yesOrNo = await vscode.window.showWarningMessage(
+    let yesOrNo = await vscode.window.showInformationMessage(
         "Are you sure you really want to remove these files from server",
         ConfirmAction.YES, ConfirmAction.NO
     );
@@ -863,7 +863,7 @@ export function refreshThisFromServer() {
  * Refresh body of active file from server
  */
 export async function deleteThisFromServer() {
-    let yesOrNo = await vscode.window.showWarningMessage(
+    let yesOrNo = await vscode.window.showInformationMessage(
         localize('deleteConfirmation.text',
             "Are you sure you really want to remove this file from server"
         ),

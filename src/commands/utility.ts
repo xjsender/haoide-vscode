@@ -11,14 +11,13 @@ import * as nls from 'vscode-nls';
 import * as util from "../utils/util";
 import * as contextUtil from "../utils/context";
 import * as settingsUtil from "../settings/settingsUtil";
-import { JSON2Apex, JSON2Typescript, convertArrayToTable } from "../utils/json";
-import { Session as SessionModel, FileProperty, SObjectReloadScope } from "../typings";
+import { JSON2Apex, JSON2Typescript } from "../utils/json";
+import { FileProperty, SObjectReloadScope, ConfirmAction } from "../typings";
 import { settings, _session, metadata } from "../settings";
 import { authorizeDefaultProject } from "./auth";
 import { statusBar } from "../utils/statusbar";
 import { executeGlobalDescribe } from "./main";
-import { reject } from "bluebird";
-import { auth } from ".";
+import { auth, main } from ".";
 
 const localize = nls.loadMessageBundle();
 
@@ -59,7 +58,7 @@ export function viewIdInBrowser() {
  * Used to let user subscribe or unsubscribe meta objects
  * which will be retrieved from server
  */
-export function toggleMetadataObjects() {
+export function toggleMetadataObjects(remindUpdateProject = false) {
     // Get all meta objects
     let metadataObjects = metadata.getMetaObjects();
     let metaObjects = _.sortBy(metadataObjects, mo => mo.xmlName);
@@ -87,7 +86,7 @@ export function toggleMetadataObjects() {
             matchOnDescription: true
         }
     ).then( selectedItems => {
-        return new Promise<string[]>( (resolve, reject) => {
+        return new Promise<string[]>( async (resolve, reject) => {
             if (!selectedItems || selectedItems.length === 0) {
                 resolve([]);
                 return;
@@ -106,6 +105,18 @@ export function toggleMetadataObjects() {
                     "Your subscribed metadata objects was updated"
                 )
             );
+            
+            if (remindUpdateProject) {
+                let yesOrNo = await vscode.window.showInformationMessage(
+                    localize("remindUpdateProject.text", 
+                        "Do you want to update your project?"
+                    ),
+                    ConfirmAction.YES, ConfirmAction.NO
+                );
+                if (yesOrNo === ConfirmAction.YES) {
+                    main.createNewProject(false);
+                }
+            }
 
             resolve(subscribedMetaObjects);
         });

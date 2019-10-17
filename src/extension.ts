@@ -129,8 +129,9 @@ export function activate(context: ExtensionContext) {
 
     // Register toggleMetaObjects command
     context.subscriptions.push(commands.registerCommand(
-        "extension.haoide.toggleMetadataObjects",
-        utility.toggleMetadataObjects
+        "extension.haoide.toggleMetadataObjects", () => {
+            utility.toggleMetadataObjects(true);
+        }
     ));
 
     // Register default project to workspace
