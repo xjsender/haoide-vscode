@@ -1021,6 +1021,10 @@ export function refreshFolders(uris: vscode.Uri[] | undefined) {
         packages.extractZipFile(result.zipFile, {
             ignorePackageXml: true
         });
+
+        // Keep fileProperties to local disk
+        util.setFileProperties(result.fileProperties);
+
         vscode.window.showInformationMessage(
             "Your folders was successfully refreshed"
         );
