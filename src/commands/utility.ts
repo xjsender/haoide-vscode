@@ -162,14 +162,6 @@ export async function switchProject(projectName?: string) {
 
     // Update context key: hasOpenProject
     contextUtil.setHasOpenProject();
-
-    // Show success message
-    vscode.window.showInformationMessage(
-        localize(
-            "defaultProjectChanged.text",
-            "Default project was updated"
-        )
-    );
 }
 
 /**
