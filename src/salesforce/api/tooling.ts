@@ -11,6 +11,7 @@ import * as auth from "../../commands/auth";
 import ProgressNotification from "../../utils/progress";
 import { TestObject } from "../../typings/test";
 import { _session, settings } from "../../settings";
+import { QueryResult } from "../../typings";
 
 export default class ToolingApi {
     private session: any;
@@ -318,12 +319,26 @@ export default class ToolingApi {
      * 
      * @returns Promise<any>
      */
-    public queryAll(options: any) {
-        return this.get(_.extend(options, {
-            serverUrl: "/queryAll?" + querystring.stringify({
+    public async queryAll(options: any) {
+        let result: QueryResult = await this.get(_.extend(options, {
+            serverUrl: "/query?" + querystring.stringify({
                 "q": options.soql
             })
         }));
+        
+        let allRecords = result.records;
+        while (!result.done) {
+            result = await this.queryMore({
+                nextRecordUrl: result.nextRecordsUrl
+            });
+            allRecords.push(...result.records);
+        }
+
+        return new Promise<any>( resolve =>{
+            result.records = allRecords;
+            result.totalSize = allRecords.length;
+            resolve(result);
+        });
     }
 
     /**

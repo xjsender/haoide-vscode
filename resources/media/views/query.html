@@ -37,13 +37,23 @@
                                 placeholder="SELECT Id FROM Account LIMIT 50" v-model="soql"></textarea>
 
                             <button type="button" id="executeQuery" style="margin-top: 5px;"
-                                    class="btn btn-primary" @click="executeQuery">
+                                    class="btn btn-primary" @click="executeQuery(false)">
                                 <span class="glyphicon glyphicon-search"></span> Query
                             </button>
 
+                            <button type="button" id="executeQuery" style="margin-top: 5px;"
+                                    class="btn btn-primary" @click="executeQuery(true)">
+                                <span class="glyphicon glyphicon-search"></span> Tooling Query
+                            </button>
+
                             <button type="button" id="exportToCSV" style="margin-top: 5px;"
-                                    class="btn btn-primary" @click="exportToCSV">
+                                    class="btn btn-primary" @click="exportToCSV(false)">
                                 <span class="glyphicon glyphicon-search"></span> Export To CSV
+                            </button>
+
+                            <button type="button" id="exportToCSV" style="margin-top: 5px;"
+                                    class="btn btn-primary" @click="exportToCSV(true)">
+                                <span class="glyphicon glyphicon-search"></span> Export Tooling To CSV
                             </button>
                         </div>
                     </div>

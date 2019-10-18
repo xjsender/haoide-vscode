@@ -131,24 +131,26 @@ function showRow(ele) {
 let app = new Vue({
     el: '#app',
     data: {
-        soql: "SELECT Id, Name FROM Account LIMIT 100",
-        isTooling: false
+        soql: "SELECT Id, Name FROM Account LIMIT 100"
     },
     computed: {
         
     },
     methods: {
-        executeQuery() {
+        executeQuery(isTooling) {
+            console.log(isTooling);
+            
             callVscode({
                 soql: this.soql, 
-                isTooling: this.isTooling,
+                isTooling: isTooling,
                 isExport: false
             });
         },
-        exportToCSV() {
+        exportToCSV(isTooling) {
+            console.log(isTooling);
             callVscode({
                 soql: this.soql, 
-                isTooling: this.isTooling,
+                isTooling: isTooling,
                 isExport: true
             })
         }
