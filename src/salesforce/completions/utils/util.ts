@@ -24,13 +24,15 @@ export function getLastCharOfPosition(document: TextDocument, postition: Positio
     return document.getText(charRange);
 }
 
-export function getMatchedSOQL(pos: PositionOption) {
+/**
+ * 
+ * @param pos position information, instance of PositionOption
+ */
+export function getSOQLSobject(pos: PositionOption) {
     let pattern = /SELECT\s+[^;]+FROM\s+[1-9_a-zA-Z]+/gi;
     let match, index, matchedText: string = '';
-    console.log(pattern.exec(pos.wholeText));
     
     while (match = pattern.exec(pos.wholeText)) {
-        console.log(match, match.index, pos.offset);
         if (index === match.index 
                 || match.index > pos.offset) {
             break;
@@ -39,10 +41,8 @@ export function getMatchedSOQL(pos: PositionOption) {
         index = match.index;
         matchedText = match[0];
     }
-
-    console.log(matchedText);
     
-    let sobjectName = matchedText.substr(
+    let sobjectName = matchedText.substring(
         matchedText.lastIndexOf(' '), matchedText.length
     );
 
@@ -208,7 +208,10 @@ export function getFieldCompletionItem(sobjectNames: string[]): CompletionItem[]
     for (const sobjectName of sobjectNames) {
         // Get sobjectDescribeResult
         let sobjectDesc = settingsUtil.getSobjectDesc(sobjectName);
-
+        if (!sobjectDesc.fields) {
+            continue;
+        }
+        
         // Add fields and parentRelationship completion
         for (const field of sobjectDesc.fields) {
             let detail = undefined;

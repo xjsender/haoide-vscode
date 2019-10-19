@@ -127,9 +127,11 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
                 ));
             }
 
-            let sobjectName = util.getMatchedSOQL(pos);
+            // Add soql fields completion
+            let sobjectName = util.getSOQLSobject(pos);
             if (sobjectName) {
-                completionItems.push(...util.getFieldCompletionItem([sobjectName]));
+                let items = util.getFieldCompletionItem([sobjectName]);
+                completionItems.push(...items);
             }
         }
 
