@@ -2,6 +2,15 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.2.6], 2019-10-19
++ **Add** new command ```runSyncTest``` to run syncholize test
++ **Add** new command ```viewCodeCoverage``` to view code coverage
++ **Add** confirmation to ```update project``` after ```toggle metadata objects```
++ **Add** support for tooling query and export for query explorer
++ **Update** Remove success information after ```switch project```
++ **Fix bug** when retrieve file property for ```aura components```
++ **Fix bug** Keep file properties to local cache after execute ```refreshFolders```
+
 
 ## [0.2.5], 2019-10-16
 + **Add** new command ```diffThisWithServer``` for diff active file with server
@@ -14,7 +23,7 @@ All notable changes to the "haoide" extension will be documented in this file.
 ## [0.2.4], 2019-10-14
 + **Add** new command to view selected id in the browser
 + **Enhancement** for the visiblity of ```addDefaultProjectToWorkspace``` command
-+ **Fix** bug for ```exportQueryToCSV`` command
++ **Fix** bug for ```exportQueryToCSV``` command
 + **Fix** bug for ``Query Explorer`` when there is no matched records
 + **Fix** bug for command visibility when all projects are removed from workspace
 
