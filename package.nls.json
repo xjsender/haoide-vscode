@@ -35,6 +35,7 @@
     "extension.haoide.executeGlobalDescribe.title": "Execute Global Describe",
     "extension.haoide.reloadSymbolTable.title": "Reload Symbol Table",
     "extension.haoide.runSyncTest.title": "Run Sync Test",
+    "extension.haoide.viewCodeCoverage.title": "View Code Coverage",
     "extension.haoide.formatJson.title": "Format JSON",
     "extension.haoide.convertXml2Json.title": "Convert XML to JSON",
     "extension.haoide.convertArray2Table.title": "Convert Arrray to Table",

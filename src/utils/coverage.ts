@@ -29,7 +29,7 @@ export default class CodeCoverage {
         this.uncoveredRangesByPath = {};
         this.percentCoveredByPath = {};
         this.coverageStatus = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1);
-        this.coverageStatus.command = 'extension.haoide.fetchCodeCoverage';
+        this.coverageStatus.command = 'extension.haoide.viewCodeCoverage';
 
         this.refreshActivePercentCovered();
         this.coverageStatus.show();

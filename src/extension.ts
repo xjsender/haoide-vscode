@@ -337,9 +337,9 @@ export function activate(context: ExtensionContext) {
         }
     ));
 
-    // Register fetchCodeCoverage command
+    // Register viewCodeCoverage command
     context.subscriptions.push(commands.registerCommand(
-        "extension.haoide.fetchCodeCoverage", () => {
+        "extension.haoide.viewCodeCoverage", () => {
             main.viewCodeCoverage();
         }
     ));
@@ -398,12 +398,12 @@ export function activate(context: ExtensionContext) {
     /**
      * Context part
      */
-    contextUtil.setHasOpenProject();
-    contextUtil.setHasDefaultProject();
-    contextUtil.setHasIdSelected();
+    contextUtil.watchEditorSelectionChange();
     contextUtil.watchWorkspaceChange();
     contextUtil.watchActiveEditorChange();
-    contextUtil.setIsTestClass(window.activeTextEditor);
+    contextUtil.setHasOpenProject();
+    contextUtil.setHasDefaultProject();
+    contextUtil.setContextKeyForActiveFile(window.activeTextEditor);
     
     /**
      * Status bar item

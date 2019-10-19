@@ -359,8 +359,11 @@ export function viewCodeCoverage(classId?: string) {
     .then( (result: QueryResult) => {
         if (result.records && result.records.length > 0) {
             let coverage = result.records[0].Coverage;
-            let coveredPercent = coverage.coveredLines.length /
-                ( coverage.uncoveredLines.length + coverage.coveredLines.length);
+            let coveredLinesNum: number = coverage.coveredLines.length;
+            let uncoveredLinesNum: number = coverage.uncoveredLines.length;
+            let totalLinesNum =  coveredLinesNum + uncoveredLinesNum;
+            let coveredPercent = totalLinesNum === 0 
+                ? 0 : coveredLinesNum / totalLinesNum;
             CodeCoverage.getInstance().report(
                 fileName, coveredPercent, coverage.uncoveredLines
             );

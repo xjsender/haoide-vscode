@@ -271,6 +271,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.viewCodeCoverage",
+				"title": "%extension.haoide.viewCodeCoverage.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.setSyntaxToApex",
 				"title": "%extension.haoide.setSyntaxToApex.title%",
 				"icon": {
@@ -313,11 +318,15 @@
 				},
 				{
 					"command": "extension.haoide.addDefaultProjectToWorkspace",
-					"when": "haoide.hasDefaultProject"
+					"when": "haoide.hasOpenProject"
 				},
 				{
 					"command": "extension.haoide.runSyncTest",
-					"when": "haoide.hasDefaultProject && haoide.isTestClass"
+					"when": "haoide.hasOpenProject && haoide.activeFile.isTestClass"
+				},
+				{
+					"command": "extension.haoide.viewCodeCoverage",
+					"when": "haoide.hasOpenProject && resourceExtname == .cls"
 				},
 				{
 					"command": "extension.haoide.loginToSFDC",
@@ -393,39 +402,39 @@
 				},
 				{
 					"command": "extension.haoide.refreshThisFromServer",
-					"when": "haoide.hasOpenProject && editorIsOpen"
+					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"command": "extension.haoide.deleteThisFromServer",
-					"when": "haoide.hasOpenProject && editorIsOpen"
+					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"command": "extension.haoide.retrieveThisFromServer",
-					"when": "haoide.hasOpenProject && editorIsOpen"
+					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"command": "extension.haoide.diffThisWithServer",
-					"when": "haoide.hasOpenProject && editorIsOpen"
+					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"command": "extension.haoide.retrieveOpenFilesFromServer",
-					"when": "haoide.hasOpenProject && editorIsOpen"
+					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"command": "extension.haoide.destructThisFromServer",
-					"when": "haoide.hasOpenProject && editorIsOpen"
+					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"command": "extension.haoide.destructOpenFilesFromServer",
-					"when": "haoide.hasOpenProject && editorIsOpen"
+					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"command": "extension.haoide.deployThisToServer",
-					"when": "haoide.hasOpenProject && editorIsOpen"
+					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"command": "extension.haoide.deployOpenFilesToServer",
-					"when": "haoide.hasOpenProject && editorIsOpen"
+					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"command": "extension.haoide.startRestExplorer",
@@ -524,50 +533,55 @@
 				{
 					"group": "haoide@2",
 					"command": "extension.haoide.diffThisWithServer",
-					"when": "haoide.hasOpenProject && resourceFilename != package.xml"
-				},
-				{
-					"group": "haoide@2",
-					"command": "extension.haoide.refreshThisFromServer",
-					"when": "resourceFilename != package.xml && resourceExtname == .cls"
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"group": "haoide@3",
-					"command": "extension.haoide.deleteThisFromServer",
-					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceExtname == .cls"
+					"command": "extension.haoide.refreshThisFromServer",
+					"when": "resourceFilename != package.xml && resourceExtname == .cls && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"group": "haoide@4",
-					"command": "extension.haoide.retrieveThisFromServer",
-					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file"
+					"command": "extension.haoide.deleteThisFromServer",
+					"when": "haoide.hasOpenProject && resourceExtname == .cls && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"group": "haoide@5",
-					"command": "extension.haoide.destructThisFromServer",
-					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file"
+					"command": "extension.haoide.retrieveThisFromServer",
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"group": "haoide@6",
-					"command": "extension.haoide.deployThisToServer",
-					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file"
+					"command": "extension.haoide.destructThisFromServer",
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"group": "haoide@7",
-					"command": "extension.haoide.locateThisInBrowser",
-					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file"
+					"command": "extension.haoide.deployThisToServer",
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"group": "haoide@8",
-					"command": "extension.haoide.runSyncTest",
-					"when": "haoide.hasOpenProject && haoide.isTestClass"
+					"command": "extension.haoide.locateThisInBrowser",
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && resourceScheme == file && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"group": "haoide@9",
-					"command": "extension.haoide.viewFileProperty",
-					"when": "haoide.hasOpenProject && resourceFilename != package.xml"
+					"command": "extension.haoide.runSyncTest",
+					"when": "haoide.hasOpenProject && haoide.activeFile.isTestClass && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"group": "haoide@10",
+					"command": "extension.haoide.viewCodeCoverage",
+					"when": "haoide.hasOpenProject && resourceExtname == .cls && haoide.activeFile.isSFDCFile"
+				},
+				{
+					"group": "haoide@11",
+					"command": "extension.haoide.viewFileProperty",
+					"when": "haoide.hasOpenProject && resourceFilename != package.xml && haoide.activeFile.isSFDCFile"
+				},
+				{
+					"group": "haoide@12",
 					"command": "extension.haoide.viewIdInBrowser",
 					"when": "haoide.hasOpenProject && haoide.hasIdSelected"
 				}

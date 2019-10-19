@@ -8,6 +8,8 @@ import * as os from "os";
 import * as fs from "fs";
 import * as path from "path";
 import * as util from './util';
+import * as packages from "./package";
+import { metadata } from "../settings";
 
 /**
  * Register context key: 'haoide.hasOpenProject'
@@ -32,6 +34,10 @@ export function setHasOpenProject() {
         });
 }
 
+/**
+ * Set context key: hasDefaultProject, which is used to
+ * control whether `addDefaultProjectToWorkspace` is visible
+ */
 export function setHasDefaultProject() {
     vscode.commands.executeCommand(
         'setContext', 'haoide.hasDefaultProject',
@@ -45,15 +51,17 @@ export function setHasDefaultProject() {
  * Watch the change of workspace folders and set context key
  */
 export function watchWorkspaceChange() {
-    vscode.workspace.onDidChangeWorkspaceFolders( (e: vscode.WorkspaceFoldersChangeEvent) => {
-        setHasOpenProject();
-    });
+    vscode.workspace.onDidChangeWorkspaceFolders( 
+        (e: vscode.WorkspaceFoldersChangeEvent) => {
+            setHasOpenProject();
+        }
+    );
 }
 
 /**
  * Register context key: haoide.hasIdSelected
  */
-export function setHasIdSelected() {
+export function watchEditorSelectionChange() {
     vscode.window.onDidChangeTextEditorSelection((e: vscode.TextEditorSelectionChangeEvent) => {
         let editor = e.textEditor;
         let selection = editor.document.getText(editor.selection);
@@ -72,24 +80,49 @@ export function setHasIdSelected() {
 export function watchActiveEditorChange() {
     vscode.window.onDidChangeActiveTextEditor( 
         (editor: vscode.TextEditor | undefined) => {
-            setIsTestClass(editor);
+            setContextKeyForActiveFile(editor);
         }
     );
 }
 
-export function setIsTestClass(editor: vscode.TextEditor | undefined) {
-    let isTestClass = false;
-
-    if (editor && fs.existsSync(editor.document.fileName)) {
-        let data = fs.readFileSync(
-            editor.document.fileName, "utf-8"
-        ).toString();
-        if (/\stestMethod\s/gi.test(data) || /@isTest/gi.test(data)) {
-            isTestClass = true;
-        }
-    }
+/**
+ * Get the xmlName of active file
+ * 
+ * @param editor Instance of active editor
+ */
+export function setContextKeyForActiveFile(editor: vscode.TextEditor | undefined) {
+    console.log(editor);
     
-    vscode.commands.executeCommand(
-        'setContext', 'haoide.isTestClass', isTestClass
-    );
+    if (editor) {
+        let attr = packages.getFileAttributes(editor.document.fileName);
+
+        // Set context key: haoide.activeFile.xmlName
+        vscode.commands.executeCommand(
+            'setContext', 'haoide.activeFile.xmlName', 
+            (attr && attr.xmlName) || ''
+        );
+        
+        // Set context key: haoide.activeFile.isSFDCFile
+        let isSFDCFile = false;
+        if (attr && attr.xmlName) {
+            isSFDCFile = metadata.getIsValidXmlName(attr.xmlName);
+        }
+        vscode.commands.executeCommand(
+            'setContext', 'haoide.activeFile.isSFDCFile', isSFDCFile
+        );
+        
+        // Set context key: haoide.activeFile.isTestClass
+        let isTestClass = false;
+        if (fs.existsSync(editor.document.fileName)) {
+            let data = fs.readFileSync(
+                editor.document.fileName, "utf-8"
+            ).toString();
+
+            isTestClass = /\stestMethod\s/gi.test(data) 
+                || /@isTest/gi.test(data);
+        }
+        vscode.commands.executeCommand(
+            'setContext', 'haoide.activeFile.isTestClass', isTestClass
+        );
+    }
 }

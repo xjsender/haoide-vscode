@@ -57,11 +57,11 @@ export default class Metadata {
     }
 
     /**
-     * Get metaObject name list
+     * Get all xml name list
      * 
-     * @returns string[], metaObject names
+     * @returns string[], xml names of speicifed api version
      */
-    public getMetaObjectNames(): string[] {
+    public getXmlNames(): string[] {
         return _.map(this.getMetaObjects(), metaObject => {
             return metaObject.xmlName;
         });
@@ -122,5 +122,15 @@ export default class Metadata {
     public getXmlName(metaFolder: string) {
         let metaObject = this.getMetaObject(metaFolder);
         return metaObject.xmlName;
+    }
+
+    /**
+     * Check whether specified xmlName is valid
+     * 
+     * @param xmlName xmlName(MetaObject Type)
+     * @returns boolean, validity of speicified xmlName
+     */
+    public getIsValidXmlName(xmlName: string) {
+        return this.getXmlNames().includes(xmlName);
     }
 }

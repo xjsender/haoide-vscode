@@ -161,7 +161,7 @@ export function buildDeployPackage(files: string[]) {
  * }
  */
 export function buildPackageDict(files: string[], ignoreFolder=true) {
-    let metaObjectNames: string[] = metadata.getMetaObjectNames();
+    let xmlNames: string[] = metadata.getXmlNames();
 
     let packageDict: any = {};
     for (let _file of files) {
@@ -174,7 +174,7 @@ export function buildPackageDict(files: string[], ignoreFolder=true) {
         let attrs: FileAttributes = getFileAttributes(_file);
 
         // Exclude invalid SF metaObject
-        if (!metaObjectNames.includes(attrs.xmlName)) {
+        if (!xmlNames.includes(attrs.xmlName)) {
             continue;
         }
 

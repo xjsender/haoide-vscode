@@ -37,6 +37,7 @@
     "extension.haoide.reloadSobjectCache.title": "重新加载对象的缓存",
     "extension.haoide.reloadSymbolTable.title": "重新加载SymbolTable",
     "extension.haoide.runSyncTest.title": "执行同步单元测试",
+    "extension.haoide.viewCodeCoverage.title": "查看代码的测试覆盖率",
     "extension.haoide.convertArray2Table.title": "将JSON数组转换成CSV",
     "extension.haoide.convertJson2Apex.title": "将JSON转换为Apex代码",
     "extension.haoide.convertJson2Typescript.title": "将JSON转换为Typescript",
