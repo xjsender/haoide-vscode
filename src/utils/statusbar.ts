@@ -15,9 +15,9 @@ export interface StatusItemOptions {
 export class StatusBarItem implements vscode.Disposable {   
     private statusBarItem: vscode.StatusBarItem;
 
-    public constructor() {
+    public constructor(priority = 9999) {
         this.statusBarItem = vscode.window.createStatusBarItem(
-            vscode.StatusBarAlignment.Left, 9999
+            vscode.StatusBarAlignment.Left, priority
         );
     }
 

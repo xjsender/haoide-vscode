@@ -25,14 +25,43 @@ export interface TestSuite {
  * runTestsSynchronous response
  */
 export interface TestResponse {
-    numTestsRun: number;
-    numFailures: number;
-    totalTime: number;
-    codeCoverage: number;
-    codeCoverageWarnings: number;
-    apexLogId: string;
-    successes: Success[];
-    failures: Failure[];
+    apexLogId: Object | undefined;
+	codeCoverage: CodeCoverage[];
+	codeCoverageWarnings: CodeCoverageWarnings[];
+	failures: Failure[];
+	flowCoverage: FlowCoverage[];
+	flowCoverageWarnings: string[];
+	numFailures: number;
+	numTestsRun: number;
+	successes: Success[];
+	totalTime: number;
+}
+
+export interface CodeCoverage {
+	id: string;
+	locationsNotCovered: any[];
+	name: string;
+	namespace: Object | undefined;
+	numLocations: number;
+	numLocationsNotCovered: number;
+	type: string;
+}
+
+export interface CodeCoverageWarnings {
+	id: string;
+	message: string;
+	name: string;
+	namespace: Object | undefined;
+}
+
+export interface FlowCoverage {
+	elementsNotCovered: string[];
+	flowId: string;
+	flowName: string;
+	flowNamespace: Object | undefined;
+	numElements: number;
+	numElementsNotCovered: number;
+	processType: string;
 }
 
 /**

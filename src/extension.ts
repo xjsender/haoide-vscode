@@ -5,7 +5,7 @@ const localize = nls.config({ messageFormat: nls.MessageFormat.file })();
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { commands, languages, ExtensionContext, Uri } from 'vscode';
+import { commands, languages, ExtensionContext, Uri, window } from 'vscode';
 import * as provider from "./salesforce/completions/provider";
 import * as contextUtil from "./utils/context";
 import { auth, utility, main, packages } from "./commands";
@@ -337,6 +337,14 @@ export function activate(context: ExtensionContext) {
         }
     ));
 
+    // Register fetchCodeCoverage command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.fetchCodeCoverage", () => {
+            main.viewCodeCoverage();
+        }
+    ));
+
+
     /**
      * Webview part
      */
@@ -395,6 +403,7 @@ export function activate(context: ExtensionContext) {
     contextUtil.setHasIdSelected();
     contextUtil.watchWorkspaceChange();
     contextUtil.watchActiveEditorChange();
+    contextUtil.setIsTestClass(window.activeTextEditor);
     
     /**
      * Status bar item

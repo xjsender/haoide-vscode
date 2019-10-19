@@ -266,6 +266,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.runSyncTest",
+				"title": "%extension.haoide.runSyncTest.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.setSyntaxToApex",
 				"title": "%extension.haoide.setSyntaxToApex.title%",
 				"icon": {
@@ -309,6 +314,10 @@
 				{
 					"command": "extension.haoide.addDefaultProjectToWorkspace",
 					"when": "haoide.hasDefaultProject"
+				},
+				{
+					"command": "extension.haoide.runSyncTest",
+					"when": "haoide.hasDefaultProject && haoide.isTestClass"
 				},
 				{
 					"command": "extension.haoide.loginToSFDC",
@@ -549,11 +558,16 @@
 				},
 				{
 					"group": "haoide@8",
+					"command": "extension.haoide.runSyncTest",
+					"when": "haoide.hasOpenProject && haoide.isTestClass"
+				},
+				{
+					"group": "haoide@9",
 					"command": "extension.haoide.viewFileProperty",
 					"when": "haoide.hasOpenProject && resourceFilename != package.xml"
 				},
 				{
-					"group": "haoide@9",
+					"group": "haoide@10",
 					"command": "extension.haoide.viewIdInBrowser",
 					"when": "haoide.hasOpenProject && haoide.hasIdSelected"
 				}

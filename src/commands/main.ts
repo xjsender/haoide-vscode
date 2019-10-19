@@ -25,17 +25,18 @@ import { _session, settings, metadata, extensionSettings } from '../settings';
 import { 
     SObjectDesc, 
     MetadataModel, 
-    TestSuite, TestObject,
-    DeployResult,
+    TestSuite, 
     Template,
     ConfirmAction,
     QueryResult,
     SObjectReloadScope,
     GlobalDescribe,
-    SObjectSOQL
+    SObjectSOQL,
+    TestResponse
 } from '../typings';
 import { CheckRetrieveResult, CheckDeployResult } from '../typings/meta';
 import { convertArrayToTable } from '../utils/json';
+import CodeCoverage from '../utils/coverage';
 
 const localize = nls.loadMessageBundle();
 
@@ -301,23 +302,73 @@ export function executeRestTest(options: any) {
  */
 export function runSyncTest() {
     let editor = vscode.window.activeTextEditor;
-    if (editor) {
-        let property = util.getFilePropertyByFileName(
-            editor.document.fileName
+    if (!editor) {
+        return;
+    }
+    
+    // Get file property cache
+    let property = util.getFilePropertyByFileName(
+        editor.document.fileName
+    );
+    
+    let toolingApi = new ToolingApi();
+    ProgressNotification.showProgress(
+        toolingApi, "runSyncTest", {
+            data: {
+                "tests": [{
+                    classId: property.id
+                }] as TestSuite
+            },
+            progressMessage: "Running test class, please wait"
+        }
+    )
+    .then( (result: TestResponse) => {
+        let codeCoverage = CodeCoverage.getInstance();
+        vscode.window.showInformationMessage(
+            localize('coverageTip.text',
+                'Open the function class and click the view code coverage item in the status bar'
+            )
         );
-        
-        runSyncTests([{
-            classId: property.id,
-            testMethods: [
-                "testCommunitiesLoginController"
-            ]
-        }, {
-            maxFailedTests: 2
-        }]);
+    })
+    .catch (err => {
+        vscode.window.showErrorMessage(err.message);
+    });
+}
+
+export function viewCodeCoverage(classId?: string) {
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
     }
-    else {
-        util.showCommandWarning();
+
+    // Get file property cache
+    let fileName = editor.document.fileName;
+    let property = util.getFilePropertyByFileName(fileName);
+
+    if (!classId) {
+        classId = property.id;
     }
+
+    ProgressNotification.showProgress(
+        new ToolingApi(), 'query', {
+            soql: "SELECT Coverage FROM ApexCodeCoverageAggregate " +
+                `WHERE ApexClassOrTriggerId = '${classId}'`,
+            progressMessage: "Fetching code coverage"
+        }
+    )
+    .then( (result: QueryResult) => {
+        if (result.records && result.records.length > 0) {
+            let coverage = result.records[0].Coverage;
+            let coveredPercent = coverage.coveredLines.length /
+                ( coverage.uncoveredLines.length + coverage.coveredLines.length);
+            CodeCoverage.getInstance().report(
+                fileName, coveredPercent, coverage.uncoveredLines
+            );
+        }
+    })
+    .catch( err => {
+        vscode.window.showErrorMessage(err.message);
+    });
 }
 
 /**
@@ -325,13 +376,11 @@ export function runSyncTest() {
  * 
  * @param classIds ids of test class to be ran
  */
-export function runSyncTests(testSuites: TestSuite[]) {
+export function runSyncTests(data: any) {
     let toolingApi = new ToolingApi();
     ProgressNotification.showProgress(
         toolingApi, "runSyncTest", {
-            data: {
-                "tests": testSuites
-            },
+            data: data,
             progressMessage: "Running test class, please wait"
         }
     )

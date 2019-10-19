@@ -72,22 +72,24 @@ export function setHasIdSelected() {
 export function watchActiveEditorChange() {
     vscode.window.onDidChangeActiveTextEditor( 
         (editor: vscode.TextEditor | undefined) => {
-            let isTestClass = false;
-
-            if (editor) {
-                let data = fs.readFileSync(
-                    editor.document.fileName, "utf-8"
-                ).toString();
-                if (data.indexOf(" testMethod ") !== -1
-                        || data.indexOf("@isTest") !== -1) {
-                    isTestClass = true;
-                }
-            }
-
-            // Register context key: isTestClass
-            vscode.commands.executeCommand(
-                'setContext', 'haoide.isTestClass', isTestClass
-            );
+            setIsTestClass(editor);
         }
+    );
+}
+
+export function setIsTestClass(editor: vscode.TextEditor | undefined) {
+    let isTestClass = false;
+
+    if (editor && fs.existsSync(editor.document.fileName)) {
+        let data = fs.readFileSync(
+            editor.document.fileName, "utf-8"
+        ).toString();
+        if (/\stestMethod\s/gi.test(data) || /@isTest/gi.test(data)) {
+            isTestClass = true;
+        }
+    }
+    
+    vscode.commands.executeCommand(
+        'setContext', 'haoide.isTestClass', isTestClass
     );
 }
