@@ -84,10 +84,12 @@ export default class Metadata {
             this.metaObjects = this.getMetaObjects();
         }
 
-        for (const metaObject of this.metaObjects) {
-            if (metaObject.directoryName === key
-                    || metaObject.xmlName === key) {
-                return metaObject;
+        if (this.metaObjects) {
+            for (const metaObject of this.metaObjects) {
+                if (metaObject.directoryName === key
+                        || metaObject.xmlName === key) {
+                    return metaObject;
+                }
             }
         }
 
