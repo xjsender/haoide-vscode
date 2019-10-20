@@ -10,13 +10,26 @@ import * as xmlParser from "fast-xml-parser";
 import * as packageUtil from "../utils/package";
 import * as settingsUtil from "../settings/settingsUtil";
 import { 
-    FileProperty, FileAttributes, 
-    ComponentSuccess, ApexClass, 
+    FileProperty, 
+    FileAttributes, 
+    ApexClass, 
     CheckDeployResult,
     SObjectDesc
 } from "../typings";
 import { settings } from "../settings";
 
+/**
+ * Time sleep for sepcified miliseconds
+ * 
+ * @param miliseconds miliseconds to sleep
+ */
+export function sleep(miliseconds = 0) {
+    return new Promise( resolve => {
+        setTimeout(() => {
+            resolve();
+        }, miliseconds);
+    });
+}
 
 export function generateWorkbook(sobjectDesc: SObjectDesc) {
     let columns = settings.getWorkbookColumns();

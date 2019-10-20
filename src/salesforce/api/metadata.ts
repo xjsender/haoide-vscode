@@ -10,11 +10,12 @@ import * as auth from "../../commands/auth";
 import * as util from "../../utils/util";
 import SOAP from "../lib/soap";
 import ProgressNotification from "../../utils/progress";
-import { _session, settings, metadata } from "../../settings";
+import { _session, settings, metadata, extensionSettings } from "../../settings";
 import { 
     ListMetadataResponse, RetrieveResult, CheckRetrieveResult, 
     DeployResult, CheckDeployResult 
 } from "../../typings";
+import moment = require("moment");
 
 export default class MetadataApi {
     private soap!: SOAP;
@@ -316,6 +317,18 @@ export default class MetadataApi {
             ) as CheckRetrieveResult;
 
             while (!checkRetrieveStatus.done) {
+                // Sleep for specified seconds according to retrieve status
+                let sleepMiliseconds: number;
+                if (["Queued", "Pending", "Succeeded"].includes(checkRetrieveStatus.status)) {
+                    sleepMiliseconds = 2000;
+                }
+                else {
+                    sleepMiliseconds = extensionSettings.getConfigValue(
+                        'metadataPollingFrequency', 2000
+                    );
+                }
+                await util.sleep(sleepMiliseconds);
+
                 checkRetrieveStatus = await self.checkRetrieveStatus(
                     _.extend(options, {
                         asyncProcessId: retrieveStatus.id,
