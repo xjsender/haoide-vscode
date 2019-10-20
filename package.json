@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"repository": "https://github.com/xjsender/haoide-vscode",
 	"description": "haoide is a vscode extension for salesforce development",
-	"version": "0.2.7",
+	"version": "0.2.8",
 	"engines": {
 		"vscode": "^1.35.0"
 	},
@@ -173,11 +173,6 @@
 			{
 				"command": "extension.haoide.buildSobjectSOQL",
 				"title": "%extension.haoide.buildSobjectSOQL.title%",
-				"category": "Haoide"
-			},
-			{
-				"command": "extension.haoide.executeGlobalDescribe",
-				"title": "%extension.haoide.executeGlobalDescribe.title%",
 				"category": "Haoide"
 			},
 			{
@@ -452,10 +447,6 @@
 				},
 				{
 					"command": "extension.haoide.startQueryExplorer",
-					"when": "haoide.hasOpenProject"
-				},
-				{
-					"command": "extension.haoide.executeGlobalDescribe",
 					"when": "haoide.hasOpenProject"
 				},
 				{
