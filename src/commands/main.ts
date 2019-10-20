@@ -886,40 +886,47 @@ export function deployFilesToServer(files: string[]) {
 
 
 /**
- * Refresh body of active file from server
+ * Refresh body of active file from server, only support
+ * + ApexClass
+ * + ApexTrigger
+ * + ApexPage
+ * + ApexComponent
  */
 export function refreshThisFromServer() {
     let editor = vscode.window.activeTextEditor;
-    if (editor) {
-        // Get file property
-        let fileName = editor.document.fileName;
-        let filep = util.getFilePropertyByFileName(fileName);
-
-        // Send get request
-        let restApi = new RestApi();
-        ProgressNotification.showProgress(restApi, "get", {
-            serverUrl: `/sobjects/ApexClass/${filep.id}`,
-            progressMessage: "Refreshing file from server"
-        })
-        .then( result => {
-            fs.writeFileSync(fileName, result["Body"], "utf-8");
-        })
-        .catch( err => {
-            vscode.window.showErrorMessage(err.message);
-        });
-    } 
-    else {
-        util.showCommandWarning();
+    if (!editor) {
+        return;
     }
+
+    // Get file property
+    let fileName = editor.document.fileName;
+    let filep = util.getFilePropertyByFileName(fileName);
+
+    // Send get request
+    let restApi = new RestApi();
+    ProgressNotification.showProgress(restApi, "get", {
+        serverUrl: `/sobjects/${filep.type}/${filep.id}`,
+        progressMessage: "Refreshing file from server"
+    })
+    .then( result => {
+        fs.writeFileSync(fileName, result.Body || result.Markup, "utf-8");
+    })
+    .catch( err => {
+        vscode.window.showErrorMessage(err.message);
+    });
 }
 
 /**
  * Refresh body of active file from server
+ * + ApexClass
+ * + ApexTrigger
+ * + ApexPage
+ * + ApexComponent
  */
 export async function deleteThisFromServer() {
     let yesOrNo = await vscode.window.showInformationMessage(
         localize('deleteConfirmation.text',
-            "Are you sure you really want to remove this file from server"
+            "Confirm to remove this file from server?"
         ),
         ConfirmAction.YES, ConfirmAction.NO
     );
@@ -928,35 +935,34 @@ export async function deleteThisFromServer() {
     }
 
     let editor = vscode.window.activeTextEditor;
-    if (editor) {
-        // Get file property
-        let fileName = editor.document.fileName;
-        let filep = util.getFilePropertyByFileName(fileName);
-
-        // Send get request
-        let restApi = new RestApi();
-        ProgressNotification.showProgress(restApi, "delete", {
-            serverUrl: `/sobjects/ApexClass/${filep.id}`,
-            progressMessage: "Refreshing file from server"
-        })
-        .then( result => {
-            // Remove files from local disk
-            util.unlinkFiles([fileName]);
-
-            // Show succeed message
-            vscode.window.showInformationMessage(
-                localize("fileDestructed.text",
-                    'File was deleted from server succesfully'
-                )
-            );
-        })
-        .catch( err => {
-            vscode.window.showErrorMessage(err.message);
-        });
-    } 
-    else {
-        util.showCommandWarning();
+    if (!editor) {
+        return;
     }
+
+    // Get file property
+    let fileName = editor.document.fileName;
+    let filep = util.getFilePropertyByFileName(fileName);
+
+    // Send get request
+    let restApi = new RestApi();
+    ProgressNotification.showProgress(restApi, "delete", {
+        serverUrl: `/sobjects/${filep.type}/${filep.id}`,
+        progressMessage: "Deleting file from server"
+    })
+    .then( result => {
+        // Remove files from local disk
+        util.unlinkFiles([fileName]);
+
+        // Show succeed message
+        vscode.window.showInformationMessage(
+            localize("fileDestructed.text",
+                'File was deleted from server succesfully'
+            )
+        );
+    })
+    .catch( err => {
+        vscode.window.showErrorMessage(err.message);
+    });
 }
 
 /**

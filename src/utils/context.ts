@@ -91,38 +91,44 @@ export function watchActiveEditorChange() {
  * @param editor Instance of active editor
  */
 export function setContextKeyForActiveFile(editor: vscode.TextEditor | undefined) {
-    console.log(editor);
-    
-    if (editor) {
-        let attr = packages.getFileAttributes(editor.document.fileName);
-
-        // Set context key: haoide.activeFile.xmlName
-        vscode.commands.executeCommand(
-            'setContext', 'haoide.activeFile.xmlName', 
-            (attr && attr.xmlName) || ''
-        );
-        
-        // Set context key: haoide.activeFile.isSFDCFile
-        let isSFDCFile = false;
-        if (attr && attr.xmlName) {
-            isSFDCFile = metadata.getIsValidXmlName(attr.xmlName);
-        }
-        vscode.commands.executeCommand(
-            'setContext', 'haoide.activeFile.isSFDCFile', isSFDCFile
-        );
-        
-        // Set context key: haoide.activeFile.isTestClass
-        let isTestClass = false;
-        if (fs.existsSync(editor.document.fileName)) {
-            let data = fs.readFileSync(
-                editor.document.fileName, "utf-8"
-            ).toString();
-
-            isTestClass = /\stestMethod\s/gi.test(data) 
-                || /@isTest/gi.test(data);
-        }
-        vscode.commands.executeCommand(
-            'setContext', 'haoide.activeFile.isTestClass', isTestClass
-        );
+    if (!editor) {
+        return;
     }
+    
+    let attr = packages.getFileAttributes(editor.document.fileName);
+    let xmlName = attr && attr.xmlName;
+
+    // Set context key: haoide.activeFile.xmlName
+    vscode.commands.executeCommand(
+        'setContext', 'haoide.activeFile.xmlName', 
+        xmlName || ''
+    );
+    
+    // Set context key: haoide.activeFile.isSFDCFile
+    vscode.commands.executeCommand(
+        'setContext', 'haoide.activeFile.isSFDCFile', 
+        metadata.getIsValidXmlName(attr.xmlName)
+    );
+
+    // Set context key: haoide.activeFile.isCodeFile
+    vscode.commands.executeCommand(
+        'setContext', 'haoide.activeFile.isCodeFile', 
+        ['ApexClass', 'ApexTrigger', 'ApexPage', 'ApexComponent'].includes(
+            xmlName
+        )
+    );
+    
+    // Set context key: haoide.activeFile.isTestClass
+    let isTestClass = false;
+    if (fs.existsSync(editor.document.fileName)) {
+        let data = fs.readFileSync(
+            editor.document.fileName, "utf-8"
+        ).toString();
+
+        isTestClass = /\stestMethod\s/gi.test(data) 
+            || /@isTest/gi.test(data);
+    }
+    vscode.commands.executeCommand(
+        'setContext', 'haoide.activeFile.isTestClass', isTestClass
+    );
 }
