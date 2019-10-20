@@ -2,6 +2,13 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.2.8], 2019-10-20
++ **Add** new setting: ``metadataPollingFrequency`` to control retrieve frequency
++ **Extend** ``refreshThisFromServer`` command feature to trigger, vf page and vf component 
++ **Remove** ``executeGlobalDescribe`` command from command palette
++ **Fix bug** for extension loading at the first time
+
+
 ## [0.2.7], 2019-10-20
 + **Add** new command ```openDocReference``` to search all document references
 + **Add** new command ```openDocReferenceByType``` to search document references by type
