@@ -2,6 +2,14 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.2.7], 2019-10-20
++ **Add** new command ```openDocReference``` to search all document references
++ **Add** new command ```openDocReferenceByType``` to search document references by type
++ **Add** new menu item ```viewCodeCoverage``` for ``ApexClass``
++ **Add** support for soql fields
++ **Enhancment** to visibity criteria for most of commands or menu items
++ 
+
 ## [0.2.6], 2019-10-19
 + **Add** new command ```runSyncTest``` to run syncholize test
 + **Add** new command ```viewCodeCoverage``` to view code coverage
