@@ -53,5 +53,7 @@
     "extension.haoide.setSyntaxToApex.title": "Set Syntax: Apex",
     "extension.haoide.setSyntaxToJS.title": "Set Syntax: JS",
     "extension.haoide.setSyntaxToHtml.title": "Set Syntax: Html",
-    "extension.haoide.createManifestFile.title": "New Manifest File"
+    "extension.haoide.createManifestFile.title": "New Manifest File",
+    "extension.haoide.openDocReference.title": "Open Document Reference",
+    "extension.haoide.openDocReferenceByType.title": "Open Document Reference By Type"
 }

@@ -8,7 +8,7 @@ const localize = nls.config({ messageFormat: nls.MessageFormat.file })();
 import { commands, languages, ExtensionContext, Uri, window } from 'vscode';
 import * as provider from "./salesforce/completions/provider";
 import * as contextUtil from "./utils/context";
-import { auth, utility, main, packages } from "./commands";
+import { auth, utility, main, packages, doc } from "./commands";
 import { RestWebPanel, QueryWebPanel } from './utils/webview';
 import { statusBar } from "./utils/statusbar";
 import { getDefaultProject } from "./utils/util";
@@ -317,6 +317,20 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(commands.registerCommand(
         "extension.haoide.setSyntaxToHtml", () => {
             utility.setSyntax("html");
+        }
+    ));
+
+    // Register openDocReference command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.openDocReference", () => {
+            doc.openDocReference(true);
+        }
+    ));
+
+    // Register openDocReferenceByType command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.openDocReferenceByType", () => {
+            doc.openDocReference(false);
         }
     ));
 

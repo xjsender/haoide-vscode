@@ -276,6 +276,16 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.openDocReference",
+				"title": "%extension.haoide.openDocReference.title%",
+				"category": "Haoide"
+			},
+			{
+				"command": "extension.haoide.openDocReferenceByType",
+				"title": "%extension.haoide.openDocReferenceByType.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.setSyntaxToApex",
 				"title": "%extension.haoide.setSyntaxToApex.title%",
 				"icon": {
@@ -654,6 +664,20 @@
 				"mac": "cmd+shift+s",
 				"win": "ctrl+alt+s",
 				"linux": "ctrl+alt+s"
+			},
+			{
+				"command": "extension.haoide.openDocReferenceByType",
+				"key": "ctrl+alt+o",
+				"mac": "cmd+shift+o",
+				"win": "ctrl+alt+o",
+				"linux": "ctrl+alt+o"
+			},
+			{
+				"command": "extension.haoide.openDocReference",
+				"key": "ctrl+alt+a",
+				"mac": "cmd+shift+a",
+				"win": "ctrl+alt+a",
+				"linux": "ctrl+alt+a"
 			}
 		],
 		"languages": [

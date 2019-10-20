@@ -53,5 +53,7 @@
     "extension.haoide.setSyntaxToApex.title": "Set Syntax: Apex",
     "extension.haoide.setSyntaxToJS.title": "Set Syntax: JS",
     "extension.haoide.setSyntaxToHtml.title": "Set Syntax: HTML",
-    "extension.haoide.createManifestFile.title": "创建Package.xml文件"
+    "extension.haoide.createManifestFile.title": "创建Package.xml文件",
+    "extension.haoide.openDocReference.title": "浏览所有文档",
+    "extension.haoide.openDocReferenceByType.title": "按类型浏览文档"
 }
