@@ -13,6 +13,7 @@ import * as moment from 'moment';
 import * as promiseLimit from 'promise-limit';
 
 import * as util from '../utils/util';
+import * as diagnostic from '../utils/diagnostic';
 import * as utility from './utility';
 import * as packages from '../utils/package';
 import * as settingsUtil from '../settings/settingsUtil';
@@ -21,7 +22,7 @@ import ApexApi from '../salesforce/api/apex';
 import RestApi from '../salesforce/api/rest';
 import ToolingApi from '../salesforce/api/tooling';
 import ProgressNotification from '../utils/progress';
-import { _session, settings, metadata, extensionSettings } from '../settings';
+import { _session, settings, metadata } from '../settings';
 import { 
     SObjectDesc, 
     MetadataModel, 
@@ -852,7 +853,7 @@ export function deployFilesToServer(files: string[]) {
             // If deploy failed, show error message
             if (!result.success) {
                 // Get failure in deploy result
-                let componentFailures: any = result.details.componentFailures;
+                let componentFailures = result.details.componentFailures;
 
                 // If there is only one failure, wrap it with array
                 if (componentFailures && !_.isArray(componentFailures)) {
@@ -860,6 +861,8 @@ export function deployFilesToServer(files: string[]) {
                 }
 
                 if (_.isArray(componentFailures)) {
+                    diagnostic.buildDiagnostic(componentFailures);
+
                     let problem: string = "";
                     for (const msg of componentFailures) {
                         problem += `[sf:deploy] ${msg.fileName} - ` +
