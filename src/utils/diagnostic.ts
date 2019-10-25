@@ -1,13 +1,11 @@
 import * as vscode from 'vscode';
 import * as util from './util';
-import { ComponentFailure } from "../typings/meta";
+import { ComponentFailure, ComponentSuccess } from "../typings/meta";
 
 const collection = vscode.languages.createDiagnosticCollection('haoide');
 
 export function buildDiagnostic(componentFailures: ComponentFailure[]) {
     for (const componentFailure of componentFailures) {
-        console.log(componentFailure);
-        
         let lineNumber: number = 0;
         let columnNumber: number = 0;
 
@@ -40,8 +38,24 @@ export function buildDiagnostic(componentFailures: ComponentFailure[]) {
 
                     break;
                 }
-                else {
-                    collection.clear();
+            }
+        }
+    }
+}
+
+/**
+ * Clear diagnostic
+ * 
+ * @param componentSuccesses deploy success details
+ */
+export function clearDiagnostic(componentSuccesses: ComponentSuccess[]) {
+    for (const componentSuccess of componentSuccesses) {
+        let documents: vscode.TextDocument[] = vscode.workspace.textDocuments;
+        if (documents) {
+            for (const doc of documents) {
+                if (doc.fileName.includes(componentSuccess.fullName + '.')) {
+                    collection.set(doc.uri, undefined);
+                    break;
                 }
             }
         }

@@ -873,6 +873,14 @@ export function deployFilesToServer(files: string[]) {
                 }
             }
             else {
+                // Clear diagnostic
+                // If there is only one success, wrap it as array
+                let componentSuccesses: any = result.details.componentSuccesses;
+                if (!_.isArray(componentSuccesses)) {
+                    componentSuccesses = [componentSuccesses];
+                }
+                diagnostic.clearDiagnostic(componentSuccesses);
+
                 // Update the lastModifiedDate of local file property
                 util.updateFilePropertyAfterDeploy(result);
 
