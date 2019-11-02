@@ -2,6 +2,11 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.2.9], 2019-11-02
++ **Add** support for compile diagnostics, deliver requirement #12
++ **Fix bug** #11
+
+
 ## [0.2.8], 2019-10-20
 + **Add** new setting: ``metadataPollingFrequency`` to control retrieve frequency
 + **Extend** ``refreshThisFromServer`` command feature to trigger, vf page and vf component 
