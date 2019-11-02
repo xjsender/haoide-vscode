@@ -136,6 +136,11 @@
 				"category": "Haoide"
 			},
 			{
+				"command": "extension.haoide.saveThisToServer",
+				"title": "%extension.haoide.saveThisToServer.title%",
+				"category": "Haoide"
+			},
+			{
 				"command": "extension.haoide.retrieveThisFromServer",
 				"title": "%extension.haoide.retrieveThisFromServer.title%",
 				"category": "Haoide"
@@ -323,7 +328,7 @@
 				},
 				{
 					"command": "extension.haoide.addDefaultProjectToWorkspace",
-					"when": "haoide.hasOpenProject"
+					"when": "haoide.hasDefaultProject"
 				},
 				{
 					"command": "extension.haoide.runSyncTest",
@@ -415,6 +420,10 @@
 				},
 				{
 					"command": "extension.haoide.retrieveThisFromServer",
+					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
+				},
+				{
+					"command": "extension.haoide.saveThisToServer",
 					"when": "haoide.hasOpenProject && editorIsOpen && haoide.activeFile.isSFDCFile"
 				},
 				{
@@ -547,6 +556,11 @@
 					"when": "haoide.hasOpenProject && haoide.activeFile.isCodeFile"
 				},
 				{
+					"group": "haoide@4",
+					"command": "extension.haoide.saveThisToServer",
+					"when": "haoide.hasOpenProject && haoide.activeFile.isCodeFile"
+				},
+				{
 					"group": "haoide@5",
 					"command": "extension.haoide.retrieveThisFromServer",
 					"when": "haoide.hasOpenProject && !haoide.activeFile.isCodeFile && haoide.activeFile.isSFDCFile"
@@ -559,7 +573,7 @@
 				{
 					"group": "haoide@7",
 					"command": "extension.haoide.deployThisToServer",
-					"when": "haoide.hasOpenProject && haoide.activeFile.isSFDCFile"
+					"when": "haoide.hasOpenProject && !haoide.activeFile.isCodeFile && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"group": "haoide@8",

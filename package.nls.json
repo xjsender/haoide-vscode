@@ -18,6 +18,7 @@
     "extension.haoide.updateProject.title": "Update Project",
     "extension.haoide.updateUserLanguage.title": "Update User Language",
     "extension.haoide.refreshThisFromServer.title": "Refresh This File From Server",
+    "extension.haoide.saveThisToServer.title": "Save This File To Server",
     "extension.haoide.deleteThisFromServer.title": "Delete This File From Server",
     "extension.haoide.diffThisWithServer.title": "Diff This File With Server",
     "extension.haoide.retrieveThisFromServer.title": "Retrieve This File From Server",

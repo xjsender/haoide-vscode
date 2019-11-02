@@ -8,10 +8,10 @@ import * as request from "request-promise";
 import * as querystring from "querystring";
 
 import * as auth from "../../commands/auth";
+import * as util from "../../utils/util";
 import ProgressNotification from "../../utils/progress";
-import { TestObject } from "../../typings/test";
-import { _session, settings } from "../../settings";
-import { QueryResult } from "../../typings";
+import { _session, settings, extensionSettings } from "../../settings";
+import { QueryResult, FileProperty } from "../../typings";
 
 export default class ToolingApi {
     private session: any;
@@ -47,8 +47,6 @@ export default class ToolingApi {
     /**
      * Get full rest url by serverUrl, i.e.,
      *      1. /sobjects/Account/describe
-     *      2. /services/data/v45.0/sobjects/Account/describe
-     *      3. /apexrest/CustomApexService
      *      4. https://.../sobjects/Account/describe
      * 
      * @param serverUrl url in string format
@@ -469,5 +467,109 @@ export default class ToolingApi {
         return this.post(_.extend(options, {
             serverUrl: "/runTestsSynchronous/"
         }));
+    }
+
+    /**
+     * Save to server
+     * 
+     * @param options options for saveToServer request
+     * @param options.fileProperty attributes for code file
+     * @param options.fileBody body of the code file
+     * @param options.isCheckOnly true means just compile
+     * @returns Promise<TestResponse>
+     */
+    public async saveToServer(options: any) {
+        let attr: FileProperty = options.fileProperty;
+        let prefix = `/services/data/v${this.apiVersion}.0/tooling/sobjects`;
+        let requestData = {
+            "allOrNone": false,
+            "compositeRequest": [
+                {
+                    "method": "POST",
+                    "body": {
+                        "Name": `Save-${attr.id}`
+                    },
+                    "url": `${prefix}/MetadataContainer/`,
+                    "referenceId": "containerId"
+                },
+                {
+                    "method": "POST",
+                    "body": {
+                        "ContentEntityId": attr.id,
+                        "body": options.fileBody,
+                        "MetadataContainerId": "@{containerId.id}"
+                    },
+                    "url": `${prefix}/${attr.type}Member/`,
+                    "referenceId": "memberRefId"
+                },
+                {
+                    "method": "POST",
+                    "body": {
+                        "IsCheckOnly": options.isCheckOnly || false,
+                        "MetadataContainerId": "@{containerId.id}"
+                    },
+                    "url": `${prefix}/ContainerAsyncRequest/`,
+                    "referenceId": "syncRequestId"
+                },
+                {
+                    "method": "GET",
+                    "url": `${prefix}/ContainerAsyncRequest/@{syncRequestId.id}`,
+                    "referenceId": "getSyncRequesId"
+                }
+            ]
+        };
+
+        let result = await this.post(_.extend(options, {
+            serverUrl: '/composite',
+            data: requestData
+        }));
+        console.log(result);
+        
+
+        // Check duplicate error and delete duplicate container id
+        // and then execute this request again
+        let containerRes = _.find(result.compositeResponse, res => {
+            return res.referenceId === 'containerId';
+        });
+        if (containerRes && containerRes.httpStatusCode > 399) {
+            let body = containerRes.body[0];
+            if (body.errorCode === 'DUPLICATE_VALUE') {
+                let containerId = body.message.substr(
+                    body.message.indexOf('1dc'), 18
+                );
+
+                let deleteResult = await this.delete({
+                    serverUrl: '/sobjects/MetadataContainer/' + containerId
+                });
+            }
+        }
+
+        // Get ContainerSyncRequest result
+        let syncRequestResult = _.find(result.compositeResponse, res => {
+            return res.referenceId === 'getSyncRequesId';
+        });
+        syncRequestResult = syncRequestResult.body;
+
+        while (syncRequestResult.State === 'Queued') {
+            let sleepMiliseconds = extensionSettings.getConfigValue(
+                'metadataPollingFrequency', 2000
+            );
+            await util.sleep(sleepMiliseconds);
+
+            syncRequestResult = await this.get({
+                serverUrl: `${prefix}/ContainerAsyncRequest/${syncRequestResult.Id}`,
+                progressDone: false,
+                progress: options.progress,
+                progressMessage: `Request status: ${syncRequestResult.State}`
+            });
+            console.log(syncRequestResult);
+        }
+
+        // Delete metadata container Id
+        this.delete({
+            serverUrl: `${prefix}/MetadataContainer/${containerRes.body.id}`
+        });
+
+        return Promise.resolve(syncRequestResult);
     }
 }

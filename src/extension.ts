@@ -61,6 +61,11 @@ export function activate(context: ExtensionContext) {
         main.deleteThisFromServer
     ));
 
+    // Register saveThisToServer command
+    context.subscriptions.push(commands.registerCommand(
+        "extension.haoide.saveThisToServer",
+        main.saveThisToServer
+    ));
 
     // Register refreshThisFromServer command
     context.subscriptions.push(commands.registerCommand(

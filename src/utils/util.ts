@@ -31,6 +31,22 @@ export function sleep(miliseconds = 0) {
     });
 }
 
+/**
+ * Generate unique guid
+ */
+export function generateGUID() {
+    let guid = "";
+    for (var i = 1; i <= 32; i++) {
+        let n = Math.floor(Math.random() * 16.0).toString(16);
+        guid += n;
+        if ([8, 12, 16, 20].includes(i)) {
+            guid += "-";
+        }
+    }
+
+    return guid;
+}
+
 export function generateWorkbook(sobjectDesc: SObjectDesc) {
     let columns = settings.getWorkbookColumns();
     let sobjectName = sobjectDesc.name;

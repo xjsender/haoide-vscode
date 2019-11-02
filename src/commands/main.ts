@@ -976,6 +976,30 @@ export async function deleteThisFromServer() {
     });
 }
 
+export function saveThisToServer() {
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
+
+    let fileName = editor.document.fileName;
+    ProgressNotification.showProgress(
+        new ToolingApi(), 'saveToServer', {
+            fileBody: fs.readFileSync(fileName, "utf-8"),
+            progressDone: false,
+            fileProperty: util.getFilePropertyByFileName(fileName),
+            progressMessage: "Saving file to server..."
+        }
+    )
+    .then( result => {
+        console.log(result);
+        
+    })
+    .catch( err => {
+        vscode.window.showErrorMessage(err.message);
+    });
+}
+
 /**
  * Retireve active file from server
  */
