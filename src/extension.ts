@@ -5,7 +5,7 @@ const localize = nls.config({ messageFormat: nls.MessageFormat.file })();
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import { commands, languages, ExtensionContext, Uri, window } from 'vscode';
+import { commands, languages, ExtensionContext, Uri, window, workspace } from 'vscode';
 import * as provider from "./salesforce/completions/provider";
 import * as contextUtil from "./utils/context";
 import { auth, utility, main, packages, doc } from "./commands";
@@ -401,18 +401,6 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(languages.registerCompletionItemProvider(
         'apex', provider.sobjectCompletionProvider, ".", "="
     ));
-
-    /**
-     * Events part
-     */
-    // context.subscriptions.push(workspace.onDidOpenTextDocument(document => {
-    //     if (document.isUntitled) {
-    //         // Set language of new open file as apex
-    //         languages.setTextDocumentLanguage(
-    //             document, 'apex'
-    //         );
-    //     }
-    // }));
 
     /**
      * Context part

@@ -737,6 +737,18 @@ export function getFilePropertyByFileName(fileName: string): FileProperty {
 }
 
 /**
+ * Judge whether spcified file is code file
+ * 
+ * @param fileName file full path
+ * @returns flag for code file
+ */
+export function getIsCodeFile(xmlName: string) {
+    return ['ApexClass', 'ApexTrigger', 'ApexPage', 'ApexComponent'].includes(
+        xmlName
+    );
+}
+
+/**
  * Remove files and its related meta file from local disk
  * 
  * @param files files to be removed

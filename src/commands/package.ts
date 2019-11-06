@@ -142,6 +142,10 @@ export function retrieveByManifest() {
         // Extract retrieved zipFile
         let extractedTo = path.dirname(activeFileName);
         packages.extractZipFile(result.zipFile, extractedTo);
+
+        // Keep fileProperty to local
+        util.setFileProperties(result.fileProperties);
+        
         vscode.window.showInformationMessage(
             `Your manifest was retrieved to ${extractedTo}`
         );

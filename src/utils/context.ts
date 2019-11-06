@@ -95,7 +95,8 @@ export function setContextKeyForActiveFile(editor: vscode.TextEditor | undefined
         return;
     }
     
-    let attr = packages.getFileAttributes(editor.document.fileName);
+    let fileName = editor.document.fileName;
+    let attr = packages.getFileAttributes(fileName);
     let xmlName = attr && attr.xmlName;
 
     // Set context key: haoide.activeFile.xmlName
@@ -113,9 +114,7 @@ export function setContextKeyForActiveFile(editor: vscode.TextEditor | undefined
     // Set context key: haoide.activeFile.isCodeFile
     vscode.commands.executeCommand(
         'setContext', 'haoide.activeFile.isCodeFile', 
-        ['ApexClass', 'ApexTrigger', 'ApexPage', 'ApexComponent'].includes(
-            xmlName
-        )
+        util.getIsCodeFile(xmlName)
     );
     
     // Set context key: haoide.activeFile.isTestClass
