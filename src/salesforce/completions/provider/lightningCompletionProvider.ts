@@ -108,7 +108,7 @@ export class LightningCompletionItemProvider implements vscode.CompletionItemPro
         }
         // completion for tag attribute
         else if (pos.char === ' ') {
-            let pattern = /<\w+[:-\s]*\w+[\w\W]*?>/g;
+            let pattern = /<\w+[:-]*\w+[\w\W]*?>/g;
             let match, matchedText, index;
             
             // Get matched string which contains cursor
