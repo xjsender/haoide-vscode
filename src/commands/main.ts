@@ -762,12 +762,13 @@ export function deployThisToServer() {
         if (settings.getEnableConflictCheck()) {
             let localFileP = util.getFilePropertyByFileName(fileName);
             if (!localFileP) {
-                vscode.window.showErrorMessage(
-                    'Not found the property of this file'
+                vscode.window.setStatusBarMessage(
+                    'Conflict is ignored due to not found file property',
+                    5000
                 );
-                return;
+                return deployFilesToServer([fileName]);
             }
-            
+
             // If this is dev metaObject, check conflict before deploy to server
             let devMetafolders = settings.getDevMetaFolders();
             if (devMetafolders.includes(localFileP.metaFolder || '')) {
