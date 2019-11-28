@@ -157,12 +157,10 @@ export function buildSobjectSOQL() {
         // Choose sobject to generate soql
         let items = [];
         for (const sobject of result.sobjects) {
-            if (sobject.queryable) {
-                items.push({
-                    label: sobject.name,
-                    description: sobject.label
-                });
-            }
+            items.push({
+                label: sobject.name,
+                description: sobject.label
+            });
         }
         let chosenItem = await vscode.window.showQuickPick(items);
         if (!chosenItem) {
