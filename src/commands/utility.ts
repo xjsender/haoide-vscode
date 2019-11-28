@@ -405,11 +405,6 @@ export function chooseSobjects(options?: any) {
             return executeGlobalDescribe(true).then( async result => {
                 let sobjectsDesc = result.sobjects;
                 for (const sobjectDesc of sobjectsDesc) {
-                    // Ignore not queryable sobject
-                    if (!sobjectDesc.queryable) {
-                        continue;
-                    }
-                    
                     if (scope === SObjectReloadScope.ALL
                             || scope === SObjectReloadScope.CUSTOMSCOPE) {
                         sobjects.push(sobjectDesc.name);

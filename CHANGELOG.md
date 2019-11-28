@@ -2,6 +2,16 @@
 
 All notable changes to the "haoide" extension will be documented in this file.
 
+## [0.3.1], 2019-11-28
++ **Fix Bug** Fix Issue #18
++ **Fix Bug** Fix Issue #19
++ **Fix Bug** Remove extra ```}``` from picklist completion
++ **Fix Bug** Fix bug when create trigger for ```BatchApexErrorEvent```
++ **Enhancement** Remove query criteria for ```reloading sobject cache```
++ **Enhancment** Force executing global describe when ```reloading sobject cache```
+
+
+
 ## [0.3.0], 2019-11-06
 + **Fix Bug** Fix bug when ```retrieve package by manifest```
 
