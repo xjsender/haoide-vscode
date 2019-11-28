@@ -556,11 +556,6 @@
 					"when": "haoide.hasOpenProject && haoide.activeFile.isCodeFile"
 				},
 				{
-					"group": "haoide@4",
-					"command": "extension.haoide.saveThisToServer",
-					"when": "haoide.hasOpenProject && haoide.activeFile.isCodeFile"
-				},
-				{
 					"group": "haoide@5",
 					"command": "extension.haoide.retrieveThisFromServer",
 					"when": "haoide.hasOpenProject && !haoide.activeFile.isCodeFile && haoide.activeFile.isSFDCFile"
@@ -573,7 +568,7 @@
 				{
 					"group": "haoide@7",
 					"command": "extension.haoide.deployThisToServer",
-					"when": "haoide.hasOpenProject && !haoide.activeFile.isCodeFile && haoide.activeFile.isSFDCFile"
+					"when": "haoide.hasOpenProject && haoide.activeFile.isSFDCFile"
 				},
 				{
 					"group": "haoide@8",
