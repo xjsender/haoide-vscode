@@ -402,7 +402,7 @@ export function chooseSobjects(options?: any) {
                 return;
             }
 
-            return executeGlobalDescribe().then( async result => {
+            return executeGlobalDescribe(true).then( async result => {
                 let sobjectsDesc = result.sobjects;
                 for (const sobjectDesc of sobjectsDesc) {
                     // Ignore not queryable sobject

@@ -218,13 +218,15 @@ export function buildSobjectSOQL() {
  * 
  * @returns Promise<GlobalDescribe>
  */
-export function executeGlobalDescribe() {
+export function executeGlobalDescribe(reloadCache = true) {
     return new Promise<GlobalDescribe>((resolve, reject) => {
-        // Get global describe cache
-        let result = settingsUtil.getGlobalDescribe();
-        
-        if (result && result.sobjects) {
-            return resolve(result);
+        if (!reloadCache) {
+            // Get global describe cache
+            let result = settingsUtil.getGlobalDescribe();
+            
+            if (result && result.sobjects) {
+                return resolve(result);
+            }
         }
 
         // Request from server if there is no global describe cache
