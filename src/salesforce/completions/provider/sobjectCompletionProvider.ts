@@ -109,7 +109,7 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
                     if (fieldDesc) {
                         for (const pv of fieldDesc.picklistValues) {
                             completionItems.push(createCompletionItem(
-                                `${pv.value}(${pv.label})}`,
+                                `${pv.value}(${pv.label})`,
                                 CompletionItemKind.Value,
                                 undefined, undefined,
                                 ` '${pv.value}'`
