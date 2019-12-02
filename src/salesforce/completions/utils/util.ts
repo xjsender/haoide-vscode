@@ -353,7 +353,6 @@ export function getVariableType(pos: PositionOption) {
             variableType = matchedContent.split(" ")[0];
         }
     }
-    console.log("variableType: ", variableType);
 
     return variableType.trim();
 }

@@ -20,8 +20,6 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
         position: Position, token: vscode.CancellationToken,
         context: vscode.CompletionContext) {
         
-        console.log('start');
-        
         let enableDebugMode = extensionSettings.getConfigValue(
             "enableDebugLog", false
         );
@@ -88,13 +86,19 @@ export class SobjectCompletionItemProvider implements vscode.CompletionItemProvi
             }
 
             if (matchedText) {
-                let [word, fieldName] = matchedText.trim().split('.');
-                pos.word = word;
-                let variableType = util.getVariableType(pos);
-                if (sobjects[variableType.toLowerCase()]) {
-                    // Get sobject name
-                    let sobjectName = sobjects[variableType.toLowerCase()];
+                let [sobjectName, fieldName] = matchedText.trim().split('.');
+                console.log(sobjectName, fieldName);
+                
+                if (sobjects[sobjectName.toLowerCase()]) {
+                    sobjectName = sobjects[sobjectName.toLowerCase()];
+                }
+                else {
+                    pos.word = sobjectName;
+                    let variableType = util.getVariableType(pos);
+                    sobjectName = sobjects[variableType.toLowerCase()];
+                }
 
+                if (sobjectName) {
                     // Get sobjectDescribeResult
                     let sobjectDesc = settingsUtil.getSobjectDesc(sobjectName);
 
