@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST Explorer</title>
+    <link href="../lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+</head>
+
+<body>
+    <div class="container" id="app">
+        <form name="form">
+            <div class="form-group col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title alert alert-success">
+                            Place HTTP method, REST URI and Body here:
+                        </h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12" style="margin-top: 5px;">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <select id="restMethod" v-model="restMethod">
+                                            <option value="get">GET</option>
+                                            <option value="post">POST</option>
+                                            <option value="put">PUT</option>
+                                            <option value="patch">PATCH</option>
+                                            <option value="delete">DELETE</option>
+                                            <option value="head">HEAD</option>
+                                        </select>
+                                    </div>
+                                    <input type="text" class="form-control" id="restUri" v-model="restUri"></input>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="restBodyDiv" class="row" v-show="isBodyVisible">
+                            <div class="col-sm-12" style="margin-top:5px;">
+                                <textarea class="form-control" name="restBody"
+                                    rows="10" v-model="restBody" 
+                                    placeholder="Place your body here"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="btn-group" style="margin-top: 5px;">
+                                    <div v-show="isBodyVisible">
+                                        <button type="button" @click="formatBody"
+                                            class="btn btn-success">
+                                            <span class="glyphicon glyphicon-ok"></span> Format
+                                        </button>
+                                    </div>
+                                    
+                                    <button type="button" id="executeRest" @click="executeRest"
+                                        class="btn btn-info">
+                                        <span class="glyphicon glyphicon-ok"></span> Execute
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+<script src="../lib/jquery/jquery-3.3.1.slim.min.js"></script>
+<script src="../lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../lib/vue/vue.min.js"></script>
+<script src="../lib/custom/rest.js"></script>
+
+<div style="height: 50px;" />

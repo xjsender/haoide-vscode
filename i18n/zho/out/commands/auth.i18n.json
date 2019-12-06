@@ -1,0 +1,11 @@
+{
+    "inputProjectName.text": "请输入您的新项目名称...",
+    "inputCustomLoginUrl.text": "请输入您的登陆链接...",
+    "projectNameRequired.text": "必须输入项目名称才可以继续！",
+    "productionEnv.text": "生产环境",
+    "sandboxEnv.text": "沙盒环境",
+    "customEnv.text": "自定义环境",
+    "chooseLoginUrl.text": "请选择登陆链接",
+    "sessionRefreshed.text": "Session已更新",
+    "sessionNotExpired.text": "Session还未过期"
+}

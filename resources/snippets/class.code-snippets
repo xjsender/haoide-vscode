@@ -1,0 +1,268 @@
+{
+    "Class Header": {
+        "scope": "java,apex",
+        "prefix": "class header",
+        "body": [
+            "/***********************************************************************************",
+            "* Name: $TM_FILENAME_BASE",
+            "* Object: $1",
+            "* Purpose: $2",
+            "* Author: $3 ($4)",
+            "* Create Date: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE",
+            "* Modify History:",
+            "* $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE    $3    ${5:Create this class}",
+            "************************************************************************************/"
+        ],
+        "description": "Class Header"
+    },
+    "SOQL - select": {
+        "scope": "java,apex",
+        "prefix": "se",
+        "body": [
+            "SELECT $2 FROM $1$0"
+        ],
+        "description": "SELECT * FROM Sobject"
+    },
+    "Collection - list bracket": {
+        "scope": "java,apex",
+        "prefix": "listb",
+        "body": [
+            "List<$1> $2 = [",
+            "   $3",
+            "];$0"
+        ],
+        "description": "List Bracket Variable"
+    },
+    "Collection - list": {
+        "scope": "java,apex",
+        "prefix": "list",
+        "body": [
+            "List<$1> $2 = new List<$1>();"
+        ],
+        "description": "List Variable"
+    },
+    "Collection - map bracket": {
+        "scope": "java,apex",
+        "prefix": "mapb",
+        "body": [
+            "Map<$1> $2 = new Map<$1>([",
+            "   $3",
+            "]);"
+        ],
+        "description": "List Bracket Variable"
+    },
+    "Collection - map": {
+        "scope": "java,apex",
+        "prefix": "map",
+        "body": [
+            "Map<$1> $2 = new Map<$1>();"
+        ],
+        "description": "Map Variable"
+    },
+    "Collection - set": {
+        "scope": "java,apex",
+        "prefix": "set",
+        "body": [
+            "Set<$1> $2 = new Set<$1>();"
+        ],
+        "description": "Set Variable"
+    },
+    "Condition Control - if else": {
+        "scope": "java,apex",
+        "prefix": "ifelse",
+        "body": [
+            "if ($1) {",
+            "   $2",
+            "} else {",
+            "   $3",
+            "}",
+            "$0"
+        ],
+        "description": "If Else"
+    },
+    "Loops - do while": {
+        "scope": "java,apex",
+        "prefix": "dow",
+        "body": [
+            "do {",
+            "   $1",
+            "}",
+            "while (${2:CONDITION});"
+        ],
+        "description": "do {} while"
+    },
+    "Loops - for each": {
+        "scope": "java,apex",
+        "prefix": "fore",
+        "body": [
+            "for ($1 : $2) {",
+            "   $0",
+            "}"
+        ],
+        "description": "for each"
+    },
+    "Loops - while": {
+        "scope": "java,apex",
+        "prefix": "wh",
+        "body": [
+            "while (${1:CONDITION}) {",
+            "   ${2:WHILE-BODY}",
+            "}"
+        ],
+        "description": "while loop"
+    },
+    "Debug - debug collection": {
+        "scope": "java,apex",
+        "prefix": "dbc",
+        "body": [
+            "for (${1:DATA-TYPE} variable : ${2:COLLECTOIN}) {",
+            "   System.debug('***Debug Output ' + variable + '');",
+            "}"
+        ],
+        "description": "Collection Debug in Loop"
+    },
+    "Debug - debug error": {
+        "scope": "java,apex",
+        "prefix": "dbe",
+        "body": [
+            "System.debug(LoggingLevel.ERROR, '*** $1: ' + $1);$0"
+        ],
+        "description": "Variable Debug Error"
+    },
+    "Debug - debug info": {
+        "scope": "java,apex",
+        "prefix": "dbi",
+        "body": [
+            "System.debug(LoggingLevel.INFO, '*** $1: ' + $1);$0"
+        ],
+        "description": "Variable Debug Info"
+    },
+    "Debug - debug json": {
+        "scope": "java,apex",
+        "prefix": "dbj",
+        "body": [
+            "System.debug('*** $1: ' + JSON.serializePretty($1) + '');$0"
+        ],
+        "description": "Variable Debug in JSON Format"
+    },
+    "Debug - debug": {
+        "scope": "java,apex",
+        "prefix": "dbd",
+        "body": [
+            "System.debug(LoggingLevel.DEBUG, '*** $1: ' + $1);$0"
+        ],
+        "description": "Variable Debug"
+    },
+    "Debug - schedule test": {
+        "scope": "java,apex",
+        "prefix": "ts",
+        "body": [
+            "$1 schClass = new $1();",
+            "Datetime dtNext5Seconds = System.now().addSeconds(5);",
+            "String sch = String.format('{0} {1} {2} {3} {4} ? {5}', new List<String> {",
+            "   String.valueOf(dtNext5Seconds.second()),",
+            "   String.valueOf(dtNext5Seconds.minute()),",
+            "   String.valueOf(dtNext5Seconds.hour()),",
+            "   String.valueOf(dtNext5Seconds.day()),",
+            "   String.valueOf(dtNext5Seconds.month()),",
+            "   String.valueOf(dtNext5Seconds.year())",
+            "});",
+            "String jobName = '$1' + Math.rint(Math.random() * 100000000);",
+            "System.schedule(jobName, sch, schClass);$0"
+        ],
+        "description": "Test Schedule class"
+    },
+    "Exception - try catch finally": {
+        "scope": "java,apex",
+        "prefix": "tryf",
+        "body": [
+            "try {",
+            "   $1",
+            "}",
+            "catch ($2 e) {",
+            "   $3",
+            "}",
+            "finally {",
+            "   $4",
+            "}",
+            "$0"
+        ],
+        "description": "Try Catch Finally"
+    },
+    "Exception - try catch": {
+        "scope": "java,apex",
+        "prefix": "tryc",
+        "body": [
+            "try {",
+            "   $1",
+            "}",
+            "catch ($2 e) {",
+            "   $3",
+            "}",
+            "$0"
+        ],
+        "description": "Try Catch"
+    },
+    "Method - test method": {
+        "scope": "java,apex",
+        "prefix": "tm",
+        "body": [
+            "static testMethod void $1() {",
+            "   $2",
+            "}"
+        ],
+        "description": "Test Method"
+    },
+    "REST - rest service class body": {
+        "scope": "java,apex",
+        "prefix": "restclass",
+        "body": [
+            "@RestResource(urlMapping='/$1/*')",
+            "global with sharing class $2 {",
+            "   ${3:@HttpGet - @HttpPost - @HttpDelete}",
+            "   webservice static $4() {",
+            "       ",
+            "   }",
+            "}"
+        ],
+        "description": "REST Class"
+    },
+
+    "Controller - add page message in vf": {
+        "scope": "java,apex",
+        "prefix": "pm",
+        "body": [
+            "ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.$1, $2));"
+        ],
+        "description": "Add PageMessages"
+    },
+    "Controller - get parameter in vf": {
+        "scope": "java,apex",
+        "prefix": "gp",
+        "body": [
+            "ApexPages.currentPage().getParameters().get('$1');"
+        ],
+        "description": "Get Visualforce Parameter"
+    },
+    "Controller - get and set in multiply line": {
+        "scope": "java,apex",
+        "prefix": "gsm",
+        "body": [
+            "public $1 {",
+                "get {",
+                    "$2",
+                "}",
+                "private set;",
+            "}"
+        ],
+        "description": "public variable {get {} private set;}"
+    },
+    "Controller - get and set in one line": {
+        "scope": "java,apex",
+        "prefix": "gs",
+        "body": [
+            "public $1 {get; set;}"
+        ],
+        "description": "public variable { get; set; }"
+    }
+}

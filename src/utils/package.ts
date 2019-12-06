@@ -10,11 +10,62 @@ import * as yazl from "yazl";
 import * as _ from "lodash";
 import * as AdmZip from "adm-zip";
 import * as shelljs from "shelljs";
+import * as moment from 'moment';
+import { Buffer } from "buffer";
+
 import * as util from "../utils/util";
 import { metadata } from "../settings";
-import { Buffer } from "buffer";
-import { MetaObject } from "../settings/metadata";
-import { utility } from "../commands";
+import { MetaObject, FileAttributes } from "../typings";
+
+/**
+ * Build destruct package by files
+ *
+ * @param files files to be destructed
+ * @returns Promise<string>, base64 encoded zipFile
+ */
+export function buildDestructPackage(files: string[]) {
+    // Create new instance for zip writer
+    let zip = new yazl.ZipFile();
+
+    // Get package dict
+    let packageDict = buildPackageDict(files);
+
+    // Build destructive package xml
+    let destructXmlContent = buildPackageXml(packageDict);
+    zip.addBuffer(
+        Buffer.alloc(destructXmlContent.length, destructXmlContent),
+        "destructiveChanges.xml"
+    );
+
+    // Build package.xml
+    let packageXmlContent = buildPackageXml({});
+    zip.addBuffer(
+        Buffer.alloc(packageXmlContent.length, packageXmlContent),
+        "package.xml"
+    );
+
+    // Write zip file to local disk
+    return new Promise<string>((resolve, reject) => {
+        try {
+            let zipFilePath = path.join(os.homedir(), "destruct.zip");
+            zip.outputStream
+                .pipe(fs.createWriteStream(zipFilePath))
+                .on("close", () => {
+                    // Read binary data from zipFile
+                    let base64Str = fs.readFileSync(zipFilePath, {
+                        encoding: "base64"
+                    });
+
+                    resolve(base64Str);
+                });
+            zip.end();
+        }
+        catch (err) {
+            reject(err);
+        }
+    });
+}
+
 
 /**
  * Build deploy package by files
@@ -32,12 +83,20 @@ export function buildDeployPackage(files: string[]) {
         if (packageDict.hasOwnProperty(xmlName)) {
             const members: FileAttributes[] = packageDict[xmlName];
             
+            let dirNames: string[] = [];
             for (const member of members) {
                 if (["lwc", "aura"].includes(member.directoryName)) {
                     let dirName = path.dirname(member.dir);
-                    let fileNames = fs.readdirSync(dirName);
 
-                    for (const fileName of fileNames) {
+                    // Used to prevent duplicate member
+                    if (dirNames.includes(dirName)) {
+                        continue;
+                    }
+                    else {
+                        dirNames.push(dirName);
+                    }
+
+                    for (const fileName of fs.readdirSync(dirName)) {
                         let fileFullName = path.join(dirName, fileName);
                         zip.addFile(fileFullName, path.join(
                             member.directoryName, member.folder, fileName
@@ -102,12 +161,27 @@ export function buildDeployPackage(files: string[]) {
  * }
  */
 export function buildPackageDict(files: string[], ignoreFolder=true) {
-    let packageDict: any = {};
+    let xmlNames: string[] = metadata.getXmlNames();
 
+    let packageDict: any = {};
     for (let _file of files) {
         // Ignore folder
         if (ignoreFolder && !fs.statSync(_file).isFile()) {
             continue;
+        }
+
+        // Get file attrs from file uri
+        let attrs: FileAttributes = getFileAttributes(_file);
+
+        // Exclude invalid SF metaObject
+        if (!xmlNames.includes(attrs.xmlName)) {
+            continue;
+        }
+
+        // Special logic for metaObjects which inFolder is true
+        let metaObject = metadata.getMetaObject(attrs.xmlName);
+        if (metaObject.inFolder) {
+            attrs.memberName = `${attrs.folder}/${attrs.name}`;
         }
 
         // Replace meta file with source file
@@ -120,9 +194,6 @@ export function buildPackageDict(files: string[], ignoreFolder=true) {
             }
         }
 
-        // Get file attrs from file uri
-        let attrs: FileAttributes = getFileAttributes(_file);
-
         // Build package dict
         if (packageDict[attrs.xmlName]) {
             packageDict[attrs.xmlName].push(attrs);
@@ -130,7 +201,7 @@ export function buildPackageDict(files: string[], ignoreFolder=true) {
         else {
             packageDict[attrs.xmlName] = [attrs];
         }
-    }
+    }    
 
     return packageDict;
 }
@@ -145,7 +216,11 @@ export function buildPackageXml(packageDict: any, apiVersion=46) {
     let types = [];
     for (const xmlName in packageDict) {
         if (packageDict.hasOwnProperty(xmlName)) {
-            const members: FileAttributes[] = packageDict[xmlName];
+            let members: FileAttributes[] = packageDict[xmlName];
+
+            // Remove duplicate member
+            members = _.uniqBy(members, "memberName");
+
             types.push(`
                 <types>
                     ${_.map(members, m => {
@@ -160,21 +235,11 @@ export function buildPackageXml(packageDict: any, apiVersion=46) {
     let packageXmlContent = `<?xml version="1.0" encoding="UTF-8"?>
         <Package xmlns="http://soap.sforce.com/2006/04/metadata">
             ${types.join(" ")}
-            <version>${apiVersion || 46}</version>
+            <version>${apiVersion || 46}.0</version>
         </Package>
     `;
 
     return packageXmlContent;
-}
-
-export interface FileAttributes {
-    dir: string;            // file Uri
-    name: string;           // component Name
-    fullName: string;       // component Name + component Extension
-    directoryName: string;  // folder from metadata describe
-    folder: string;         // If folder is not null, means in folder
-    xmlName: string;        // xmlName from metadata describe
-    memberName: string;      // Used in package.xml
 }
 
 /**
@@ -227,6 +292,7 @@ export function getFileAttributes(_file: string): FileAttributes {
 
 /**
  * Get retrieve types by files
+ * 
  * @param files files to be retrieved
  * @returns types, 
  * i.e., {
@@ -249,10 +315,54 @@ export function getRetrieveTypes(files: string[]) {
     return retrieveTypes;
 }
 
-export function extractZipFile(result: any, addProjectToWorkspace=false) {
+/**
+ * Get source of the active file from server and then write it to lcoal file
+ * 
+ * @param zipFile base64 encoded string
+ * @param cmpName file name of active file
+ */
+export function getExtractedFile(zipFile: string, cmpName: string) {
+    let zipFilePath = path.join(os.homedir(), 
+        moment().format('YYYYMMDDHHMMSS') + ".zip"
+    );
+    fs.writeFileSync(
+        zipFilePath, zipFile, "base64"
+    );
+
+    let remoteFilePath = path.join(
+        util.getProjectPath(), '.diff'
+    );
+    if (!fs.existsSync(remoteFilePath)) {
+        shelljs.mkdir('-p', remoteFilePath);
+    }
+
+    let remoteFile;
+    let zip = new AdmZip(zipFilePath);
+    for (const zipEntry of zip.getEntries()) {
+        let fileName = zipEntry.name;
+        if (fileName === cmpName) {
+            remoteFile = path.join(remoteFilePath, fileName);
+            fs.writeFileSync(
+                remoteFile, zipEntry.getData()
+            );
+        }
+    }
+
+    return remoteFile;
+}
+
+/**
+ * Extract base64 encoded zipfile to local disk
+ * 
+ * @param zipFile base64 encoded zipFile to be extracted
+ * @param options, options for extract zipfile,
+ *      extractedTo: path to extract the files in the zip,
+ *      ignorePackageXml, boolean
+ */
+export function extractZipFile(zipFile: string, options:any={}) {
     let zipFilePath = path.join(os.homedir(), "haoide.zip");
     fs.writeFileSync(
-        zipFilePath, result["zipFile"], "base64"
+        zipFilePath, zipFile, "base64"
     );
 
     let zip = new AdmZip(zipFilePath);
@@ -260,9 +370,14 @@ export function extractZipFile(result: any, addProjectToWorkspace=false) {
         let entryName = zipEntry.entryName.replace("unpackaged", "src");
         let fileName = zipEntry.name;
 
+        // Can't override project package.xml when refresh folders
+        if (options.ignorePackageXml && fileName === "package.xml") {
+            continue;
+        }
+
         // Get file path for every file
         let filePath = path.join(
-            util.getProjectPath(),
+            options.extractedTo || util.getProjectPath(),
             entryName.substr(0, entryName.lastIndexOf(fileName) - 1)
         );
 
@@ -278,12 +393,4 @@ export function extractZipFile(result: any, addProjectToWorkspace=false) {
             zipEntry.getData()
         );
     }
-
-    // Add project to workspace
-    if (addProjectToWorkspace) {
-        utility.addDefaultProjectToWorkspace();
-    }
-
-    // Keep fileProperties to local disk
-    util.setFileProperties(result["fileProperties"]);
 }

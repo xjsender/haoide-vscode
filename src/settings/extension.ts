@@ -16,7 +16,7 @@ export default class ExtensionSettings {
     }
 
     /**
-     * Get the configuration for a sfdx-core
+     * Get the configuration for a haoide
      */
     public getConfiguration(): vscode.WorkspaceConfiguration {
         return vscode.workspace.getConfiguration('haoide');
@@ -27,6 +27,8 @@ export default class ExtensionSettings {
     }
 
     public async setConfigValue(key: string, value: any) {
-        await this.getConfiguration().update(key, value);
+        await this.getConfiguration().update(key, value, 
+            vscode.ConfigurationTarget.Global    
+        );
     }
 }

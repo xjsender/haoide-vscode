@@ -1,0 +1,1 @@
+public class {MetaObject_Name__c} extends Exception {}

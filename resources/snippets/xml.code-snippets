@@ -1,0 +1,21 @@
+{
+    "types": {
+        "scope": "xml",
+        "prefix": "types",
+        "body": [
+            "<types>",
+                "<members>$2</members>$0",
+                "<name>$1</name>",
+            "</types>"
+        ],
+        "description": "types pair in package.xml"
+    },
+    "members": {
+        "scope": "xml",
+        "prefix": "members",
+        "body": [
+            "<members>$1</members>$0"
+        ],
+        "description": "members pair in package.xml"
+    }
+}

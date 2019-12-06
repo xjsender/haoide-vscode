@@ -4,10 +4,19 @@
  */
 
 import * as vscode from "vscode";
-import { TextDocument, Position, CompletionItem, CompletionItemKind, Range } from "vscode";
+import {
+    TextDocument,
+    Position,
+    CompletionItem,
+    CompletionItemKind,
+    Range
+} from "vscode";
+
+import * as util from "../utils/util";
+import { createCompletionItem } from "../utils/util";
 import { vfTagDefs } from "../lib";
-import { getLastCharOfPosition, createCompletionItem } from "../utils";
 import { extensionSettings } from "../../../settings";
+import { PositionOption } from "../typings/completion";
 
 export class VisualforceCompletionItemProvider implements vscode.CompletionItemProvider {
     public constructor() { }
@@ -15,35 +24,31 @@ export class VisualforceCompletionItemProvider implements vscode.CompletionItemP
     public provideCompletionItems(document: TextDocument, position: Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 
         let enableDebugMode = extensionSettings.getConfigValue(
-            "enable-debug-mode", false
+            "enableDebugLog", false
         );
         
-        let positionOffset = document.offsetAt(position);
-        let wholeText = document.getText();
-        let lineText = document.lineAt(position.line).text;
-        let char = getLastCharOfPosition(document, position);
-
         // We can't get correct word if remove -1
         let wordRange = document.getWordRangeAtPosition(
-            new Position(position.line, position.character - 1), /[\w]+[\w-:]*/g
+            new Position(position.line, position.character - 1), /[\w]+[\w-]*/g
         ) || new Range(position, position);
-        let word = document.getText(wordRange).trim();
+
+        let pos: PositionOption = {
+            offset: document.offsetAt(position),
+            wholeText: document.getText(),
+            lineText: document.lineAt(position.line).text,
+            char: util.getLastCharOfPosition(document, position),
+            word: document.getText(wordRange).trim()
+        };
 
         if (enableDebugMode) {
-            console.log({
-                'position': JSON.stringify(position),
-                "positionOffset": positionOffset,
-                "lineText": lineText,
-                "lastChar": char,
-                "word": word
-            });
+            console.log(pos);
         }
 
         // Initiate completion list
         let completionItems: CompletionItem[] = [];
 
         // Completion for tag
-        if (char === "<") {
+        if (pos.char === "<") {
             for (const tag in vfTagDefs) {
                 if (vfTagDefs.hasOwnProperty(tag)) {
                     let attr = vfTagDefs[tag];
@@ -64,15 +69,15 @@ export class VisualforceCompletionItemProvider implements vscode.CompletionItemP
             }
         }
         // completion for tag, such lighting-input
-        else if (char === '-') {
+        else if (pos.char === '-') {
             for (const tag in vfTagDefs) {
                 if (vfTagDefs.hasOwnProperty(tag)) {
                     // If position char is :, remove the < in the word
-                    if (word.startsWith('-')) {
-                        word = word.substr(1, word.length);
+                    if (pos.word.startsWith('-')) {
+                        pos.word = pos.word.substr(1, pos.word.length);
                     }
 
-                    if (tag.startsWith(word)) {
+                    if (tag.startsWith(pos.word)) {
                         let tag_suffix = tag.split('-')[1];
 
                         let attr = vfTagDefs[tag];
@@ -87,15 +92,15 @@ export class VisualforceCompletionItemProvider implements vscode.CompletionItemP
             }
         }
         // completion for tag, such lighting:input
-        else if (char === ':') {
+        else if (pos.char === ':') {
             for (const tag in vfTagDefs) {
                 if (vfTagDefs.hasOwnProperty(tag)) {
                     // If position char is :, remove the < in the word
-                    if (word.startsWith('<')) {
-                        word = word.substr(1, word.length);
+                    if (pos.word.startsWith('<')) {
+                        pos.word = pos.word.substr(1, pos.word.length);
                     }
 
-                    if (tag.startsWith(word)) {
+                    if (tag.startsWith(pos.word)) {
                         let tag_suffix = tag.split(':')[1];
 
                         let attr = vfTagDefs[tag];
@@ -109,15 +114,18 @@ export class VisualforceCompletionItemProvider implements vscode.CompletionItemP
             }
         }
         // completion for tag attribute
-        else if (char === ' ') {
+        else if (pos.char === ' ') {
             let pattern = /<\w+[:-\s]*\w+[\w\W]*?>/g;
-            let match, matchedText;
+            let match, matchedText, index;
             
             // Get matched string which contains cursor
-            while (match = pattern.exec(wholeText)) {
-                if (match.index > positionOffset) {
+            while (match = pattern.exec(pos.wholeText)) {
+                if (index === match.index 
+                        || match.index > pos.offset) {
                     break;
                 }
+
+                index = match.index;
                 matchedText = match[0];
             }
 
@@ -165,13 +173,13 @@ export class VisualforceCompletionItemProvider implements vscode.CompletionItemP
             }
         }
         // Attribute values completion
-        else if (char === "=") {
+        else if (pos.char === "=") {
             let pattern = /<\w+[:-\s]+\w+[\w\W]*?/g;
             let match, matchedText;
 
             // Get matched string which contains cursor
-            while (match = pattern.exec(wholeText)) {
-                if (match.index > positionOffset) {
+            while (match = pattern.exec(pos.wholeText)) {
+                if (match.index > pos.offset) {
                     break;
                 }
                 matchedText = match[0];
@@ -185,7 +193,7 @@ export class VisualforceCompletionItemProvider implements vscode.CompletionItemP
 
                 let tagAttrib = vfTagDefs[matchedTag] || {};
                 let attribs: Object = tagAttrib["attribs"] || {};
-                let attrName = word;
+                let attrName = pos.word;
                 let attr = (<any>attribs)[attrName];
 
                 if (enableDebugMode) {

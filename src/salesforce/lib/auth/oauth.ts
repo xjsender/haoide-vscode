@@ -3,9 +3,13 @@
  * @author Mouse Liu <mouse.mliu@gmail.com>
  */
 
-import { appConfig } from "./config";
 import * as querystring from "querystring";
 import * as request from "request-promise";
+import * as _ from "lodash";
+
+import ProgressNotification from "../../../utils/progress";
+import { appConfig } from "./config";
+import { _session } from "../../../settings";
 
 export default class OAuth {
     private authorizeUrl: string;
@@ -13,9 +17,9 @@ export default class OAuth {
     private revokeUrl: string;
 
     public constructor(loginUrl: string) {
-        this.tokenUrl = `${loginUrl}/services/oauth2/token`;
-        this.revokeUrl = `${loginUrl}//services/oauth2/revoke`;
         this.authorizeUrl = `${loginUrl}/services/oauth2/authorize`;
+        this.tokenUrl = `${loginUrl}/services/oauth2/token`;
+        this.revokeUrl = `${loginUrl}/services/oauth2/revoke`;
     }
 
     /**
@@ -35,12 +39,12 @@ export default class OAuth {
 
     /**
      * Common service for invoking oauth request, 
-     * i.e., requestToken, refreshToken
+     * i.e., requestToken, refreshToken, revokeToken
      * 
-     * @param params utility for invoke request
+     * @param options utility for invoke request
      * @returns request response
      */
-    private _invokeTokenRequest(params: any) {
+    private _invokeTokenRequest(options: any) {
         let self = this;
 
         return new Promise<any>(function(resolve, reject) {
@@ -49,15 +53,27 @@ export default class OAuth {
                 headers : {
                     "content-type" : "application/x-www-form-urlencoded"
                 },
-                uri: self.tokenUrl,
-                resolveWithFullResponse: true,
-                body: querystring.stringify(params)
+                uri: options.serverUrl || self.tokenUrl,
+                body: querystring.stringify(options),
+                json: true
             };
+            console.log(requestOptions);
+            
 
-            request(requestOptions).then(response => {
-                resolve(response);
+            // Send notification
+            ProgressNotification.notify(
+                options.progress, `Start authorization request...`
+            );
+            
+            request(requestOptions).then( body => {
+                // Send finish notification
+                ProgressNotification.notify(
+                    options.progress, 'OAuth request is finished', 100
+                );
+
+                resolve(body);
             })
-            .catch (err => {
+            .catch( err => {
                 reject(err);
             });
         });
@@ -66,36 +82,51 @@ export default class OAuth {
     /**
      * Get accessToken, instanceUrl by code
      * 
-     * @param code response code after user login succeed
-     * @returns Promise<response>
+     * @param options options for requestToken request
+     * @param options.code authorization code for requesting refresh token and access token
+     * @returns Promise<any>
      */
-    public requestToken(code: string) {
-        let params = {
+    public requestToken(options: any) {
+        let self = this;
+
+        return this._invokeTokenRequest(_.extend(options, {
+            serverUrl: self.tokenUrl,
             grant_type: "authorization_code",
-            code: code,
             client_id: appConfig["clientId"],
             client_secret: appConfig["clientSecret"],
             redirect_uri: appConfig["redirectUri"]
-        };
-        
-        return this._invokeTokenRequest(params);
+        }));
     }
 
     /**
      * Get refreshed accessToken by refreshToken
      * 
-     * @param refreshToken got from code request response
-     * @returns Promise<response>
+     * @param options options for revokeToken request
+     * @param options.refreshToken refresh token which is used to refresh access token
+     * @returns Promise<any>
      */
-    public refreshToken(refreshToken: string) {
-        let params = {
-            grant_type: "refresh_token",
-            refresh_token : refreshToken ,
-            client_id: appConfig["clientId"]
-        };
+    public refreshToken(options: any) {
+        let self = this;
 
-        return this._invokeTokenRequest(params);
+        return this._invokeTokenRequest(_.extend(options, {
+            serverUrl: self.tokenUrl,
+            grant_type: "refresh_token",
+            client_id: appConfig["clientId"]
+        }));
     }
 
-    public revokeToken(token: string) {}
+    /**
+     * Revoke exist refresh token at local disk
+     * 
+     * @param options options for revokeToken request
+     * @param options.refreshToken refresh token to be revoked
+     * @returns Promise<any>
+     */
+    public revokeToken(options: any) {
+        let self = this;
+
+        return this._invokeTokenRequest(_.extend(options, {
+            serverUrl: self.revokeUrl
+        }));
+    }
 }

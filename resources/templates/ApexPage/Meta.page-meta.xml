@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Apexpage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>{API_Version__c}.0</apiVersion>
+    <label>{MetaObject_Name__c}</label>
+</Apexpage>

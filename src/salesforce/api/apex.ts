@@ -4,11 +4,11 @@
  */
 
 import * as request from "request-promise";
-import * as xmlParser from "fast-xml-parser";
+
 import * as auth from "../../commands/auth";
 import SOAP from "../lib/soap";
 import ProgressNotification from "../../utils/progress";
-import { projectSession } from "../../settings";
+import { _session } from "../../settings";
 
 export default class ApexApi {
     private soap!: SOAP;
@@ -24,7 +24,7 @@ export default class ApexApi {
     }
 
     private initiate(sessionInfo?: any) {
-        this.session = sessionInfo || projectSession.getSession();
+        this.session = sessionInfo || _session.getSession();
         this.sessionId = this.session["sessionId"];
         this.instanceUrl = this.session["instanceUrl"];
         this.apiVersion = this.session["apiVersion"] || 46;
@@ -40,7 +40,7 @@ export default class ApexApi {
         return this;
     }
 
-    private _invoke_method(options: any, progress?: any) {
+    private _invoke_method(options: any) {
         let self = this;
 
         return new Promise<any>(function (resolve, reject) {
@@ -56,13 +56,18 @@ export default class ApexApi {
 
             // Send notification
             ProgressNotification.notify(
-                progress, `Start ${requestType}...`
+                options.progress, 
+                options.progressMessage || 
+                    `Start ${requestType}...`
             );
 
             request(requestOptions).then( body => {
                 // If request is finished, notify user and stop future notification
                 ProgressNotification.notify(
-                    progress, `${requestType} succeed`, 100
+                    options.progress, 
+                    options.progressMessage || 
+                        `${requestType} succeed`, 
+                    100
                 );
 
                 resolve(body);
@@ -71,11 +76,14 @@ export default class ApexApi {
                 // If session is expired, just login again
                 if (err.message.indexOf("INVALID_SESSION_ID") !== -1) {
                     return auth.authorizeDefaultProject().then( () => {
-                        self.initiate()._invoke_method(options, progress);
+                        self.initiate()._invoke_method(options)
+                            .then( body => {
+                                resolve(body);
+                            });
                     })
-                    .catch( err => {
+                    .catch( () => {
                         // Stop notification progress if any exception
-                        resolve("");
+                        resolve();
                     });
                 }
                 
@@ -84,6 +92,18 @@ export default class ApexApi {
         });
     }
 
+    /**
+     * Get deleted records during spcified date time range
+     * 
+     * @param options options for getDeletedRecords request
+     * @param options.logLevels apex log level
+     * @param options.progress optional, progress instance of vscode 
+     * @param options.progressMessage optional, progress message
+     * @param options.timeout optional, request timeout ```miliseconds```, 
+     *   default is ```120000```
+     * 
+     * @returns Promise<any>
+     */
     public executeAnonymous(options: any) {
         let self = this;
         options["requestType"] = "ExecuteAnonymous";

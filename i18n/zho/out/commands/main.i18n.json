@@ -1,0 +1,8 @@
+{
+    "noCodeExecute.text": "没有可执行的代码",
+    "fileDeployed.text": "代码已经部署成功",
+    "fileDestructed.text": "代码已经删除成功",
+    "noSubscribedMetadata.text": "没有订阅的MetadataObjects",
+    "deleteConfirmation.text": "请再次确认是否从服务器中删除该文件？",
+    "coverageTip.text": "打开你的功能类，点击状态栏上的'查看测试覆盖率'即可查看测试覆盖情况"
+}

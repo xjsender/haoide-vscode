@@ -1,0 +1,4 @@
+# haoide cache
+.haoide/
+.output/
+.diff/

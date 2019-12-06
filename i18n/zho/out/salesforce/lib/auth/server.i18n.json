@@ -1,0 +1,7 @@
+{
+    "errorOpenUrl.text": "打开网址出错 {0}",
+    "successLogin.text": "登陆成功",
+    "errorLogin.text": "登陆出错：{0}",
+    "serverStartAt.text": "服务启动于：{0}",
+    "serverStartedAt.text": "服务已经于 {0} 启动"
+}

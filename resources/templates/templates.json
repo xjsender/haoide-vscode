@@ -1,0 +1,378 @@
+{
+    "Aura": {
+        "Application": {
+            "sourceDirectoryName": "Aura/Application.app",
+            "targetDirectoryName": "aura",
+            "extension": ".app",
+            "inFolder": true,
+            "children": [{
+                    "type": "Controller",
+                    "sourceDirectoryName": "AuraElement/Controller.js",
+                    "targetDirectoryName": "aura",
+                    "extension": ".js",
+                    "inFolder": true
+                },
+                {
+                    "type": "Helper",
+                    "sourceDirectoryName": "AuraElement/Helper.js",
+                    "targetDirectoryName": "aura",
+                    "extension": ".js",
+                    "inFolder": true
+                },
+                {
+                    "type": "Style",
+                    "sourceDirectoryName": "AuraElement/Style.css",
+                    "targetDirectoryName": "aura",
+                    "extension": ".css",
+                    "inFolder": true
+                },
+                {
+                    "type": "Documentation",
+                    "sourceDirectoryName": "AuraElement/Documentation.auradoc",
+                    "targetDirectoryName": "aura",
+                    "extension": ".auradoc",
+                    "inFolder": true
+                },
+                {
+                    "type": "Renderer",
+                    "sourceDirectoryName": "AuraElement/Renderer.js",
+                    "targetDirectoryName": "aura",
+                    "extension": ".js",
+                    "inFolder": true
+                },
+                {
+                    "type": "Design",
+                    "sourceDirectoryName": "AuraElement/Design.design",
+                    "targetDirectoryName": "aura",
+                    "extension": ".design",
+                    "inFolder": true
+                },
+                {
+                    "type": "SVG",
+                    "sourceDirectoryName": "AuraElement/SVG.svg",
+                    "targetDirectoryName": "aura",
+                    "extension": ".svg",
+                    "inFolder": true
+                }
+            ]
+        },
+
+        "Component": {
+            "sourceDirectoryName": "Aura/Component.cmp",
+            "targetDirectoryName": "aura",
+            "extension": ".cmp",
+            "inFolder": true,
+            "children": [
+                {
+                    "type": "Controller",
+                    "sourceDirectoryName": "AuraElement/Controller.js",
+                    "targetDirectoryName": "aura",
+                    "extension": ".js",
+                    "inFolder": true
+                },
+                {
+                    "type": "Helper",
+                    "sourceDirectoryName": "AuraElement/Helper.js",
+                    "targetDirectoryName": "aura",
+                    "extension": ".js",
+                    "inFolder": true
+                },
+                {
+                    "type": "Style",
+                    "sourceDirectoryName": "AuraElement/Style.css",
+                    "targetDirectoryName": "aura",
+                    "extension": ".css",
+                    "inFolder": true
+                },
+                {
+                    "type": "Documentation",
+                    "sourceDirectoryName": "AuraElement/Documentation.auradoc",
+                    "targetDirectoryName": "aura",
+                    "extension": ".auradoc",
+                    "inFolder": true
+                },
+                {
+                    "type": "Renderer",
+                    "sourceDirectoryName": "AuraElement/Renderer.js",
+                    "targetDirectoryName": "aura",
+                    "extension": ".js",
+                    "inFolder": true
+                },
+                {
+                    "type": "Design",
+                    "sourceDirectoryName": "AuraElement/Design.design",
+                    "targetDirectoryName": "aura",
+                    "extension": ".design",
+                    "inFolder": true
+                },
+                {
+                    "type": "SVG",
+                    "sourceDirectoryName": "AuraElement/SVG.svg",
+                    "targetDirectoryName": "aura",
+                    "extension": ".svg",
+                    "inFolder": true
+                }
+            ]
+        },
+
+        "Interface": {
+            "sourceDirectoryName": "Aura/Interface.intf",
+            "targetDirectoryName": "aura",
+            "extension": ".intf",
+            "inFolder": true,
+            "children": []
+        },
+
+        "Event": {
+            "sourceDirectoryName": "Aura/Event.evt",
+            "targetDirectoryName": "aura",
+            "extension": ".evt",
+            "inFolder": true,
+            "children": []
+        }
+    },
+
+    "LWC": {
+        "Basic": [{
+            "sourceDirectoryName": "lwc/lwc.html",
+            "targetDirectoryName": "lwc",
+            "extension": ".html",
+            "inFolder": true,
+            "description": "Component"
+        },
+        {
+            "sourceDirectoryName": "lwc/lwc.js",
+            "targetDirectoryName": "lwc",
+            "extension": ".js",
+            "inFolder": true,
+            "description": "Controller"
+        },
+        {
+            "sourceDirectoryName": "lwc/lwc.js-meta.xml",
+            "targetDirectoryName": "lwc",
+            "extension": ".js-meta.xml",
+            "inFolder": true,
+            "description": "Metafile"
+        }]
+    },
+
+    "ApexClass": {
+        "Aura": [{
+            "sourceDirectoryName": "ApexClass/Aura.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "Basic template for Aura Class"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "Basic": [{
+            "sourceDirectoryName": "ApexClass/Basic.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "Basic Pattern"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "Batch": [{
+            "sourceDirectoryName": "ApexClass/Batch.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "Batch Class Template"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "Controller": [{
+            "sourceDirectoryName": "ApexClass/Controller.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "Custom Controller"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "Queueable": [{
+            "sourceDirectoryName": "ApexClass/Queueable.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "Queueable Apex Template"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "StandardController Extension": [{
+            "sourceDirectoryName": "ApexClass/StandardController Extension.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "directory for StandardController"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "StandardSetController Extension": [{
+            "sourceDirectoryName": "ApexClass/StandardSetController Extension.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "directory for StandardSetController"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "Schedule": [{
+            "sourceDirectoryName": "ApexClass/Schedule.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "Schedule Class Template"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "Exception": [{
+            "sourceDirectoryName": "ApexClass/Exception.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "Exception Class"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "Apex REST": [{
+            "sourceDirectoryName": "ApexClass/Apex REST.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "REST Class"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "Test": [{
+            "sourceDirectoryName": "ApexClass/Test.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "Test Class"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "Triggers Template": [{
+            "sourceDirectoryName": "ApexClass/Triggers Template.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "Triggers Template"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }],
+        "Triggers Implementation": [{
+            "sourceDirectoryName": "ApexClass/Triggers Implementation.cls",
+            "targetDirectoryName": "classes",
+            "extension": ".cls",
+            "inFolder": false,
+            "description": "Implementation Class for Triggers Template"
+        }, {
+            "sourceDirectoryName": "ApexClass/Meta.cls-meta.xml",
+            "targetDirectoryName": "classes",
+            "extension": ".cls-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexClass"
+        }]
+    },
+
+    "ApexTrigger": {
+        "Basic": [{
+            "sourceDirectoryName": "ApexTrigger/Basic.trigger",
+            "targetDirectoryName": "triggers",
+            "extension": ".trigger",
+            "inFolder": false,
+            "description": "Trigger Template"
+        }, {
+            "sourceDirectoryName": "ApexTrigger/Meta.trigger-meta.xml",
+            "targetDirectoryName": "triggers",
+            "extension": ".trigger-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexTrigger"
+        }]
+    },
+    
+    "ApexComponent": {
+        "Basic": [{
+            "sourceDirectoryName": "ApexComponent/Basic.component",
+            "targetDirectoryName": "components",
+            "extension": ".component",
+            "inFolder": false,
+            "description": "component Template"
+        }, {
+            "sourceDirectoryName": "ApexComponent/Meta.component-meta.xml",
+            "targetDirectoryName": "components",
+            "extension": ".component-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexComponent"
+        }]
+    },
+
+    "ApexPage": {
+        "Basic": [{
+            "sourceDirectoryName": "ApexPage/Basic.page",
+            "targetDirectoryName": "pages",
+            "extension": ".page",
+            "inFolder": false,
+            "description": "Visualforce Page Template"
+        }, {
+            "sourceDirectoryName": "ApexPage/Meta.page-meta.xml",
+            "targetDirectoryName": "pages",
+            "extension": ".page-meta.xml",
+            "inFolder": false,
+            "description": "Meta file template for ApexPage"
+        }]
+    }
+}

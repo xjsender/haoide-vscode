@@ -5,20 +5,45 @@
 
 import * as assert from "assert";
 import * as pkg from "../../../utils/package";
+import { 
+    MetadataModel, MetaObject
+} from "../../../typings/meta";
+
+import {
+    FileAttributes, FileProperty
+} from "../../../typings";
 
 describe("Test all functions for ./utils/package", () => {
+    // Prepare test data
+    let metadataModel: MetadataModel = {
+        "metadataObjects": [
+            {
+                "directoryName": "classes",
+                "inFolder": false,
+                "metaFile": true,
+                "suffix": "cls",
+                "xmlName": "ApexClass"
+            }
+        ],
+        "organizationNamespace": "",
+        "partialSaveAllowed": true,
+        "testRequired": false
+    };
+
     let files: string[] = [
-        "/Users/mouse/Dropbox/SFDC/workspace/pro-trailhead/src/pages/AccountList.page"
+        "/Users/mouse/Dropbox/SFDC/workspace/trailhead/src/pages/AccountList.page"
     ];
 
     describe("#getFileAttributes()", () => {
         it("xmlName should be ApexClass", () => {
-            let attrs: pkg.FileAttributes = pkg.getFileAttributes(files[0]);
+            let attrs: FileAttributes = pkg.getFileAttributes(files[0]);
+            console.log(attrs);
             assert(attrs.xmlName, "ApexPage");
         });
 
         it("fullName should be AccountList.page", () => {
-            let attrs: pkg.FileAttributes = pkg.getFileAttributes(files[0]);
+            let attrs: FileAttributes = pkg.getFileAttributes(files[0]);
+            console.log(attrs);
             assert(attrs.xmlName, "ApexPage");
             assert(attrs.fullName, "AccountList.page");
         });
@@ -29,6 +54,7 @@ describe("Test all functions for ./utils/package", () => {
             let retrieveTypes: { [key: string]: string[] } = 
                 pkg.getRetrieveTypes(files);
             let members = retrieveTypes["ApexPage"];
+            console.log(members);
             assert(members.length, '1');
         });
     });
@@ -40,6 +66,7 @@ describe("Test all functions for ./utils/package", () => {
             let containsAccountListMember: boolean = packageXmlContent.indexOf(
                 "<members>AccountList</members>"
             ) !== -1;
+            console.log(containsAccountListMember);
             assert(containsAccountListMember, 'true');
         });
     });

@@ -1,12 +1,16 @@
 import * as vscode from "vscode";
+import * as nls from 'vscode-nls';
+const localize = nls.loadMessageBundle();
 
 export default class ProgressNotification {
     /**
      * Start vscode progress notfication
      * 
      * @param self the context of invoker
-     * @param methodName the method name in the metadata Api
-     * @param options any
+     * @param methodName the method name of the invoker
+     * @param options options for sepcified request
+     * @param options.progressMessage progress message of request
+     * @param options.timeout request timeout miliseconds, default is 120000
      */
     public static showProgress(self: any, methodName: string, options: any) {
         return vscode.window.withProgress({
@@ -15,17 +19,30 @@ export default class ProgressNotification {
             cancellable: true
         }, (progress, token) => {
             token.onCancellationRequested(() => {
-                console.log("You canceled the long polling operation");
+                vscode.window.showWarningMessage(
+                    localize('cancelRequest.text',
+                        'Your request was cancelled'
+                    )
+                );
             });
 
-            // Notify for init action
             progress.report({ message: methodName });
 
-            return self[methodName](options, progress);
+            // Bind options with progress
+            options.progress = progress;
+
+            return self[methodName](options);
         }) as Promise<any>;
     }
-
-    public static notify(progress: any, message: string, increment?: number) {
+    
+    /**
+     * Notify user with the api request progress
+     * 
+     * @param progress vscode progress instance
+     * @param message message to report
+     * @param increment progress rate, from 0 - 100
+     */
+    public static notify(progress: vscode.Progress<any>, message: string, increment?: number) {
         if (progress) {
             progress.report({
                 message: message,

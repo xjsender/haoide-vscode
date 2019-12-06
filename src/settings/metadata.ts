@@ -3,15 +3,10 @@
  * @author Mouse Liu <mouse.mliu@gmail.com>
  */
 
-import * as settingsUtil from "./settingsUtil";
+import * as _ from "lodash";
 
-export interface MetaObject {
-    directoryName: string;
-    inFolder: boolean;
-    metaFile: string;
-    suffix: string;
-    xmlName: string;
-}
+import * as settingsUtil from "./settingsUtil";
+import { MetadataModel, MetaObject } from "../typings";
 
 export default class Metadata {
     private static instance: Metadata;
@@ -28,6 +23,7 @@ export default class Metadata {
 
     /**
      * Keep metadata describe result to local disk
+     * 
      * @param metaObject metadata describe result
      */
     public setMetaObjects(metaObject: any) {
@@ -37,21 +33,45 @@ export default class Metadata {
     }
 
     /**
+     * Get metaobject Model
+     * 
+     * @returns metadata object model
+     */
+    public getMetadataModel(): MetadataModel {
+        let metadataModel: MetadataModel = settingsUtil.getConfig(
+            this.metaFileName
+        );
+
+        return metadataModel;
+    }
+
+    /**
      * Get metaobjects array
+     * 
+     * @returns MetaObject array of active project
      */
     public getMetaObjects(): MetaObject[] {
-        let metadataObjects = settingsUtil.getConfig(
-            this.metaFileName
-        )["metadataObjects"];
+        let metadataModel = this.getMetadataModel();
 
-        return metadataObjects as MetaObject[];
+        return metadataModel.metadataObjects;
+    }
+
+    /**
+     * Get all xml name list
+     * 
+     * @returns string[], xml names of speicifed api version
+     */
+    public getXmlNames(): string[] {
+        return _.map(this.getMetaObjects(), metaObject => {
+            return metaObject.xmlName;
+        });
     }
 
     /**
      * Get metaObject by metaFolder(directoryName)
-     * @param metaFolder metadata folder (directoryName)
-     * @returns metaObject,
-     * i.e., {
+     * 
+     * @param key directoryName or xmlName
+     * @returns metaObject, i.e., {
      *      "directoryName": "classes",
      *      "inFolder": "false",
      *      "metaFile": "true",
@@ -59,14 +79,17 @@ export default class Metadata {
      *      "xmlName": "ApexClass"
      *  }
      */
-    public getMetaObject(metaFolder: string): MetaObject {
+    public getMetaObject(key: string): MetaObject {
         if (this.metaObjects === undefined) {
             this.metaObjects = this.getMetaObjects();
         }
 
-        for (const metaObject of this.metaObjects) {
-            if (metaObject.directoryName === metaFolder) {
-                return metaObject;
+        if (this.metaObjects) {
+            for (const metaObject of this.metaObjects) {
+                if (metaObject.directoryName === key
+                        || metaObject.xmlName === key) {
+                    return metaObject;
+                }
             }
         }
 
@@ -74,12 +97,42 @@ export default class Metadata {
     }
 
     /**
+     * Get xmlName array of meta objects which inFolder attr is true
+     * 
+     * @returns xmlName array of metaObjects 
+     * which inFolder attribute is true, for example,
+     * EmailFolder, DocumentFolder, DashboardFolder and ReportFolder
+     */
+    public getXmlNamesInFolder(): string[] {
+        if (this.metaObjects === undefined) {
+            this.metaObjects = this.getMetaObjects();
+        }
+
+        return _.map(this.metaObjects, mo => {
+            if (mo.inFolder) {
+                return mo.xmlName;
+            }
+        }) as string[];
+    }
+
+    /**
      * Get xmlName by metaFolder(directoryName)
+     * 
      * @param metaFolder metadata folder (directoryName)
      * @returns xmlName xmlName in the metaObject
      */
     public getXmlName(metaFolder: string) {
         let metaObject = this.getMetaObject(metaFolder);
         return metaObject.xmlName;
+    }
+
+    /**
+     * Check whether specified xmlName is valid
+     * 
+     * @param xmlName xmlName(MetaObject Type)
+     * @returns boolean, validity of speicified xmlName
+     */
+    public getIsValidXmlName(xmlName: string) {
+        return this.getXmlNames().includes(xmlName);
     }
 }
