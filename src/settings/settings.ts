@@ -100,7 +100,7 @@ export default class Settings {
     public getApiVersion() {
         let apiVersion = this.getSettingValue('apiVersion');
         if (!apiVersion) {
-            apiVersion = extensionSettings.getConfigValue('apiVersion', 46);
+            apiVersion = extensionSettings.getConfigValue('apiVersion', 50);
             settingsUtil.setConfigValue(
                 this.settingsFileName, { apiVersion }
             );
