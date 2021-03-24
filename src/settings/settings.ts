@@ -95,7 +95,7 @@ export default class Settings {
     /**
      * Get api version of default project
      * 
-     * @returns apiVersion, default is 46
+     * @returns apiVersion, default is 50
      */
     public getApiVersion() {
         let apiVersion = this.getSettingValue('apiVersion');
