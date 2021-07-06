@@ -277,7 +277,8 @@ export function getFileAttributes(_file: string): FileAttributes {
     let mo: MetaObject = metadata.getMetaObject(attrs.directoryName);
     attrs.xmlName = mo.xmlName;
 
-    if (["lwc", "aura"].includes(attrs.xmlName)) {
+    // lushang @20.01.30: recorrect attribute name of `directoryName`
+    if (["lwc", "aura"].includes(attrs.directoryName)) {
         attrs.memberName = attrs.folder;
     }
     else if (folder) {
