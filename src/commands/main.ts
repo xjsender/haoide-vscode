@@ -56,7 +56,8 @@ export function diffThisWithServer() {
         new MetadataApi(), 'retrieve', {
             types: retrieveTypes,
             progressDone: false,
-            progressMessage: "Retrieving this file from server"
+            progressMessage: localize("retrievingFileProcess.text",
+                                      "Retrieving this file from server...")
         }
     )
     .then( (result: CheckRetrieveResult) => {
@@ -77,7 +78,8 @@ export async function exportQueryToCSV(soql?: string, isTooling?: boolean) {
     // Get soql input from user
     if (!soql) {
         soql = await vscode.window.showInputBox({
-            placeHolder: 'Input your soql to be exported'
+            placeHolder: localize("inputSOQLtoExport.text",
+                                  "Input your SOQL to be exported:")
         });
         if (!soql) {
             return;
@@ -89,13 +91,15 @@ export async function exportQueryToCSV(soql?: string, isTooling?: boolean) {
     let matches = soql.match(pattern);
     if (!matches || matches.length === 0) {
         let yesOrNo = await vscode.window.showWarningMessage(
-            `Your input soql is not valid, want to try again?`,
-            ConfirmAction.OVERRIDE, ConfirmAction.NO
+            localize("invalidSOQL.text",
+                     "Your SOQL is not valid, want to try again?"),
+                     ConfirmAction.OVERRIDE, ConfirmAction.NO
         );
         if (yesOrNo === ConfirmAction.YES) {
             exportQueryToCSV(soql, isTooling);
         }
 
+        // If the user choose "No", do nothing
         return;
     }
 
@@ -105,7 +109,8 @@ export async function exportQueryToCSV(soql?: string, isTooling?: boolean) {
     );
 
     let csvName = await vscode.window.showInputBox({
-        prompt: 'Input your csv name',
+        prompt: localize("inputCSVNameToExport.text",
+                         "Input your CSV name to export:"),
         value: sobjectName
     });
     if (!csvName) {
@@ -117,7 +122,8 @@ export async function exportQueryToCSV(soql?: string, isTooling?: boolean) {
     ProgressNotification.showProgress(
         api, 'queryAll', {
             soql: soql,
-            progressMessage: 'Executing query request'
+            progressMessage: localize("executingSOQLProcess.text",
+                                      "Input your CSV name to export:"),
         }
     )
     .then( result => {
@@ -175,7 +181,8 @@ export function buildSobjectSOQL() {
             SObjectSOQL.UPDATEABLE,
             SObjectSOQL.CREATEABLE
         ], {
-            placeHolder: 'Choose the condition for sobject SOQL to reload',
+            placeHolder: localize("conditionSOQLReload.text",
+                                  "Choose the condition for SObject SOQL to reload:"),
             ignoreFocusOut: true
         }) as string;
         if (!condition) {
@@ -187,7 +194,9 @@ export function buildSobjectSOQL() {
         return ProgressNotification.showProgress(
             restApi, "describeSobject", {
                 sobject: sobjectName,
-                progressMessage: "Excecuting describe request for " + sobjectName
+                progressMessage: localize("executingSOQLForSObject.text",
+                                          "Excecuting describe request for {0}",
+                                          sobjectName),
             }
         )
         .then( (sobjectDesc: SObjectDesc) => {
@@ -231,7 +240,8 @@ export function executeGlobalDescribe(reloadCache = true) {
         let restApi = new RestApi();
         return ProgressNotification.showProgress(
             restApi, "describeGlobal", {
-            progressMessage: "Executing global describe request"
+            progressMessage: localize("executingGlobalDescReq.text",
+                                      "Executing global describe request...")
         })
         .then( (result: GlobalDescribe) => {
             settingsUtil.saveGlobalDescribe(result);
@@ -258,15 +268,18 @@ export async function updateUserLanguage() {
 
     let restApi = new RestApi();
     ProgressNotification.showProgress(restApi, "patch", {
-        "serverUrl": "/sobjects/User/" + _session.getUserId(),
-        "data": {
+        serverUrl: "/sobjects/User/" + _session.getUserId(),
+        data: {
             "LanguageLocaleKey": chosenItem.label
         },
-        "progressMessage": "Updating user language"
+        progressMessage: localize("switchingUserLang.text",
+                                  "Switching the user's language...")
     })
     .then( body => {
         vscode.window.showInformationMessage(
-            `Your lanaguage is updated to ${chosenItem.description}`
+            localize("updatedUserLang.text",
+                     "Your lanaguage is updated to: {0}",
+                     chosenItem.description)
         );
     });
 }
@@ -284,7 +297,8 @@ export function executeRestTest(options: any) {
     let restApi = new RestApi();
     ProgressNotification.showProgress(
         restApi, options.method, _.extend(options, {
-            progressMessage: "Executing REST Test"
+            progressMessage: localize("executingRESTTest.text",
+                                      "Executing REST Test...")
         })
     )
     .then( result => {
@@ -320,7 +334,8 @@ export function runSyncTest() {
                     classId: property.id
                 }] as TestSuite
             },
-            progressMessage: "Running test class, please wait"
+            progressMessage: localize("runningTestSync.text",
+                                      "Running the test class in sync, please wait...")
         }
     )
     .then( (result: TestResponse) => {
@@ -354,7 +369,8 @@ export function viewCodeCoverage(classId?: string) {
         new ToolingApi(), 'query', {
             soql: "SELECT Coverage FROM ApexCodeCoverageAggregate " +
                 `WHERE ApexClassOrTriggerId = '${classId}'`,
-            progressMessage: "Fetching code coverage"
+            progressMessage: localize("fetchingCodeCoverage.text",
+                                      "Fetching code coverage...")
         }
     )
     .then( (result: QueryResult) => {
@@ -376,16 +392,15 @@ export function viewCodeCoverage(classId?: string) {
 }
 
 /**
- * Running sync test class
- * 
- * @param classIds ids of test class to be ran
+ * Running sync test classes
  */
 export function runSyncTests(data: any) {
     let toolingApi = new ToolingApi();
     ProgressNotification.showProgress(
         toolingApi, "runSyncTest", {
             data: data,
-            progressMessage: "Running test class, please wait"
+            progressMessage:localize("runningTestsSync.text",
+                                     "Running the test classes in sync, please wait...")
         }
     )
     .then( result => {
@@ -408,7 +423,8 @@ export function executeQuery(isTooling=false) {
         let api = isTooling ? new ToolingApi() : new RestApi();
         ProgressNotification.showProgress(api, "query", {
             soql: soql,
-            progressMessage: "Executing query request"
+            progressMessage: localize("executingQueryRequest.text",
+                                      "Executing the query request...")
         })
         .then( result => {
             util.openNewUntitledFile(
@@ -431,7 +447,8 @@ export function reloadSymbolTable() {
     ProgressNotification.showProgress(toolingApi, "query", {
         soql: "SELECT Id, Name, SymbolTable FROM ApexClass",
         batchSize: 200,
-        progressMessage: "This is a long time request, please wait..."
+        progressMessage: localize("reloadSymbolTable.text",
+                                  "This is a long time request, please wait...")
     })
     .then( (result: QueryResult) => {
         util.saveSymbolTables(result.records);
@@ -445,7 +462,9 @@ export function reloadSymbolTable() {
         function retrieveNextRecordsUrl(nextRecordsUrl: string) {
             ProgressNotification.showProgress(toolingApi, "get", {
                 serverUrl: nextRecordsUrl,
-                progressMessage: `Retrieving nextRecordsUrl: ${nextRecordsUrl}`
+                progressMessage: localize("retrievingNextRecordsUrl.text",
+                                          "Retrieving next Records' Url:{0}",
+                                          nextRecordsUrl)
             })
             .then( (result: QueryResult) => {
                 util.saveSymbolTables(result.records);
@@ -476,8 +495,9 @@ export async function reloadSobjectCache(options?: any) {
         }
 
         vscode.window.showInformationMessage(
-            "There is long time process to " + 
-            "load sobjects cache, please wait..."
+            localize("reloadingSobjectCache.text",
+                     "There is long time process to "+ 
+                     "load sobjects cache, please wait...")
         );
     
         let restApi = new RestApi();
@@ -534,7 +554,8 @@ export async function reloadSobjectCache(options?: any) {
     
             // Succeed message after finished
             vscode.window.showInformationMessage(
-                "Your sobjects cache were saved at '.haoide'"
+                localize("sobjectCacheSaved.text",
+                         "Your sobjects cache were saved at '.haoide'")
             );
         })
         .catch( err => {
@@ -556,8 +577,9 @@ export function generateWorkbooks() {
         }
 
         vscode.window.showInformationMessage(
-            "There is long time process to " + 
-            "load sobjects cache, please wait..."
+            localize("reloadingSobjectCache.text",
+                     "There is long time process to "+ 
+                     "load sobjects cache, please wait...")
         );
     
         let restApi = new RestApi();
@@ -568,15 +590,16 @@ export function generateWorkbooks() {
                 ignoreError: true
             }));
         }))
-        .then( (sobjectsDesc : any) => {
+        .then( async (sobjectsDesc : any) => {
             sobjectsDesc = sobjectsDesc as SObjectDesc[];
             for (const sd of sobjectsDesc) {
-                util.generateWorkbook(sd);
+                await util.generateWorkbook(sd);
             }
 
             // Succeed message after finished
             vscode.window.showInformationMessage(
-                "Your workbooks were generated at '.haoide/output/workbooks'"
+                localize("workbooksGenerate.text",
+                         "Your workbooks were generated at '.haoide/output/workbooks'")
             );
         })
         .catch( err => {
@@ -605,7 +628,7 @@ export function executeAnonymous(apexCode?: string) {
     let apexApi = new ApexApi();
     let requestType = "executeAnonymous";
     ProgressNotification.showProgress(apexApi, requestType, { 
-        "apexCode": util.quoteattr(apexCode)
+        apexCode: util.quoteattr(apexCode)
     })
     .then( (body: string) => {
         if (body) {
@@ -644,7 +667,8 @@ export function describeMetadata() {
             metadata.setMetaObjects(result);
 
             vscode.window.showInformationMessage(
-                "Metadata describe result has been kept to .config/metadata.json"
+                localize("metadataSaved.text",
+                         "Metadata describe result has been kept to .config/metadata.json")
             );
 
             resolve(result);
@@ -662,8 +686,9 @@ export function describeMetadata() {
  */
 export async function destructFilesFromServer(files: string[]) {
     let yesOrNo = await vscode.window.showInformationMessage(
-        "Are you sure you really want to remove these files from server",
-        ConfirmAction.YES, ConfirmAction.NO
+        localize("destructingFilesConfirm.text",
+                 "Are you sure you really want to remove these files from server?",
+        ConfirmAction.YES, ConfirmAction.NO)
     );
     if (yesOrNo !== ConfirmAction.YES) {
         return;
@@ -674,7 +699,8 @@ export async function destructFilesFromServer(files: string[]) {
             new MetadataApi(), 'deploy', {
                 zipfile: base64Str, 
                 progressDone: false,
-                progressMessage: "Destructing files from server"
+                progressMessage: localize("destructingFiles.text",
+                                          "Destructing files from server...")
             }
         )
         .then( result => {
@@ -763,7 +789,9 @@ export function deployThisToServer() {
             let localFileP = util.getFilePropertyByFileName(fileName);
             if (!localFileP) {
                 vscode.window.setStatusBarMessage(
-                    'Conflict is ignored due to not found file property',
+                    localize("conflictIgnoredFileNotFound.text",
+                             "Conflict is ignored due to file property not found"
+                    ),
                     5000
                 );
                 return deployFilesToServer([fileName]);
@@ -779,13 +807,15 @@ export function deployThisToServer() {
                         soql: `SELECT Id, LastModifiedBy.Id, LastModifiedBy.Name, ` +
                             `LastModifiedDate FROM ${xmlName} ` + 
                             `WHERE Id = '${localFileP.id}'`,
-                        progressMessage: 'Retrieving file property from server'
+                        progressMessage: localize("retrievingFileProperty.text",
+                                                  "Retrieving file property from server...")
                     }
                 )
                 .then( async (result: QueryResult) => {
                     if (result.totalSize === 0) {
                         return vscode.window.showWarningMessage(
-                            'Not found file property in the server'
+                            localize("notFoundFileProperty.text",
+                                     "The file property cannot be found in the server")
                         );
                     }
 
@@ -847,7 +877,8 @@ export function deployFilesToServer(files: string[]) {
             new MetadataApi(), 'deploy', {
                 zipfile: base64Str, 
                 progressDone: false,
-                progressMessage: "Deploying files to server"
+                progressMessage: localize("deployingFilesToServer.text",
+                                          "Deploying files to server...")
             }
         )
         .then( (result: CheckDeployResult) => {
@@ -918,7 +949,8 @@ export function refreshThisFromServer() {
     let restApi = new RestApi();
     ProgressNotification.showProgress(restApi, "get", {
         serverUrl: `/sobjects/${filep.type}/${filep.id}`,
-        progressMessage: "Refreshing file from server"
+        progressMessage: localize("retrievingFile.text", 
+                                  "Refreshing file from server...")
     })
     .then( result => {
         fs.writeFileSync(fileName, result.Body || result.Markup, "utf-8");
@@ -959,7 +991,8 @@ export async function deleteThisFromServer() {
     let restApi = new RestApi();
     ProgressNotification.showProgress(restApi, "delete", {
         serverUrl: `/sobjects/${filep.type}/${filep.id}`,
-        progressMessage: "Deleting file from server"
+        progressMessage:  localize("deletingFileFromServer.text",
+                                   "Deleting file from server...")
     })
     .then( result => {
         // Remove files from local disk
@@ -968,8 +1001,7 @@ export async function deleteThisFromServer() {
         // Show succeed message
         vscode.window.showInformationMessage(
             localize("fileDestructed.text",
-                'File was deleted from server succesfully'
-            )
+                'File was deleted from server succesfully')
         );
     })
     .catch( err => {
@@ -989,7 +1021,8 @@ export function saveThisToServer() {
             fileBody: fs.readFileSync(fileName, "utf-8"),
             progressDone: false,
             fileProperty: util.getFilePropertyByFileName(fileName),
-            progressMessage: "Saving file to server..."
+            progressMessage: localize("savingFileToServer.text",
+                                      'Saving file to server...')
         }
     )
     .then( result => {
@@ -1039,7 +1072,8 @@ export function retrieveFilesFromServer(fileNames: string[]) {
         new MetadataApi(), 'retrieve', {
             types: retrieveTypes,
             progressDone: false,
-            progressMessage: "Retrieving files from server"
+            progressMessage: localize("retrievingFile.text",
+                                      'Retrieving files from server...')
         }
     )
     .then( (result: CheckRetrieveResult) => {
@@ -1091,7 +1125,8 @@ export function refreshFolders(uris: vscode.Uri[] | undefined) {
         new MetadataApi(), 'retrieve', {
             types: retrieveTypes,
             progressDone: false,
-            progressMessage: "Refresh folders from server"
+            progressMessage: localize("refreshingFolderFromServer.text",
+                                      'Refresh folders from server')
         }
     )
     .then( (result: CheckRetrieveResult) => {
@@ -1120,7 +1155,8 @@ export function refreshFolders(uris: vscode.Uri[] | undefined) {
         util.setFileProperties(result.fileProperties);
 
         vscode.window.showInformationMessage(
-            "Your folders was successfully refreshed"
+            localize("refreshedFolderFromServer.text",
+                     'Your folders was successfully refreshed')
         );
     });
 }
@@ -1162,7 +1198,8 @@ export function createNewProject(reloadCache = true) {
         new MetadataApi(), 'retrieve', {
             types: retrieveTypes,
             progressDone: false,
-            progressMessage: "Retrieving files from server"
+            progressMessage: localize("retrievingFile.text",
+                                      'Retrieving files from server...')
         }
     )
     .then( (result: CheckRetrieveResult) => {
@@ -1198,7 +1235,8 @@ export function createNewProject(reloadCache = true) {
 export async function createMetaObject(metaType: string) {
     // Get metaObject name from user input
     let metaObjectName = await vscode.window.showInputBox({
-        placeHolder: "Input your component name"
+        placeHolder: localize("createComponent.text",
+                              'Input the component name:')
     });
     if (!metaObjectName) {
         return;
@@ -1330,7 +1368,8 @@ export async function createMetaObject(metaType: string) {
         // Check confict
         if (!yesOrNo && fs.existsSync(targetFile)) {
             yesOrNo = await vscode.window.showWarningMessage(
-                `${targetFile} is already exist, continue?`,
+                localize("createComponentOverride.text",
+                         '{0} already exists, override it?'),
                 ConfirmAction.OVERRIDE, ConfirmAction.NO
             );
             if (yesOrNo === ConfirmAction.NO) {
@@ -1339,7 +1378,7 @@ export async function createMetaObject(metaType: string) {
         }
         
         // Write template content to target file
-        fs.writeFileSync(targetFile, data, "utf-8");
+        await fs.promises.writeFile(targetFile, data, "utf-8");
     }
 
     // Open newly created files

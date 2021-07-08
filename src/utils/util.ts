@@ -17,6 +17,9 @@ import {
     SObjectDesc
 } from "../typings";
 import { settings } from "../settings";
+import * as nls from "vscode-nls";
+
+const localize = nls.loadMessageBundle();
 
 /**
  * Time sleep for sepcified miliseconds
@@ -47,7 +50,7 @@ export function generateGUID() {
     return guid;
 }
 
-export function generateWorkbook(sobjectDesc: SObjectDesc) {
+export async function generateWorkbook(sobjectDesc: SObjectDesc) {
     let columns = settings.getWorkbookColumns();
     let sobjectName = sobjectDesc.name;
 
@@ -111,7 +114,9 @@ export function generateWorkbook(sobjectDesc: SObjectDesc) {
     fs.writeFileSync(workbookFile, tableContent, 'utf-8');
 
     vscode.window.setStatusBarMessage(
-        `Workbook of ${sobjectName} is generated successfully`,
+        localize("workbookGenerated.text",
+                 "Workbook of {0} is generated successfully",
+                 sobjectName),
         5000
     );
 }
@@ -228,7 +233,9 @@ export function getExtensionInstance() {
 
 export function showCommandWarning(warningMessage?: string) {
     return vscode.window.showQuickPick([{
-        label: warningMessage || "No text editor active at this time"
+        label: warningMessage ||
+        localize("showCommandWarningWhenEmpty.text",
+                 "No text editor is active at this time")
     }]);
 }
 
