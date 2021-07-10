@@ -50,7 +50,7 @@ export function generateGUID() {
     return guid;
 }
 
-export async function generateWorkbook(sobjectDesc: SObjectDesc) {
+export function generateWorkbook(sobjectDesc: SObjectDesc) {
     let columns = settings.getWorkbookColumns();
     let sobjectName = sobjectDesc.name;
 
