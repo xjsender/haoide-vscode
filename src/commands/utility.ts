@@ -165,9 +165,11 @@ export async function switchProject(projectName?: string) {
     util.setDefaultProject(projectName);
 
     // Show default project at the status bar
+    const statusBarDefaultTooltip = localize('statusBarDefaultProject',
+    'This is haoide default project')
     statusBar.updateText({
         text: `Haoide: ${projectName}`,
-        tooltip: 'This is haoide default project',
+        tooltip: statusBarDefaultTooltip,
         command: 'extension.haoide.switchProject'
     });
 
@@ -205,7 +207,9 @@ export function locateThisInBrowser() {
     }
 
     vscode.window.showErrorMessage(
-        "Not found attributes of this file at local cache"
+        localize("notFoundAttributes.text", 
+                        "Cannot find attributes of this file at local cache"
+                    ),
     );
 }
 
@@ -252,7 +256,9 @@ export function copyLoginUrl() {
 
     // Show succeed information
     vscode.window.showInformationMessage(
-        "Login url has been copied to clipboard"
+        localize("loginUrlCopiedToClipBoard.text", 
+                    "Login url has been copied to clipboard"
+                )
     );
 }
 
@@ -332,7 +338,7 @@ export function convertJson2Typescript() {
 export function convert15IdTo18Id() {
     vscode.window.showInputBox({
         placeHolder: localize(
-            'input15Id.text', "Please input your 15Id..."
+            'input15Id.text', "Please input your 15-digit Id..."
         )
     })
     .then( the15Id => {
@@ -394,7 +400,10 @@ export function chooseSobjects(options?: any) {
                 SObjectReloadScope.CUSTOM,
                 SObjectReloadScope.CUSTOMSCOPE
             ], {
-                placeHolder: 'Choose the scope for sobject definitions to reload',
+                placeHolder: localize(
+                    'chooseScopeForSObjectDef.text',
+                    "Choose the scope for SObject definitions to reload"
+                ),
                 ignoreFocusOut: true
             });
             if (!scope) {
