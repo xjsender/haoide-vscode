@@ -47,7 +47,7 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
         projectName = await vscode.window.showInputBox({
             placeHolder: localize(
                 "inputProjectName.text", 
-                "Please input your project name..."
+                "Please input your project name:"
             )
         });
         if (!projectName) {
@@ -71,7 +71,7 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
             }, {
                 label: LoginUrlEnum.CUSTOM,
                 description: localize(
-                    "customEnv.text", "Enter a custom login url"
+                    "customEnv.text", "Customized"
                 )
             }
         ]);
@@ -85,7 +85,7 @@ export async function authorizeNewProject(projectName?: string, loginUrl?: strin
             loginUrl = await vscode.window.showInputBox({
                 placeHolder: localize(
                     "inputCustomLoginUrl.text", 
-                    "Please input your login url..."
+                    "Please input your login url:"
                 )
             });
             if (!loginUrl) {
@@ -112,7 +112,7 @@ export function authorizeDefaultProject() {
         if (_session.isSessionValid()) {
             resolve(_session.getSession());
             return vscode.window.showInformationMessage(
-                localize('sessionNotExpired.text', "Session is still not expired")
+                localize('sessionNotExpired.text', "Session is not expired yet")
             );
         }
 
@@ -133,7 +133,7 @@ export function authorizeDefaultProject() {
 
             // Show success information
             vscode.window.setStatusBarMessage(
-                localize("sessionRefreshed.text","Session information is refreshed"),
+                localize("sessionRefreshed.text","Session's Info has been refreshed"),
                 5000
             );
 
@@ -142,8 +142,9 @@ export function authorizeDefaultProject() {
         .catch( err => {
             if (err.message.indexOf("expired access/refresh token")) {
                 vscode.window.showWarningMessage(
-                    "Refresh token expired or not exist, " +
-                        "it will start new authorization"
+                    localize('sessionNotExpired.text', 
+                             "Refresh token expired or not exist," + 
+                             "it will start new authorization")
                 );
 
                 // Refresh token expired, start new authorization

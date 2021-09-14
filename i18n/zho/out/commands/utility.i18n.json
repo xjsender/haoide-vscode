@@ -1,13 +1,18 @@
 {
-    "input15Id.text": "请输入15位的ID",
-    "inputJSON.text": "请输入待处理的JSON",
-    "inputClassName.text": "请输入Class名称",
+    "input15Id.text": "请输入 15 位的 ID",
+    "inputJSON.text": "请输入待处理的 JSON",
+    "inputClassName.text": "请输入 Class 名称",
     "requiredInput.text": "请输入必填信息",
     "chooseMetadataObject.text": "选择需要订阅的 Metadata 对象",
     "selectOneMetadata.text": "至少需要选择一个 Metadata 对象",
     "metadataObjectUpdated.text": "您订阅的 Metadata 对象已更新",
-    "remindUpdateProject.text": "您是否需要更新项目内容?", 
+    "remindUpdateProject.text": "您是否需要更新项目内容？", 
     "chooseDefaultProject.text": "请选择要作为默认的项目",
     "defaultProjectPanel.text": "默认项目选择面板",
-    "defaultProjectChanged.text": "当前默认项目已更改"
+    "defaultProjectChanged.text": "当前默认项目已更改",
+    "statusBarDefaultProject.text":"这是 haoide 默认项目",
+    "notFoundAttributes.text":"本地 Cache 中无法找到此文件的 Attributes",
+    "loginUrlCopiedToClipBoard.text":"登陆的 url 地址成功拷贝到剪贴板",
+    "chooseScopeForSObjectDef.text":"选择加载 SObject 定义范围",
+    "workbookCreated.text":"成功创建了工作簿：{0}"
 }
