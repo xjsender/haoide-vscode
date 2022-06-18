@@ -92,7 +92,6 @@ export async function exportQueryToCSV(soql?: string, isTooling?: boolean) {
     if (!matches || matches.length === 0) {
         let yesOrNo = await vscode.window.showWarningMessage
         (
-            `Your input soql is not valid, want to try again?`,
             localize("invalidSOQL.text",
                      "Your SOQL is not valid, want to try again?"
                     ),
