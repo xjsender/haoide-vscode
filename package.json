@@ -840,7 +840,7 @@
 		"querystring": "v0.2.0",
 		"request": "*",
 		"request-promise": "^4.2.4",
-		"shelljs": "^0.8.1",
+		"shelljs": "^0.8.5",
 		"vscode-nls": "^3.2.5",
 		"yazl": "^2.5.1"
 	}
