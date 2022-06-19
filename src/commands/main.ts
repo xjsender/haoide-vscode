@@ -90,10 +90,12 @@ export async function exportQueryToCSV(soql?: string, isTooling?: boolean) {
     let pattern = /[\n\s]*SELECT\s+[*\w\n,.:_\s()]+?\s+FROM\s+[1-9_a-zA-Z]+/gi;
     let matches = soql.match(pattern);
     if (!matches || matches.length === 0) {
-        let yesOrNo = await vscode.window.showWarningMessage(
+        let yesOrNo = await vscode.window.showWarningMessage
+        (
             localize("invalidSOQL.text",
-                     "Your SOQL is not valid, want to try again?"),
-                     ConfirmAction.OVERRIDE, ConfirmAction.NO
+                     "Your SOQL is not valid, want to try again?"
+                    ),
+            ConfirmAction.YES, ConfirmAction.NO
         );
         if (yesOrNo === ConfirmAction.YES) {
             exportQueryToCSV(soql, isTooling);
