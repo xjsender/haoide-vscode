@@ -835,7 +835,7 @@
 		"express": "^4.16.4",
 		"fast-xml-parser": "^3.12.19",
 		"lodash": "^4.17.19",
-		"moment": "^2.24.0",
+		"moment": "^2.29.4",
 		"open": "^6.4.0",
 		"querystring": "v0.2.0",
 		"request": "*",
