@@ -832,7 +832,7 @@
 		"bootstrap": "^4.3.1",
 		"promise-limit": "^2.7.0",
 		"adm-zip": "^0.4.13",
-		"express": "^4.16.4",
+		"express": "^4.17.3",
 		"fast-xml-parser": "^3.12.19",
 		"lodash": "^4.17.19",
 		"moment": "^2.24.0",
